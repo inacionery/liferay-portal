@@ -74,6 +74,8 @@ public class UpgradeProcess_6_2_0 extends UpgradeProcess {
 		upgrade(UpgradeImageGallery.class);
 		upgrade(UpgradeJournal.class);
 
+		// Order is important. See LPS-52278.
+
 		upgrade(UpgradeDynamicDataMapping.class);
 
 		upgrade(UpgradeLayout.class);
