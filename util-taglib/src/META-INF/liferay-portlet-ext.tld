@@ -49,6 +49,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>append</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>copyCurrentRenderParameters</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -248,6 +253,11 @@
 		</attribute>
 		<attribute>
 			<name>anchor</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>append</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

@@ -62,7 +62,7 @@ public class ParamAndPropertyAncestorTagImpl
 
 		String[] values = params.get(name);
 
-		if (values == null) {
+		if (!_append || (values == null)) {
 			values = new String[] {value};
 		}
 		else {
@@ -146,6 +146,10 @@ public class ParamAndPropertyAncestorTagImpl
 		return _allowEmptyParam;
 	}
 
+	public boolean isAppend() {
+		return _append;
+	}
+
 	@Override
 	public void release() {
 		super.release();
@@ -160,6 +164,10 @@ public class ParamAndPropertyAncestorTagImpl
 
 	public void setAllowEmptyParam(boolean allowEmptyParam) {
 		_allowEmptyParam = allowEmptyParam;
+	}
+
+	public void setAppend(boolean append) {
+		_append = append;
 	}
 
 	@Override
@@ -183,6 +191,7 @@ public class ParamAndPropertyAncestorTagImpl
 	protected ServletContext servletContext;
 
 	private boolean _allowEmptyParam;
+	private boolean _append;
 	private DynamicServletRequest _dynamicServletRequest;
 	private Map<String, String[]> _properties;
 	private Set<String> _removedParameterNames;
