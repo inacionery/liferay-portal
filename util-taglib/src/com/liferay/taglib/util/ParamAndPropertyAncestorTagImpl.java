@@ -62,7 +62,7 @@ public class ParamAndPropertyAncestorTagImpl
 
 		String[] values = params.get(name);
 
-		if (values == null) {
+		if (!_copyCurrentRenderParameters || (values == null)) {
 			values = new String[] {value};
 		}
 		else {
@@ -86,7 +86,7 @@ public class ParamAndPropertyAncestorTagImpl
 
 		String[] values = _properties.get(name);
 
-		if (values == null) {
+		if (!_copyCurrentRenderParameters || (values == null)) {
 			values = new String[] {value};
 		}
 		else {
@@ -162,6 +162,13 @@ public class ParamAndPropertyAncestorTagImpl
 		_allowEmptyParam = allowEmptyParam;
 	}
 
+	public void setCopyCurrentRenderParameters(
+		boolean copyCurrentRenderParameters) {
+
+		_copyCurrentRenderParameters = Boolean.valueOf(
+			copyCurrentRenderParameters);
+	}
+
 	@Override
 	public void setPageContext(PageContext pageContext) {
 		super.setPageContext(pageContext);
@@ -183,6 +190,7 @@ public class ParamAndPropertyAncestorTagImpl
 	protected ServletContext servletContext;
 
 	private boolean _allowEmptyParam;
+	private boolean _copyCurrentRenderParameters = true;
 	private DynamicServletRequest _dynamicServletRequest;
 	private Map<String, String[]> _properties;
 	private Set<String> _removedParameterNames;
