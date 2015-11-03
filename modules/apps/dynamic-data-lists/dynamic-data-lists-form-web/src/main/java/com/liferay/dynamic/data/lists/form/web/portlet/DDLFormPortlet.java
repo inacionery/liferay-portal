@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.util.PortalUtil;
 
@@ -183,7 +184,13 @@ public class DDLFormPortlet extends MVCPortlet {
 			ddmFormRenderingContext.setAttribute(
 				"captchaURL", resourceURL.toString());
 		}
-		
+
+		String successURL = GetterUtil.getString(
+				recordSet.getTypeSettingsProperty(
+					"successURL", StringPool.BLANK));
+
+		ddmFormRenderingContext.setAttribute("successURL", successURL);
+
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
 		return _ddmFormRenderer.render(
