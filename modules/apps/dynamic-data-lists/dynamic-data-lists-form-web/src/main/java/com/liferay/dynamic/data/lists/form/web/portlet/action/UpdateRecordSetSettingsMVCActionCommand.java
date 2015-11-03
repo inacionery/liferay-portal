@@ -78,10 +78,14 @@ public class UpdateRecordSetSettingsMVCActionCommand
 		boolean requireCaptcha = ParamUtil.getBoolean(
 			actionRequest, "requireCaptcha");
 
+		String successURL = ParamUtil.getString(actionRequest, "successURL");
+
 		UnicodeProperties typeSettingsProperties = new UnicodeProperties(true);
 
 		typeSettingsProperties.setProperty(
 			"requireCaptcha", String.valueOf(requireCaptcha));
+
+		typeSettingsProperties.setProperty("successURL", successURL);
 
 		_ddlRecordSetService.updateRecordSet(
 			recordSetId, typeSettingsProperties.toString());
