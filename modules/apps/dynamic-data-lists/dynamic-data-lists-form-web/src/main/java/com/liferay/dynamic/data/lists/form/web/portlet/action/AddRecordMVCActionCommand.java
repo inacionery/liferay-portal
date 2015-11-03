@@ -31,9 +31,11 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.util.PortalUtil;
@@ -64,6 +66,7 @@ public class AddRecordMVCActionCommand extends BaseMVCActionCommand {
 
 		long groupId = ParamUtil.getLong(actionRequest, "groupId");
 		long recordSetId = ParamUtil.getLong(actionRequest, "recordSetId");
+		String portletId = PortalUtil.getPortletId(actionRequest);
 
 		DDLRecordSet recordSet = _ddlRecordSetService.getRecordSet(recordSetId);
 
@@ -80,6 +83,22 @@ public class AddRecordMVCActionCommand extends BaseMVCActionCommand {
 		_ddlRecordService.addRecord(
 			groupId, recordSetId, DDLRecordConstants.DISPLAY_INDEX_DEFAULT,
 			ddmFormValues, serviceContext);
+
+		String successURL = GetterUtil.getString(
+				recordSet.getTypeSettingsProperty(
+					"successURL", StringPool.BLANK));
+
+		if (SessionErrors.isEmpty(actionRequest) &&
+			Validator.isNotNull(successURL)) {
+
+			SessionMessages.add(
+					actionRequest,
+					portletId +
+						SessionMessages.
+							KEY_SUFFIX_HIDE_DEFAULT_SUCCESS_MESSAGE);
+
+			actionResponse.sendRedirect(successURL);
+		}
 	}
 
 	protected DDMForm getDDMForm(DDLRecordSet recordSet)
