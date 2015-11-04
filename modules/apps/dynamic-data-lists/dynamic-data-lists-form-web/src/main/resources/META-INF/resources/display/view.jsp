@@ -17,8 +17,6 @@
 <%@ include file="/display/init.jsp" %>
 
 <%
-String redirect = ParamUtil.getString(request, "redirect", currentURL);
-
 DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 %>
 
@@ -29,16 +27,26 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 		</div>
 	</c:when>
 	<c:otherwise>
+
+		<%
+		String successURL = GetterUtil.getString(recordSet.getTypeSettingsProperty("successURL", StringPool.BLANK));
+		%>
+
 		<portlet:actionURL name="addRecord" var="addRecordActionURL" />
 
 		<div class="portlet-forms">
 			<aui:form action="<%= addRecordActionURL %>" method="post" name="fm">
-				<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+				<c:if test="<%= Validator.isNull(successURL) %>">
+					<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+				</c:if>
 				<aui:input name="groupId" type="hidden" value="<%= themeDisplay.getScopeGroupId() %>" />
 				<aui:input name="recordSetId" type="hidden" value="<%= recordSet.getRecordSetId() %>" />
 				<aui:input name="availableLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 				<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 				<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
+				
+				<liferay-ui:error exception="<%= CaptchaMaxChallengesException.class %>" message="maximum-number-of-captcha-attempts-exceeded" />
+				<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 
 				<div class="ddl-form-basic-info">
 					<div class="container-fluid-1280">

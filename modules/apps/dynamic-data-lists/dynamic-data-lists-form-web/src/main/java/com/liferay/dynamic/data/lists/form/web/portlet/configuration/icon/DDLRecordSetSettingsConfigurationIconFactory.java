@@ -26,14 +26,10 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Marcellus Tavares
  */
-@Component(
-	immediate = true,
-	property = {
+@Component(immediate = true, property = {
 		"javax.portlet.name=" + DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN,
-		"path=/admin/edit_record_set.jsp"
-	},
-	service = PortletConfigurationIconFactory.class
-)
+				"path=/admin/edit_record_set.jsp"
+			}, service = PortletConfigurationIconFactory.class)
 public class DDLRecordSetSettingsConfigurationIconFactory
 	extends BasePortletConfigurationIconFactory {
 
