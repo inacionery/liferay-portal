@@ -1542,7 +1542,11 @@ AUI.add(
 						var instance = this;
 
 						if (Lang.isString(value)) {
-							value = JSON.parse(value);
+							JSON.parse(value).forEach(
+								function(item, index) {
+									value[index] = item.value;
+								}
+							);
 						}
 
 						instance.getInputNode().all('option').each(
