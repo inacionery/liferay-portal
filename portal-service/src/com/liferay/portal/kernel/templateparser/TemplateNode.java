@@ -115,12 +115,12 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 		return new ArrayList<>(_childTemplateNodes.values());
 	}
 
-	public String getData() {
+	public Object getData() {
+		String data = (String)get("data");
+
 		String type = getType();
 
 		if (type.equals("link_to_layout")) {
-			String data = (String)get("data");
-
 			int pos = data.indexOf(CharPool.AT);
 
 			if (pos != -1) {
@@ -129,9 +129,15 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 			return data;
 		}
-		else {
-			return (String)get("data");
+		else if (type.equals("list")) {
+			try {
+				return JSONFactoryUtil.createJSONObject(data);
+			}
+			catch (JSONException jsone) {
+			}
 		}
+
+		return data;
 	}
 
 	public String getFriendlyUrl() {
