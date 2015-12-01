@@ -14,6 +14,9 @@
 
 package com.liferay.portal.kernel.templateparser;
 
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CharPool;
@@ -49,7 +52,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 		put("name", name);
 		put("data", data);
 		put("type", type);
-		put("options", new ArrayList<String>());
+		put("options", new ArrayList<JSONObject>());
 	}
 
 	public void appendChild(TemplateNode templateNode) {
@@ -65,15 +68,25 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	public void appendOption(String option) {
-		List<String> options = getOptions();
+		List<JSONObject> options = getOptions();
 
-		options.add(option);
+		try {
+			options.add(JSONFactoryUtil.createJSONObject(option));
+		}
+		catch (JSONException jsone) {
+		}
 	}
 
 	public void appendOptions(List<String> options) {
-		List<String> curOptions = getOptions();
+		List<JSONObject> curOptions = getOptions();
 
-		curOptions.addAll(options);
+		for (String option : options) {
+			try {
+				curOptions.add(JSONFactoryUtil.createJSONObject(option));
+			}
+			catch (JSONException jsone) {
+			}
+		}
 	}
 
 	public void appendSibling(TemplateNode templateNode) {
@@ -168,8 +181,8 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 		return (String)get("name");
 	}
 
-	public List<String> getOptions() {
-		return (List<String>)get("options");
+	public List<JSONObject> getOptions() {
+		return (List<JSONObject>)get("options");
 	}
 
 	public List<TemplateNode> getSiblings() {
