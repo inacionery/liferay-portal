@@ -30,6 +30,7 @@ import com.liferay.portal.workflow.kaleo.definition.ExecutionType;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoNode;
 import com.liferay.portal.workflow.kaleo.model.KaleoTask;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.runtime.notification.NotificationUtil;
@@ -97,6 +98,21 @@ public class DefaultTaskManagerImpl
 			return doCompleteWorkflowTask(
 				workflowTaskInstanceId, transitionName, comment,
 				workflowContext, serviceContext);
+		}
+		catch (Exception e) {
+			throw new WorkflowException(e);
+		}
+	}
+
+	@Override
+	public WorkflowTask unassignWorkflowTask(
+			long workflowTaskId, List<KaleoTaskAssignment> kaleoTaskAssignments,
+			String comment, ServiceContext serviceContext)
+		throws WorkflowException {
+
+		try {
+			return doUnassignWorkflowTask(
+				workflowTaskId, kaleoTaskAssignments, comment, serviceContext);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
