@@ -67,26 +67,15 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 		}
 	}
 
-	public void appendOption(String option) {
+	public void appendOption(String optionLabel, String optionValue) {
 		List<JSONObject> options = getOptions();
 
-		try {
-			options.add(JSONFactoryUtil.createJSONObject(option));
-		}
-		catch (JSONException jsone) {
-		}
-	}
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-	public void appendOptions(List<String> options) {
-		List<JSONObject> curOptions = getOptions();
+		jsonObject.put("label", optionLabel);
+		jsonObject.put("value", optionValue);
 
-		for (String option : options) {
-			try {
-				curOptions.add(JSONFactoryUtil.createJSONObject(option));
-			}
-			catch (JSONException jsone) {
-			}
-		}
+		options.add(jsonObject);
 	}
 
 	public void appendSibling(TemplateNode templateNode) {

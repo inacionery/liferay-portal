@@ -14,10 +14,17 @@
 
 package com.liferay.journal.transformer;
 
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mobile.device.Device;
@@ -55,6 +62,7 @@ import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.xsl.XSLTemplateResource;
 import com.liferay.portal.xsl.XSLURIResolver;
+import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.taglib.servlet.PipingServletResponse;
 
 import java.io.IOException;
@@ -294,7 +302,8 @@ public class JournalTransformer {
 					Element rootElement = document.getRootElement();
 
 					List<TemplateNode> templateNodes = getTemplateNodes(
-						themeDisplay, rootElement);
+						themeDisplay, rootElement,
+						Long.valueOf(tokens.get("ddm_structure_id")));
 
 					if (templateNodes != null) {
 						for (TemplateNode templateNode : templateNodes) {
@@ -509,8 +518,16 @@ public class JournalTransformer {
 	}
 
 	protected List<TemplateNode> getTemplateNodes(
-			ThemeDisplay themeDisplay, Element element)
+			ThemeDisplay themeDisplay, Element element, long ddmStructureId)
 		throws Exception {
+
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+			ddmStructureId);
+
+		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(true);
 
 		List<TemplateNode> templateNodes = new ArrayList<>();
 
@@ -532,6 +549,8 @@ public class JournalTransformer {
 			String name = dynamicElementElement.attributeValue(
 				"name", StringPool.BLANK);
 
+			DDMFormField ddmFormField = ddmFormFieldsMap.get(name);
+
 			if (name.length() == 0) {
 				throw new TransformException(
 					"Element missing \"name\" attribute");
@@ -539,6 +558,22 @@ public class JournalTransformer {
 
 			String type = dynamicElementElement.attributeValue(
 				"type", StringPool.BLANK);
+
+			if (type.equals("list")) {
+				DDMFormFieldOptions ddmFormFieldOptions =
+					ddmFormField.getDDMFormFieldOptions();
+
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+				LocalizedValue label = ddmFormFieldOptions.getOptionLabels(
+					data);
+
+				jsonObject.put(
+					"label", label.getString(themeDisplay.getLocale()));
+				jsonObject.put("value", data);
+
+				data = jsonObject.toString();
+			}
 
 			Map<String, String> attributes = new HashMap<>();
 
@@ -559,12 +594,21 @@ public class JournalTransformer {
 			else if ((dynamicContentElement != null) &&
 					 (dynamicContentElement.element("option") != null)) {
 
+				DDMFormFieldOptions ddmFormFieldOptions =
+					ddmFormField.getDDMFormFieldOptions();
+
 				List<Element> optionElements = dynamicContentElement.elements(
 					"option");
 
 				for (Element optionElement : optionElements) {
+					String optionValue = StringUtil.stripCDATA(
+						optionElement.getText());
+
+					LocalizedValue label = ddmFormFieldOptions.getOptionLabels(
+						optionValue);
+
 					templateNode.appendOption(
-						StringUtil.stripCDATA(optionElement.getText()));
+						label.getString(themeDisplay.getLocale()));
 				}
 			}
 
