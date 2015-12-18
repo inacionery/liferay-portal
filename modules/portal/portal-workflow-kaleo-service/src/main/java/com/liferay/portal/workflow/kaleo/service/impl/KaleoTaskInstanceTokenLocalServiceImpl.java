@@ -494,6 +494,7 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 
 		kaleoTaskInstanceTokenQuery.setAssetPrimaryKeys(assetPrimaryKeys);
 		kaleoTaskInstanceTokenQuery.setAssetTypes(assetTypes);
+		kaleoTaskInstanceTokenQuery.setAssetTitle(assetTitle);
 		kaleoTaskInstanceTokenQuery.setCompleted(completed);
 		kaleoTaskInstanceTokenQuery.setDueDateGT(dueDateGT);
 		kaleoTaskInstanceTokenQuery.setDueDateLT(dueDateLT);
@@ -554,6 +555,7 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 
 		kaleoTaskInstanceTokenQuery.setAssetPrimaryKeys(assetPrimaryKeys);
 		kaleoTaskInstanceTokenQuery.setAssetTypes(assetTypes);
+		kaleoTaskInstanceTokenQuery.setAssetTitle(assetTitle);
 		kaleoTaskInstanceTokenQuery.setCompleted(completed);
 		kaleoTaskInstanceTokenQuery.setDueDateGT(dueDateGT);
 		kaleoTaskInstanceTokenQuery.setDueDateLT(dueDateLT);
