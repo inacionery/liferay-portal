@@ -278,12 +278,19 @@ public class KaleoTaskInstanceTokenFinderImpl
 
 			appendOrderByComparator(sb, _ORDER_BY_ENTITY_ALIAS, obc);
 
-			sql = sb.toString();
+			String sort = "DESC";
 
+			if (obc.isAscending()) {
+				sort = "ASC";
+			}
+
+			sb.append(", AssetEntry.title "+ sort);
+
+			sql = sb.toString();
 
 			String[] orderByFields = obc.getOrderByFields();
 
-			sb = new StringBundler(orderByFields.length * 3 + 1);
+			sb = new StringBundler(orderByFields.length * 3 + 2);
 
 			sb.append(
 				"DISTINCT KaleoTaskInstanceToken.kaleoTaskInstanceTokenId");
@@ -293,6 +300,8 @@ public class KaleoTaskInstanceTokenFinderImpl
 				sb.append(_ORDER_BY_ENTITY_ALIAS);
 				sb.append(orderByField);
 			}
+
+			sb.append(", AssetEntry.title ");
 
 			sql = sql.replace(
 				"DISTINCT KaleoTaskInstanceToken.kaleoTaskInstanceTokenId",
