@@ -87,6 +87,8 @@ AUI.add(
 						editForm.set('onSubmit', A.bind('_onSubmitEditForm', instance));
 
 						instance._eventHandlers = [
+							instance.one('#descriptionEditor').on('valuechange', A.bind('_onValueChangeDescriptionEditor', instance)),
+							instance.one('#nameEditor').on('valuechange', A.bind('_onValueChangeNameEditor', instance)),
 							instance.one('#publishCheckbox').on('change', A.bind('_onChangePublishCheckbox', instance)),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
 						];
@@ -219,6 +221,26 @@ AUI.add(
 						instance.serializeFormBuilder();
 
 						instance.submitForm();
+					},
+
+					_onValueChangeDescriptionEditor: function(event) {
+						var instance = this;
+
+						var description = window[instance.ns('descriptionEditor')].getHTML();
+
+						description = description.substring(0, 120);
+
+						window[instance.ns('descriptionEditor')].setHTML(description);
+					},
+
+					_onValueChangeNameEditor: function(event) {
+						var instance = this;
+
+						var name = window[instance.ns('nameEditor')].getHTML();
+
+						name = name.substring(0, 120);
+
+						window[instance.ns('nameEditor')].setHTML(name);
 					},
 
 					_valueFormBuilder: function() {
