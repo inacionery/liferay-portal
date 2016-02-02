@@ -19,6 +19,10 @@ AUI.add(
 
 		var CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'page', 'header');
 
+		var CSS_PAGE_HEADER_DESCRIPTION = A.getClassName('form', 'builder', 'page', 'header', 'description');
+
+		var CSS_PAGE_HEADER_TITLE = A.getClassName('form', 'builder', 'page', 'header', 'title');
+
 		var FormBuilderPagesManager = A.Component.create(
 			{
 				ATTRS: {
@@ -207,6 +211,27 @@ AUI.add(
 						instance._addWizardPage();
 					},
 
+					_onDescriptionInputValueChange: function(event) {
+						var instance = this;
+
+						var activePageNumber = instance.get('activePageNumber');
+						var descriptions = instance.get('descriptions');
+						var pageHeader = instance.get('pageHeader');
+
+						var description = event.newVal;
+						var descriptionNode = pageHeader.one('.' + CSS_PAGE_HEADER_DESCRIPTION);
+
+						description = description.substring(0, 100);
+
+						descriptions[activePageNumber - 1] = description.trim();
+
+						instance.set('descriptions', descriptions);
+
+				        descriptionNode.set('value', description || '');
+
+				        event.preventDefault();
+					},
+
 					_onPageControlOptionClick: function(event) {
 						var popover = this._getPopover();
 
@@ -281,11 +306,15 @@ AUI.add(
 						var instance = this;
 
 						var activePageNumber = instance.get('activePageNumber');
+						var pageHeader = instance.get('pageHeader');
 						var titles = instance.get('titles');
 
-						var title = event.newVal.trim();
+						var title = event.newVal;
+						var titleNode = pageHeader.one('.' + CSS_PAGE_HEADER_TITLE);
 
-						titles[activePageNumber - 1] = title;
+						title = title.substring(0, 100);
+
+						titles[activePageNumber - 1] = title.trim();
 
 						if (!title) {
 							var pagesQuantity = instance.get('pagesQuantity');
@@ -294,6 +323,10 @@ AUI.add(
 						}
 
 						instance.set('titles', titles);
+
+				        titleNode.set('value', title || '');
+
+				        event.preventDefault();
 					},
 
 					_removeWizardPage: function(index) {
