@@ -35,7 +35,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
-import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -53,16 +53,23 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
 
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -90,6 +97,32 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		_jsonStorageAdapter = StorageAdapterRegistryUtil.getStorageAdapter(
 			StorageType.JSON.toString());
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
+
+		Collection<ServiceReference<FieldsToDDMFormValuesConverter>>
+			serviceReferences = registry.getServiceReferences(
+				FieldsToDDMFormValuesConverter.class,
+				"(component.name=" +
+					FieldsToDDMFormValuesConverter.class.getName() +")");
+
+		Iterator<ServiceReference<FieldsToDDMFormValuesConverter>> iterator =
+			serviceReferences.iterator();
+
+		_serviceReference = iterator.next();
+
+		_fieldsToDDMFormValuesConverter = registry.getService(
+			_serviceReference);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
+
+		registry.ungetService(_serviceReference);
 	}
 
 	@Test
@@ -637,8 +670,8 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
 			ddmStructureId);
 
-		DDMFormValues ddmFormValues =
-			FieldsToDDMFormValuesConverterUtil.convert(ddmStructure, fields);
+		DDMFormValues ddmFormValues = _fieldsToDDMFormValuesConverter.convert(
+			ddmStructure, fields);
 
 		return storageAdapter.create(
 			TestPropsValues.getCompanyId(), ddmStructureId, ddmFormValues,
@@ -708,5 +741,8 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 	private static Locale _enLocale;
 	private static StorageAdapter _jsonStorageAdapter;
 	private static Locale _ptLocale;
+
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
+	private ServiceReference<FieldsToDDMFormValuesConverter> _serviceReference;
 
 }
