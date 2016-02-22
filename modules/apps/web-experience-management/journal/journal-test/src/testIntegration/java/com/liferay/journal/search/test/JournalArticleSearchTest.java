@@ -61,18 +61,14 @@ import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceReference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -101,28 +97,9 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	public void setUp() throws Exception {
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
-		Registry registry = RegistryUtil.getRegistry();
-
-		Collection<ServiceReference<DDMBeanTranslator>>
-			serviceReferences = registry.getServiceReferences(
-				DDMBeanTranslator.class,
-				"(component.name=" + DDMBeanTranslator.class.getName() +")");
-
-		Iterator<ServiceReference<DDMBeanTranslator>> iterator =
-			serviceReferences.iterator();
-
-		_serviceReference = iterator.next();
-
-		_ddmBeanTranslator = registry.getService(_serviceReference);
+		setUpDDMBeanTranslator();
 
 		super.setUp();
-	}
-
-	@After
-	public void tearDown() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		registry.ungetService(_serviceReference);
 	}
 
 	@Test
@@ -478,6 +455,12 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		return hits.getLength();
 	}
 
+	protected void setUpDDMBeanTranslator() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmBeanTranslator = registry.getService(DDMBeanTranslator.class);
+	}
+
 	@Override
 	protected BaseModel<?> updateBaseModel(
 			BaseModel<?> baseModel, String keywords,
@@ -584,6 +567,5 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMStructure _ddmStructure;
-	private ServiceReference<DDMBeanTranslator> _serviceReference;
 
 }
