@@ -19,6 +19,7 @@ import com.liferay.document.library.display.context.DLEditFileEntryDisplayContex
 import com.liferay.document.library.display.context.DLMimeTypeDisplayContext;
 import com.liferay.document.library.display.context.DLViewFileVersionDisplayContext;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -96,8 +97,8 @@ public class DLDisplayContextProvider {
 		try {
 			DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext =
 				new DefaultDLViewFileVersionDisplayContext(
-					request, response, fileShortcut, _dlMimeTypeDisplayContext,
-					_resourceBundleLoader);
+					request, response, fileShortcut, _ddmBeanTranslator,
+					_dlMimeTypeDisplayContext, _resourceBundleLoader);
 
 			if (fileShortcut == null) {
 				return dlViewFileVersionDisplayContext;
@@ -126,8 +127,8 @@ public class DLDisplayContextProvider {
 
 		DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext =
 			new DefaultDLViewFileVersionDisplayContext(
-				request, response, fileVersion, _dlMimeTypeDisplayContext,
-				_resourceBundleLoader);
+				request, response, fileVersion, _ddmBeanTranslator,
+				_dlMimeTypeDisplayContext, _resourceBundleLoader);
 
 		if (fileVersion == null) {
 			return dlViewFileVersionDisplayContext;
@@ -143,6 +144,11 @@ public class DLDisplayContextProvider {
 		}
 
 		return dlViewFileVersionDisplayContext;
+	}
+
+	@Reference(unbind = "-")
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
 	}
 
 	@Reference(
@@ -185,6 +191,7 @@ public class DLDisplayContextProvider {
 		_resourceBundleLoader = resourceBundleLoader;
 	}
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private ServiceTrackerList<DLDisplayContextFactory, DLDisplayContextFactory>
 		_dlDisplayContextFactories;
 	private DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;

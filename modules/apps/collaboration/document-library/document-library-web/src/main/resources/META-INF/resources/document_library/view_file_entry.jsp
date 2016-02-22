@@ -314,7 +314,7 @@ if (portletTitleBasedNavigation) {
 								<liferay-ddm:html
 									classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
 									classPK="<%= ddmStructure.getPrimaryKey() %>"
-									ddmFormValues="<%= DDMBeanTranslatorUtil.translate(ddmFormValues) %>"
+									ddmFormValues="<%= dlViewFileVersionDisplayContext.translate(ddmFormValues) %>"
 									fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
 									readOnly="<%= true %>"
 									requestedLocale="<%= (ddmFormValues != null) ? ddmFormValues.getDefaultLocale() : locale %>"

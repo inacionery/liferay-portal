@@ -113,6 +113,13 @@ public class BaseDLViewFileVersionDisplayContext
 		parentDisplayContext.renderPreview(request, response);
 	}
 
+	@Override
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
+		translate(DDMFormValues ddmFormValues) {
+
+		return parentDisplayContext.translate(ddmFormValues);
+	}
+
 	protected FileVersion fileVersion;
 
 }
