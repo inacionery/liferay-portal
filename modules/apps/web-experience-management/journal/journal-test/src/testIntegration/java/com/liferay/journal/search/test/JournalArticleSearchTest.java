@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.search.TestOrderHelper;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.journal.configuration.JournalServiceConfigurationValues;
@@ -58,14 +59,20 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.test.BaseSearchTestCase;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -94,7 +101,28 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	public void setUp() throws Exception {
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
+		Registry registry = RegistryUtil.getRegistry();
+
+		Collection<ServiceReference<DDMBeanTranslator>>
+			serviceReferences = registry.getServiceReferences(
+				DDMBeanTranslator.class,
+				"(component.name=" + DDMBeanTranslator.class.getName() +")");
+
+		Iterator<ServiceReference<DDMBeanTranslator>> iterator =
+			serviceReferences.iterator();
+
+		_serviceReference = iterator.next();
+
+		_ddmBeanTranslator = registry.getService(_serviceReference);
+
 		super.setUp();
+	}
+
+	@After
+	public void tearDown() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		registry.ungetService(_serviceReference);
 	}
 
 	@Test
@@ -149,7 +177,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMBooleanField() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMBooleanField();
 	}
@@ -157,7 +185,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMBooleanFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMBooleanFieldRepeatable();
 	}
@@ -165,7 +193,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMIntegerField() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMIntegerField();
 	}
@@ -173,7 +201,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMIntegerFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMIntegerFieldRepeatable();
 	}
@@ -181,7 +209,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMNumberField() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMNumberField();
 	}
@@ -189,7 +217,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMNumberFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMNumberFieldRepeatable();
 	}
@@ -197,7 +225,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMRadioField() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMRadioField();
 	}
@@ -205,7 +233,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMRadioFieldKeyword() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMRadioFieldKeyword();
 	}
@@ -213,7 +241,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMTextField() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMTextField();
 	}
@@ -221,7 +249,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMTextFieldKeyword() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMTextFieldKeyword();
 	}
@@ -229,7 +257,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMTextFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper =
-			new JournalArticleSearchTestOrderHelper(group);
+			new JournalArticleSearchTestOrderHelper(_ddmBeanTranslator, group);
 
 		testOrderHelper.testOrderByDDMTextFieldRepeatable();
 	}
@@ -481,10 +509,11 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	protected class JournalArticleSearchTestOrderHelper
 		extends TestOrderHelper {
 
-		protected JournalArticleSearchTestOrderHelper(Group group)
+		protected JournalArticleSearchTestOrderHelper(
+				DDMBeanTranslator ddmBeanTranslator, Group group)
 			throws Exception {
 
-			super(group);
+			super(ddmBeanTranslator, group);
 		}
 
 		@Override
@@ -553,6 +582,8 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 	}
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMStructure _ddmStructure;
+	private ServiceReference<DDMBeanTranslator> _serviceReference;
 
 }
