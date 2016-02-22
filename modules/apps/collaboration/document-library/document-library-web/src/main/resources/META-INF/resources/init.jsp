@@ -112,7 +112,6 @@ page import="com.liferay.dynamic.data.mapping.kernel.StructureDuplicateElementEx
 page import="com.liferay.dynamic.data.mapping.kernel.StructureNameException" %><%@
 page import="com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.StorageEngineUtil" %><%@
-page import="com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMNavigationHelper" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
 page import="com.liferay.frontend.taglib.servlet.taglib.AddMenuItem" %><%@

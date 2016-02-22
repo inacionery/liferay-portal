@@ -28,7 +28,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -57,7 +57,10 @@ import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -123,6 +126,20 @@ public class DLFileEntryTypeServiceTest {
 				_marketingBannerDLFileEntryType = dlFileEntryType;
 			}
 		}
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		Collection<ServiceReference<DDMBeanTranslator>>
+			serviceReferences = registry.getServiceReferences(
+				DDMBeanTranslator.class,
+				"(component.name=" + DDMBeanTranslator.class.getName() +")");
+
+		Iterator<ServiceReference<DDMBeanTranslator>> iterator =
+			serviceReferences.iterator();
+
+		_serviceReference = iterator.next();
+
+		_ddmBeanTranslator = registry.getService(_serviceReference);
 	}
 
 	@After
@@ -130,6 +147,10 @@ public class DLFileEntryTypeServiceTest {
 		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 
 		PrincipalThreadLocal.setName(_originalName);
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		registry.ungetService(_serviceReference);
 	}
 
 	@Test
@@ -143,7 +164,7 @@ public class DLFileEntryTypeServiceTest {
 			new String(testFileBytes));
 
 		serviceContext.setAttribute(
-			"ddmForm", DDMBeanTranslatorUtil.translate(ddmForm));
+			"ddmForm", _ddmBeanTranslator.translate(ddmForm));
 
 		User user = TestPropsValues.getUser();
 
@@ -395,6 +416,7 @@ public class DLFileEntryTypeServiceTest {
 
 	private DLFileEntryType _basicDocumentDLFileEntryType;
 	private DLFileEntryType _contractDLFileEntryType;
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private List<DLFileEntryType> _dlFileEntryTypes;
 	private Folder _folder;
@@ -405,6 +427,7 @@ public class DLFileEntryTypeServiceTest {
 	private DLFileEntryType _marketingBannerDLFileEntryType;
 	private String _originalName;
 	private PermissionChecker _originalPermissionChecker;
+	private ServiceReference<DDMBeanTranslator> _serviceReference;
 	private Folder _subfolder;
 
 }
