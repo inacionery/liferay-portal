@@ -6,4 +6,5 @@ dependencies {
 	testIntegrationCompile project(":apps:business-productivity:dynamic-data-mapping:dynamic-data-mapping-test-util")
 	testIntegrationCompile project(":apps:web-experience-management:asset:asset-publisher-web")
 	testIntegrationCompile project(":apps:web-experience-management:journal:journal-api")
+	testIntegrationCompile project(":core:registry-api")
 }
