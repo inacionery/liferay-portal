@@ -25,6 +25,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -67,7 +68,8 @@ public class GoogleDocsConfigurator {
 
 					LegacyGoogleDocsMigration legacyGoogleDocsMigration =
 						new LegacyGoogleDocsMigration(
-							company, _ddmStructureLocalService,
+							company, _ddmFormValuesToFieldsConverter,
+							_ddmStructureLocalService,
 							_dlFileEntryTypeLocalService,
 							_dlFileEntryLocalService,
 							_dlFileEntryMetadataLocalService,
@@ -113,6 +115,13 @@ public class GoogleDocsConfigurator {
 	@Reference(unbind = "-")
 	protected void setDDM(DDM ddm) {
 		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesToFieldsConverter(
+		DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter) {
+
+		_ddmFormValuesToFieldsConverter = ddmFormValuesToFieldsConverter;
 	}
 
 	@Reference(unbind = "-")
@@ -180,6 +189,7 @@ public class GoogleDocsConfigurator {
 	private ClassNameLocalService _classNameLocalService;
 	private CompanyLocalService _companyLocalService;
 	private DDM _ddm;
+	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DDMStructureLocalService _ddmStructureLocalService;
 	private DDMStructureVersionLocalService _ddmStructureVersionLocalService;
