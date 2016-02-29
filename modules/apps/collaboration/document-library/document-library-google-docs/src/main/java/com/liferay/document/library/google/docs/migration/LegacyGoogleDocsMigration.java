@@ -25,6 +25,7 @@ import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -38,7 +39,9 @@ import com.liferay.portal.kernel.util.SetUtil;
 public class LegacyGoogleDocsMigration {
 
 	public LegacyGoogleDocsMigration(
-		Company company, DDMStructureLocalService ddmStructureLocalService,
+		Company company,
+		DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter,
+		DDMStructureLocalService ddmStructureLocalService,
 		DLFileEntryTypeLocalService dlFileEntryTypeLocalService,
 		DLFileEntryLocalService dlFileEntryLocalService,
 		DLFileEntryMetadataLocalService dlFileEntryMetadataLocalService,
@@ -47,6 +50,7 @@ public class LegacyGoogleDocsMigration {
 		StorageEngine storageEngine) {
 
 		_company = company;
+		_ddmFormValuesToFieldsConverter = ddmFormValuesToFieldsConverter;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
 		_dlFileEntryLocalService = dlFileEntryLocalService;
@@ -124,6 +128,7 @@ public class LegacyGoogleDocsMigration {
 				public void performAction(DLFileEntry dlFileEntry) {
 					GoogleDocsMetadataHelper googleDocsMetadataHelper =
 						new GoogleDocsMetadataHelper(
+							_ddmFormValuesToFieldsConverter,
 							_ddmStructureLocalService, dlFileEntry,
 							_dlFileEntryMetadataLocalService,
 							_fieldsToDDMFormValuesConverter, _storageEngine);
@@ -131,6 +136,7 @@ public class LegacyGoogleDocsMigration {
 					LegacyGoogleDocsMetadataHelper
 						legacyGoogleDocsMetadataHelper =
 							new LegacyGoogleDocsMetadataHelper(
+								_ddmFormValuesToFieldsConverter,
 								_ddmStructureLocalService, dlFileEntry,
 								_storageEngine);
 
@@ -166,6 +172,8 @@ public class LegacyGoogleDocsMigration {
 	}
 
 	private final Company _company;
+	private final DDMFormValuesToFieldsConverter
+		_ddmFormValuesToFieldsConverter;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DLFileEntryLocalService _dlFileEntryLocalService;
 	private final DLFileEntryMetadataLocalService
