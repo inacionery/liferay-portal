@@ -27,7 +27,7 @@ import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfigurationValues;
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
-import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
@@ -63,6 +63,7 @@ import java.util.TimeZone;
 
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -82,10 +83,19 @@ public class AssetPublisherDisplayContext {
 	};
 
 	public AssetPublisherDisplayContext(
-		HttpServletRequest request, PortletPreferences portletPreferences) {
+		HttpServletRequest request, DDMIndexer ddmIndexer) {
 
 		_request = request;
-		_portletPreferences = portletPreferences;
+		_ddmIndexer = ddmIndexer;
+
+		PortletRequest portletRequest = (PortletRequest)request.getAttribute(
+			JavaConstants.JAVAX_PORTLET_REQUEST);
+
+		_portletPreferences = portletRequest.getPreferences();
+	}
+
+	public String encodeName(long ddmStructureId, String fieldName) {
+		return _ddmIndexer.encodeName(ddmStructureId, fieldName);
 	}
 
 	public int getAbstractLength() {
@@ -1177,7 +1187,7 @@ public class AssetPublisherDisplayContext {
 
 		assetEntryQuery.setAttribute(
 			"ddmStructureFieldName",
-			DDMIndexerUtil.encodeName(
+			_ddmIndexer.encodeName(
 				classTypeField.getClassTypeId(), getDDMStructureFieldName(),
 				locale));
 		assetEntryQuery.setAttribute(
@@ -1247,6 +1257,7 @@ public class AssetPublisherDisplayContext {
 	private long[] _classTypeIds;
 	private Long _companyId;
 	private String[] _compilerTagNames;
+	private final DDMIndexer _ddmIndexer;
 	private String _ddmStructureDisplayFieldValue;
 	private String _ddmStructureFieldLabel;
 	private String _ddmStructureFieldName;
