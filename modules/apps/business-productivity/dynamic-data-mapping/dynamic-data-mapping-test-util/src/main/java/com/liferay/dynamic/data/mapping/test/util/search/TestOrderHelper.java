@@ -34,7 +34,7 @@ import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
-import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.Group;
@@ -147,10 +147,13 @@ public abstract class TestOrderHelper {
 		return jsonArrays;
 	}
 
-	protected TestOrderHelper(DDMBeanTranslator ddmBeanTranslator, Group group)
+	protected TestOrderHelper(
+			DDMBeanTranslator ddmBeanTranslator, DDMIndexer ddmIndexer,
+			Group group)
 		throws Exception {
 
 		_ddmBeanTranslator = ddmBeanTranslator;
+		_ddmIndexer = ddmIndexer;
 		_group = group;
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext(
@@ -230,7 +233,7 @@ public abstract class TestOrderHelper {
 				_group.getGroupId(),
 				new String[] {getSearchableAssetEntryClassName()});
 
-		String orderByCol1 = DDMIndexerUtil.encodeName(
+		String orderByCol1 = _ddmIndexer.encodeName(
 			ddmStructure.getStructureId(), "name");
 
 		assetEntryQuery.setOrderByCol1(orderByCol1);
@@ -406,6 +409,7 @@ public abstract class TestOrderHelper {
 
 	private String _dataType;
 	private final DDMBeanTranslator _ddmBeanTranslator;
+	private final DDMIndexer _ddmIndexer;
 	private final Group _group;
 	private String _indexType;
 	private boolean _repeatable;
