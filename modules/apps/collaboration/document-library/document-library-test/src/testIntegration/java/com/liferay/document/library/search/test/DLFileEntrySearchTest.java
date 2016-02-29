@@ -36,7 +36,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.search.TestOrderHelper;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
-import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -104,6 +104,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 		setUpPermissionThreadLocal();
 		setUpPrincipalThreadLocal();
 		setUpDDMBeanTranslator();
+		setUpDDMIndexer();
 	}
 
 	@After
@@ -122,7 +123,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMBooleanField() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMBooleanField();
 	}
@@ -130,7 +131,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMBooleanFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMBooleanFieldRepeatable();
 	}
@@ -138,7 +139,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMIntegerField() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMIntegerField();
 	}
@@ -146,7 +147,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMIntegerFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMIntegerFieldRepeatable();
 	}
@@ -154,7 +155,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMNumberField() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMNumberField();
 	}
@@ -162,7 +163,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMNumberFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMNumberFieldRepeatable();
 	}
@@ -170,7 +171,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMRadioField() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMRadioField();
 	}
@@ -178,7 +179,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMRadioFieldKeyword() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMRadioFieldKeyword();
 	}
@@ -186,7 +187,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMTextField() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMTextField();
 	}
@@ -194,7 +195,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMTextFieldKeyword() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMTextFieldKeyword();
 	}
@@ -202,7 +203,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Test
 	public void testOrderByDDMTextFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper = new DLFileEntrySearchTestOrderHelper(
-			_ddmBeanTranslator, group);
+			_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMTextFieldRepeatable();
 	}
@@ -395,7 +396,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 
 	@Override
 	protected String getDDMStructureFieldName() {
-		return DDMIndexerUtil.encodeName(
+		return _ddmIndexer.encodeName(
 			_ddmStructure.getStructureId(), "name",
 			LocaleUtil.getSiteDefault());
 	}
@@ -472,6 +473,12 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 		_ddmBeanTranslator = registry.getService(DDMBeanTranslator.class);
 	}
 
+	protected void setUpDDMIndexer() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmIndexer = registry.getService(DDMIndexer.class);
+	}
+
 	protected void setUpPermissionThreadLocal() throws Exception {
 		_originalPermissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -534,10 +541,11 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	protected class DLFileEntrySearchTestOrderHelper extends TestOrderHelper {
 
 		protected DLFileEntrySearchTestOrderHelper(
-				DDMBeanTranslator ddmBeanTranslator, Group group)
+				DDMBeanTranslator ddmBeanTranslator, DDMIndexer ddmIndexer,
+				Group group)
 			throws Exception {
 
-			super(ddmBeanTranslator, group);
+			super(ddmBeanTranslator, ddmIndexer, group);
 		}
 
 		@Override
@@ -595,6 +603,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	private static final int _FOLDER_NAME_MAX_LENGTH = 100;
 
 	private DDMBeanTranslator _ddmBeanTranslator;
+	private DDMIndexer _ddmIndexer;
 	private DDMStructure _ddmStructure;
 	private String _originalName;
 	private PermissionChecker _originalPermissionChecker;
