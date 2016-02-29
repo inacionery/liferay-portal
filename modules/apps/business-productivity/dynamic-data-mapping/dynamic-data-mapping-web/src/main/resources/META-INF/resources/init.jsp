@@ -64,7 +64,6 @@ page import="com.liferay.dynamic.data.mapping.service.permission.DDMStructurePer
 page import="com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePermission" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.StorageType" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMDisplay" %><%@
-page import="com.liferay.dynamic.data.mapping.util.DDMDisplayRegistryUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMNavigationHelper" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMTemplateHelperUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
@@ -148,7 +147,11 @@ boolean showAncestorScopes = ParamUtil.getBoolean(request, "showAncestorScopes")
 boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);
 boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
 
-DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
+DDMDisplayContext ddmDisplayContext = (DDMDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
+
+DDMGroupServiceConfiguration ddmGroupServiceConfiguration = ddmDisplayContext.getDDMGroupServiceConfiguration();
+
+DDMDisplay ddmDisplay = ddmDisplayContext.getDDMDisplay(refererPortletName);
 
 String scopeAvailableFields = ddmDisplay.getAvailableFields();
 long scopeClassNameId = PortalUtil.getClassNameId(ddmDisplay.getStructureType());
@@ -169,10 +172,6 @@ if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY)) {
 else if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 	templateTypeValue = DDMTemplateConstants.TEMPLATE_TYPE_FORM;
 }
-
-DDMDisplayContext ddmDisplayContext = (DDMDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
-
-DDMGroupServiceConfiguration ddmGroupServiceConfiguration = ddmDisplayContext.getDDMGroupServiceConfiguration();
 %>
 
 <%@ include file="/init-ext.jsp" %>

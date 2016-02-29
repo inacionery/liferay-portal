@@ -18,6 +18,8 @@ import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfigurati
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -37,12 +39,13 @@ import javax.servlet.http.HttpServletRequest;
 public class DDMDisplayContext {
 
 	public DDMDisplayContext(
-			RenderRequest renderRequest,
+			RenderRequest renderRequest, DDMDisplayRegistry ddmDisplayRegistry,
 			DDMFormJSONDeserializer ddmFormJSONDeserializer,
 			DDMWebConfiguration ddmWebConfiguration)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
+		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
 		_ddmWebConfiguration = ddmWebConfiguration;
 
@@ -68,6 +71,10 @@ public class DDMDisplayContext {
 		throws PortalException {
 
 		return _ddmFormJSONDeserializer.deserialize(serializedDDMForm);
+	}
+
+	public DDMDisplay getDDMDisplay(String portletId) {
+		return _ddmDisplayRegistry.getDDMDisplay(portletId);
 	}
 
 	public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
@@ -114,6 +121,7 @@ public class DDMDisplayContext {
 		return orderByType;
 	}
 
+	private final DDMDisplayRegistry _ddmDisplayRegistry;
 	private final DDMFormJSONDeserializer _ddmFormJSONDeserializer;
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
