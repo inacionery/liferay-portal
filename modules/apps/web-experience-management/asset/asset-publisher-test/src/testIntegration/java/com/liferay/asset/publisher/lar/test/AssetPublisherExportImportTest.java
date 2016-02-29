@@ -32,6 +32,7 @@ import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
 import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSettingsMapFactory;
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
@@ -77,6 +78,8 @@ import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.test.LayoutTestUtil;
 import com.liferay.portlet.asset.util.test.AssetTestUtil;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.io.Serializable;
 
@@ -130,6 +133,8 @@ public class AssetPublisherExportImportTest
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
 		super.setUp();
+
+		setUpDDMIndexer();
 
 		_permissionChecker = PermissionCheckerFactoryUtil.create(
 			TestPropsValues.getUser());
@@ -1069,6 +1074,12 @@ public class AssetPublisherExportImportTest
 		return getExportParameterMap();
 	}
 
+	protected void setUpDDMIndexer() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmIndexer = registry.getService(DDMIndexer.class);
+	}
+
 	protected void testDynamicExportImport(
 			Map<String, String[]> preferenceMap,
 			List<AssetEntry> expectedAssetEntries, boolean filtering)
@@ -1112,7 +1123,7 @@ public class AssetPublisherExportImportTest
 
 		AssetPublisherDisplayContext assetPublisherDisplayContext =
 			new AssetPublisherDisplayContext(
-				mockHttpServletRequest, portletPreferences);
+				mockHttpServletRequest, _ddmIndexer);
 
 		SearchContainer<AssetEntry> searchContainer = new SearchContainer<>();
 
@@ -1250,6 +1261,7 @@ public class AssetPublisherExportImportTest
 		AssetVocabularyLocalServiceUtil.deleteAssetVocabulary(assetVocabulary);
 	}
 
+	private DDMIndexer _ddmIndexer;
 	private PermissionChecker _permissionChecker;
 
 }
