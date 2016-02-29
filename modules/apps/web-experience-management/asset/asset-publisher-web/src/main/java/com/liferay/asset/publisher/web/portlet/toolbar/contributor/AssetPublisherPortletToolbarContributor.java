@@ -18,6 +18,7 @@ import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -108,8 +109,7 @@ public class AssetPublisherPortletToolbarContributor
 
 		AssetPublisherDisplayContext assetPublisherDisplayContext =
 			new AssetPublisherDisplayContext(
-				PortalUtil.getHttpServletRequest(portletRequest),
-				portletRequest.getPreferences());
+				PortalUtil.getHttpServletRequest(portletRequest), _ddmIndexer);
 
 		if (!assetPublisherDisplayContext.isShowAddContentButton() ||
 			(scopeGroup == null) || scopeGroup.isLayoutPrototype() ||
@@ -250,6 +250,11 @@ public class AssetPublisherPortletToolbarContributor
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
+		_ddmIndexer = ddmIndexer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setGroupLocalService(GroupLocalService groupLocalService) {
 		_groupLocalService = groupLocalService;
 	}
@@ -371,6 +376,7 @@ public class AssetPublisherPortletToolbarContributor
 	private static final Log _log = LogFactoryUtil.getLog(
 		AssetPublisherPortletToolbarContributor.class);
 
+	private DDMIndexer _ddmIndexer;
 	private GroupLocalService _groupLocalService;
 
 }

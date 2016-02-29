@@ -20,6 +20,7 @@ import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.publisher.web.display.context.AssetEntryResult;
 import com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -63,7 +64,8 @@ import javax.portlet.ResourceResponse;
 public class AssetRSSUtil {
 
 	public static byte[] getRSS(
-			ResourceRequest portletRequest, ResourceResponse portletResponse)
+			ResourceRequest portletRequest, ResourceResponse portletResponse,
+			DDMIndexer ddmIndexer)
 		throws Exception {
 
 		PortletPreferences portletPreferences = portletRequest.getPreferences();
@@ -89,7 +91,7 @@ public class AssetRSSUtil {
 		String rss = exportToRSS(
 			portletRequest, portletResponse, rssName, null, format, version,
 			rssDisplayStyle, assetLinkBehavior,
-			getAssetEntries(portletRequest, portletPreferences));
+			getAssetEntries(portletRequest, portletPreferences, ddmIndexer));
 
 		return rss.getBytes(StringPool.UTF8);
 	}
@@ -183,7 +185,7 @@ public class AssetRSSUtil {
 
 	protected static List<AssetEntry> getAssetEntries(
 			PortletRequest portletRequest,
-			PortletPreferences portletPreferences)
+			PortletPreferences portletPreferences, DDMIndexer ddmIndexer)
 		throws Exception {
 
 		List<AssetEntry> assetEntries = new ArrayList<>();
@@ -192,8 +194,7 @@ public class AssetRSSUtil {
 
 		AssetPublisherDisplayContext assetPublisherDisplayContext =
 			new AssetPublisherDisplayContext(
-				PortalUtil.getHttpServletRequest(portletRequest),
-				portletPreferences);
+				PortalUtil.getHttpServletRequest(portletRequest), ddmIndexer);
 
 		searchContainer.setDelta(assetPublisherDisplayContext.getRSSDelta());
 
