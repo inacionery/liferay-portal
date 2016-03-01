@@ -34,6 +34,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
@@ -179,7 +180,7 @@ public class DDMPortlet extends MVCPortlet {
 			setDDMStructureRequestAttribute(request);
 
 			DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
-				request, _ddmDisplayRegistry, _ddmFormJSONDeserializer,
+				request, _ddm, _ddmDisplayRegistry, _ddmFormJSONDeserializer,
 				_ddmTemplateHelper, ddmWebConfiguration);
 
 			request.setAttribute(
@@ -221,6 +222,11 @@ public class DDMPortlet extends MVCPortlet {
 	protected void activate(Map<String, Object> properties) {
 		this.ddmWebConfiguration = Configurable.createConfigurable(
 			DDMWebConfiguration.class, properties);
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
 	}
 
 	@Reference(unbind = "-")
@@ -297,6 +303,7 @@ public class DDMPortlet extends MVCPortlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMPortlet.class);
 
+	private DDM _ddm;
 	private DDMDisplayRegistry _ddmDisplayRegistry;
 	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
 	private DDMTemplateHelper _ddmTemplateHelper;
