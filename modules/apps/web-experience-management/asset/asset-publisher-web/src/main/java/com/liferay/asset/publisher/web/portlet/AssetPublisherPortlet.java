@@ -20,8 +20,8 @@ import com.liferay.asset.publisher.web.util.AssetRSSUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -119,7 +119,7 @@ public class AssetPublisherPortlet extends MVCPortlet {
 				String fieldsNamespace = ParamUtil.getString(
 					resourceRequest, "fieldsNamespace");
 
-				fields = DDMUtil.getFields(
+				fields = _ddm.getFields(
 					structureId, fieldsNamespace, serviceContext);
 			}
 
@@ -147,7 +147,7 @@ public class AssetPublisherPortlet extends MVCPortlet {
 
 			String type = ddmStructure.getFieldType(fieldName);
 
-			Serializable displayValue = DDMUtil.getDisplayFieldValue(
+			Serializable displayValue = _ddm.getDisplayFieldValue(
 				themeDisplay, fieldValue, type);
 
 			jsonObject.put("displayValue", String.valueOf(displayValue));
@@ -308,10 +308,16 @@ public class AssetPublisherPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
 		_ddmIndexer = ddmIndexer;
 	}
 
+	private DDM _ddm;
 	private DDMIndexer _ddmIndexer;
 
 }
