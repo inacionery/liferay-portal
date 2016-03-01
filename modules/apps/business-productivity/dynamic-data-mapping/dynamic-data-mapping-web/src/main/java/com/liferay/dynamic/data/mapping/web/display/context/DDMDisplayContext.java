@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
@@ -34,6 +35,8 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Set;
+
 import javax.portlet.RenderRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +50,8 @@ public class DDMDisplayContext {
 			RenderRequest renderRequest, DDM ddm,
 			DDMDisplayRegistry ddmDisplayRegistry,
 			DDMTemplateHelper ddmTemplateHelper,
-			DDMWebConfiguration ddmWebConfiguration)
+			DDMWebConfiguration ddmWebConfiguration,
+			StorageAdapterRegistry storageAdapterRegistry)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
@@ -55,6 +59,7 @@ public class DDMDisplayContext {
 		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmTemplateHelper = ddmTemplateHelper;
 		_ddmWebConfiguration = ddmWebConfiguration;
+		_storageAdapterRegistry = storageAdapterRegistry;
 
 		HttpServletRequest httpServletRequest =
 			PortalUtil.getHttpServletRequest(renderRequest);
@@ -145,6 +150,10 @@ public class DDMDisplayContext {
 		return orderByType;
 	}
 
+	public Set<String> getStorageTypes() {
+		return _storageAdapterRegistry.getStorageTypes();
+	}
+
 	public OrderByComparator<DDMStructure> getStructureOrderByComparator(
 		String orderByCol, String orderByType) {
 
@@ -181,5 +190,6 @@ public class DDMDisplayContext {
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;
+	private final StorageAdapterRegistry _storageAdapterRegistry;
 
 }
