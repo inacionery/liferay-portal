@@ -59,7 +59,7 @@ public class GoogleDocsDLDisplayContextFactory
 		if (googleDocsDDMStructure != null) {
 			return new GoogleDocsDLEditFileEntryDisplayContext(
 				parentDLEditFileEntryDisplayContext, request, response,
-				dlFileEntryType);
+				dlFileEntryType, _storageEngine);
 		}
 
 		return parentDLEditFileEntryDisplayContext;
@@ -83,7 +83,7 @@ public class GoogleDocsDLDisplayContextFactory
 			if (googleDocsMetadataHelper.isGoogleDocs()) {
 				return new GoogleDocsDLEditFileEntryDisplayContext(
 					parentDLEditFileEntryDisplayContext, request, response,
-					fileEntry);
+					fileEntry, _storageEngine);
 			}
 		}
 
@@ -137,7 +137,7 @@ public class GoogleDocsDLDisplayContextFactory
 			if (googleDocsMetadataHelper.isGoogleDocs()) {
 				return new GoogleDocsDLViewFileVersionDisplayContext(
 					parentDLViewFileVersionDisplayContext, request, response,
-					fileVersion, googleDocsMetadataHelper);
+					fileVersion, googleDocsMetadataHelper, _storageEngine);
 			}
 		}
 

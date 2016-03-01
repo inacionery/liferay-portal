@@ -29,10 +29,13 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.util.DDLRequestHelper;
 import com.liferay.dynamic.data.lists.web.search.RecordSetSearch;
+import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePermission;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
@@ -73,7 +76,8 @@ public class DDLDisplayContext {
 		DDLRecordSetLocalService ddlRecordSetLocalService,
 		DDLWebConfiguration ddlWebConfiguration, DDM ddm,
 		DDMDisplayRegistry ddmDisplayRegistry,
-		DDMTemplateLocalService ddmTemplateLocalService) {
+		DDMTemplateLocalService ddmTemplateLocalService,
+		StorageEngine storageEngine) {
 
 		_ddl = ddl;
 		_ddlRecordSetLocalService = ddlRecordSetLocalService;
@@ -81,6 +85,7 @@ public class DDLDisplayContext {
 		_ddm = ddm;
 		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
+		_storageEngine = storageEngine;
 
 		_ddlRequestHelper = new DDLRequestHelper(request);
 
@@ -176,6 +181,12 @@ public class DDLDisplayContext {
 		DDMStructure ddmStructure, String script) {
 
 		return _ddm.getDDMFormFieldsJSONArray(ddmStructure, script);
+	}
+
+	public DDMFormValues getDDMFormValues(long classPK)
+		throws StorageException {
+
+		return _storageEngine.getDDMFormValues(classPK);
 	}
 
 	public long getDisplayDDMTemplateId() {
@@ -595,5 +606,6 @@ public class DDLDisplayContext {
 	private Boolean _hasViewPermission;
 	private DDLRecordSet _recordSet;
 	private Boolean _showConfigurationIcon;
+	private final StorageEngine _storageEngine;
 
 }
