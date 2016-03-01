@@ -34,6 +34,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
@@ -181,7 +182,8 @@ public class DDMPortlet extends MVCPortlet {
 
 			DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
 				request, _ddm, _ddmDisplayRegistry, _ddmFormJSONDeserializer,
-				_ddmTemplateHelper, ddmWebConfiguration);
+				_ddmTemplateHelper, ddmWebConfiguration,
+				_storageAdapterRegistry);
 
 			request.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
@@ -297,6 +299,13 @@ public class DDMPortlet extends MVCPortlet {
 		}
 	}
 
+	@Reference(unbind = "-")
+	protected void setStorageAdapterRegistry(
+		StorageAdapterRegistry storageAdapterRegistry) {
+
+		_storageAdapterRegistry = storageAdapterRegistry;
+	}
+
 	protected volatile DDMStructureLocalService ddmStructureLocalService;
 	protected volatile DDMTemplateLocalService ddmTemplateLocalService;
 	protected volatile DDMWebConfiguration ddmWebConfiguration;
@@ -307,5 +316,6 @@ public class DDMPortlet extends MVCPortlet {
 	private DDMDisplayRegistry _ddmDisplayRegistry;
 	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
 	private DDMTemplateHelper _ddmTemplateHelper;
+	private StorageAdapterRegistry _storageAdapterRegistry;
 
 }
