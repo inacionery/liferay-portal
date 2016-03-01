@@ -23,9 +23,9 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.search.TestOrderHelper;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
@@ -97,6 +97,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	public void setUp() throws Exception {
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
+		setUpDDM();
 		setUpDDMBeanTranslator();
 		setUpDDMIndexer();
 
@@ -467,6 +468,12 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		return hits.getLength();
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected void setUpDDMBeanTranslator() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -498,7 +505,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm("title");
 
-		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 
 		DDMStructureLocalServiceUtil.updateStructure(
 			_ddmStructure.getUserId(), _ddmStructure.getStructureId(),
@@ -584,6 +591,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 	}
 
+	private DDM _ddm;
 	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMIndexer _ddmIndexer;
 	private DDMStructure _ddmStructure;
