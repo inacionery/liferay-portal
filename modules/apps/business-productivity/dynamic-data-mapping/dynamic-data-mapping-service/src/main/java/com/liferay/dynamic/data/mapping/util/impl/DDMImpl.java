@@ -39,8 +39,8 @@ import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.util.DDM;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
-import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureIdComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureModifiedDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.TemplateIdComparator;
@@ -226,7 +226,7 @@ public class DDMImpl implements DDM {
 		Fields fields = getFields(
 			ddmStructure.getStructureId(), fieldNamespace, serviceContext);
 
-		return FieldsToDDMFormValuesConverterUtil.convert(ddmStructure, fields);
+		return _fieldsToDDMFormValuesConverter.convert(ddmStructure, fields);
 	}
 
 	@Override
@@ -918,7 +918,7 @@ public class DDMImpl implements DDM {
 		DDMFormValues ddmFormValues = getDDMFormValues(
 			ddmStructure.getFullHierarchyDDMForm(), serializedDDMFormValues);
 
-		return DDMFormValuesToFieldsConverterUtil.convert(
+		return _ddmFormValuesToFieldsConverter.convert(
 			ddmStructure, ddmFormValues);
 	}
 
@@ -1218,8 +1218,22 @@ public class DDMImpl implements DDM {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormValuesToFieldsConverter(
+		DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter) {
+
+		_ddmFormValuesToFieldsConverter = ddmFormValuesToFieldsConverter;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
 		_dlAppLocalService = dlAppLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
 	}
 
 	@Reference(unbind = "-")
@@ -1246,7 +1260,9 @@ public class DDMImpl implements DDM {
 	private DDMFormJSONSerializer _ddmFormJSONSerializer;
 	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 	private DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
+	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
 	private DLAppLocalService _dlAppLocalService;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private ImageLocalService _imageLocalService;
 	private LayoutLocalService _layoutLocalService;
 

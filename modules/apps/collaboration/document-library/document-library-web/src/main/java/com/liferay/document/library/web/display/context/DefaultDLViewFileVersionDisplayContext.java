@@ -29,6 +29,7 @@ import com.liferay.document.library.web.display.context.util.JSPRenderer;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -62,25 +63,25 @@ public class DefaultDLViewFileVersionDisplayContext
 
 	public DefaultDLViewFileVersionDisplayContext(
 			HttpServletRequest request, HttpServletResponse response,
-			FileShortcut fileShortcut,
+			FileShortcut fileShortcut, DDMBeanTranslator ddmBeanTranslator,
 			DLMimeTypeDisplayContext dlMimeTypeDisplayContext,
 			ResourceBundleLoader resourceBundleLoader)
 		throws PortalException {
 
 		this(
 			request, response, fileShortcut.getFileVersion(), fileShortcut,
-			dlMimeTypeDisplayContext, resourceBundleLoader);
+			ddmBeanTranslator, dlMimeTypeDisplayContext, resourceBundleLoader);
 	}
 
 	public DefaultDLViewFileVersionDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
-		FileVersion fileVersion,
+		FileVersion fileVersion, DDMBeanTranslator ddmBeanTranslator,
 		DLMimeTypeDisplayContext dlMimeTypeDisplayContext,
 		ResourceBundleLoader resourceBundleLoader) {
 
 		this(
-			request, response, fileVersion, null, dlMimeTypeDisplayContext,
-			resourceBundleLoader);
+			request, response, fileVersion, null, ddmBeanTranslator,
+			dlMimeTypeDisplayContext, resourceBundleLoader);
 	}
 
 	@Override
@@ -219,14 +220,23 @@ public class DefaultDLViewFileVersionDisplayContext
 		jspRenderer.render(request, response);
 	}
 
+	@Override
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
+		translate(DDMFormValues ddmFormValues) {
+
+		return _ddmBeanTranslator.translate(ddmFormValues);
+	}
+
 	private DefaultDLViewFileVersionDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
 		FileVersion fileVersion, FileShortcut fileShortcut,
+		DDMBeanTranslator ddmBeanTranslator,
 		DLMimeTypeDisplayContext dlMimeTypeDisplayContext,
 		ResourceBundleLoader resourceBundleLoader) {
 
 		try {
 			_fileVersion = fileVersion;
+			_ddmBeanTranslator = ddmBeanTranslator;
 			_dlMimeTypeDisplayContext = dlMimeTypeDisplayContext;
 			_resourceBundleLoader = resourceBundleLoader;
 
@@ -298,6 +308,7 @@ public class DefaultDLViewFileVersionDisplayContext
 	private static final UUID _UUID = UUID.fromString(
 		"85F6C50E-3893-4E32-9D63-208528A503FA");
 
+	private final DDMBeanTranslator _ddmBeanTranslator;
 	private List<DDMStructure> _ddmStructures;
 	private final DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
 	private final DLPortletInstanceSettingsHelper

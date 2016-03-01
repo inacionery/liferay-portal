@@ -18,14 +18,26 @@ import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfigurati
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
+import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
 import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Set;
 
 import javax.portlet.RenderRequest;
 
@@ -37,14 +49,21 @@ import javax.servlet.http.HttpServletRequest;
 public class DDMDisplayContext {
 
 	public DDMDisplayContext(
-			RenderRequest renderRequest,
+			RenderRequest renderRequest, DDM ddm,
+			DDMDisplayRegistry ddmDisplayRegistry,
 			DDMFormJSONDeserializer ddmFormJSONDeserializer,
-			DDMWebConfiguration ddmWebConfiguration)
+			DDMTemplateHelper ddmTemplateHelper,
+			DDMWebConfiguration ddmWebConfiguration,
+			StorageAdapterRegistry storageAdapterRegistry)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
+		_ddm = ddm;
+		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
+		_ddmTemplateHelper = ddmTemplateHelper;
 		_ddmWebConfiguration = ddmWebConfiguration;
+		_storageAdapterRegistry = storageAdapterRegistry;
 
 		HttpServletRequest httpServletRequest =
 			PortalUtil.getHttpServletRequest(renderRequest);
@@ -68,6 +87,33 @@ public class DDMDisplayContext {
 		throws PortalException {
 
 		return _ddmFormJSONDeserializer.deserialize(serializedDDMForm);
+	}
+
+	public DDMStructure fetchStructure(DDMTemplate template) {
+		return _ddmTemplateHelper.fetchStructure(template);
+	}
+
+	public String getAutocompleteJSON(
+			HttpServletRequest request, String language)
+		throws Exception {
+
+		return _ddmTemplateHelper.getAutocompleteJSON(request, language);
+	}
+
+	public DDMDisplay getDDMDisplay(String portletId) {
+		return _ddmDisplayRegistry.getDDMDisplay(portletId);
+	}
+
+	public JSONArray getDDMFormFieldsJSONArray(
+		DDMStructure ddmStructure, String script) {
+
+		return _ddm.getDDMFormFieldsJSONArray(ddmStructure, script);
+	}
+
+	public JSONArray getDDMFormFieldsJSONArray(
+		DDMStructureVersion ddmStructureVersion, String script) {
+
+		return _ddm.getDDMFormFieldsJSONArray(ddmStructureVersion, script);
 	}
 
 	public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
@@ -114,9 +160,33 @@ public class DDMDisplayContext {
 		return orderByType;
 	}
 
+	public Set<String> getStorageTypes() {
+		return _storageAdapterRegistry.getStorageTypes();
+	}
+
+	public OrderByComparator<DDMStructure> getStructureOrderByComparator(
+		String orderByCol, String orderByType) {
+
+		return _ddm.getStructureOrderByComparator(orderByCol, orderByType);
+	}
+
+	public OrderByComparator<DDMTemplate> getTemplateOrderByComparator(
+		String orderByCol, String orderByType) {
+
+		return _ddm.getTemplateOrderByComparator(orderByCol, orderByType);
+	}
+
+	public boolean isAutocompleteEnabled(String language) {
+		return _ddmTemplateHelper.isAutocompleteEnabled(language);
+	}
+
+	private final DDM _ddm;
+	private final DDMDisplayRegistry _ddmDisplayRegistry;
 	private final DDMFormJSONDeserializer _ddmFormJSONDeserializer;
+	private final DDMTemplateHelper _ddmTemplateHelper;
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;
+	private final StorageAdapterRegistry _storageAdapterRegistry;
 
 }

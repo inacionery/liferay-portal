@@ -61,4 +61,7 @@ public interface DLViewFileVersionDisplayContext extends DLDisplayContext {
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException, ServletException;
 
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues translate(
+		DDMFormValues ddmFormValues);
+
 }
