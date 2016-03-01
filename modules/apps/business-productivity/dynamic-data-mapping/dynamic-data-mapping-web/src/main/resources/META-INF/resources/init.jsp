@@ -65,7 +65,6 @@ page import="com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePerm
 page import="com.liferay.dynamic.data.mapping.storage.StorageType" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMDisplay" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMNavigationHelper" %><%@
-page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException" %><%@
 page import="com.liferay.dynamic.data.mapping.validator.DDMFormValidationException" %><%@
 page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurationKeys" %><%@
@@ -209,7 +208,7 @@ private JSONArray _getFieldReadOnlyAttributes(DDMStructure structure, String fie
 }
 
 private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String script) throws Exception {
-	JSONArray jsonArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+	JSONArray jsonArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structure, script);
 
 	_addFormTemplateFieldAttributes(structure, jsonArray);
 
