@@ -18,8 +18,11 @@ import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfigurati
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
+import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
 import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -41,12 +44,14 @@ public class DDMDisplayContext {
 	public DDMDisplayContext(
 			RenderRequest renderRequest, DDMDisplayRegistry ddmDisplayRegistry,
 			DDMFormJSONDeserializer ddmFormJSONDeserializer,
+			DDMTemplateHelper ddmTemplateHelper,
 			DDMWebConfiguration ddmWebConfiguration)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
 		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
+		_ddmTemplateHelper = ddmTemplateHelper;
 		_ddmWebConfiguration = ddmWebConfiguration;
 
 		HttpServletRequest httpServletRequest =
@@ -71,6 +76,17 @@ public class DDMDisplayContext {
 		throws PortalException {
 
 		return _ddmFormJSONDeserializer.deserialize(serializedDDMForm);
+	}
+
+	public DDMStructure fetchStructure(DDMTemplate template) {
+		return _ddmTemplateHelper.fetchStructure(template);
+	}
+
+	public String getAutocompleteJSON(
+			HttpServletRequest request, String language)
+		throws Exception {
+
+		return _ddmTemplateHelper.getAutocompleteJSON(request, language);
 	}
 
 	public DDMDisplay getDDMDisplay(String portletId) {
@@ -121,8 +137,13 @@ public class DDMDisplayContext {
 		return orderByType;
 	}
 
+	public boolean isAutocompleteEnabled(String language) {
+		return _ddmTemplateHelper.isAutocompleteEnabled(language);
+	}
+
 	private final DDMDisplayRegistry _ddmDisplayRegistry;
 	private final DDMFormJSONDeserializer _ddmFormJSONDeserializer;
+	private final DDMTemplateHelper _ddmTemplateHelper;
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;
