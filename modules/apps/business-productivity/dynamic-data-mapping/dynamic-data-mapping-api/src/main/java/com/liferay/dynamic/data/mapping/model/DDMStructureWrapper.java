@@ -295,6 +295,12 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
+	public com.liferay.portal.kernel.json.JSONArray getDDMFormFieldsJSONArray(
+		java.lang.String script) {
+		return _ddmStructure.getDDMFormFieldsJSONArray(script);
+	}
+
+	@Override
 	public com.liferay.dynamic.data.mapping.model.DDMFormLayout getDDMFormLayout()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddmStructure.getDDMFormLayout();
@@ -864,6 +870,11 @@ public class DDMStructureWrapper implements DDMStructure,
 	@Override
 	public void setCreateDate(Date createDate) {
 		_ddmStructure.setCreateDate(createDate);
+	}
+
+	@Override
+	public void setDDM(com.liferay.dynamic.data.mapping.util.DDM ddm) {
+		_ddmStructure.setDDM(ddm);
 	}
 
 	@Override

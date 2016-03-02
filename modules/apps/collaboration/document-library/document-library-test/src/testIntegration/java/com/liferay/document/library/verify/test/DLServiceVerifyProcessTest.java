@@ -36,7 +36,7 @@ import com.liferay.dynamic.data.mapping.kernel.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -66,11 +66,14 @@ import com.liferay.portal.verify.test.BaseVerifyProcessTestCase;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
 import com.liferay.registry.ServiceTracker;
 
 import java.io.ByteArrayInputStream;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -124,6 +127,20 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 		setUpPrincipalThreadLocal();
 
 		_group = GroupTestUtil.addGroup();
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		Collection<ServiceReference<DDMBeanTranslator>>
+			serviceReferences = registry.getServiceReferences(
+				DDMBeanTranslator.class,
+				"(component.name=" + DDMBeanTranslator.class.getName() +")");
+
+		Iterator<ServiceReference<DDMBeanTranslator>> iterator =
+			serviceReferences.iterator();
+
+		_serviceReference = iterator.next();
+
+		_ddmBeanTranslator = registry.getService(_serviceReference);
 	}
 
 	@After
@@ -134,6 +151,10 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 
 		PrincipalThreadLocal.setName(_originalName);
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		registry.ungetService(_serviceReference);
 	}
 
 	@Test
@@ -388,7 +409,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 			_ddmFormXSDDeserializer.deserialize(new String(bytes));
 
 		serviceContext.setAttribute(
-			"ddmForm", DDMBeanTranslatorUtil.translate(ddmForm));
+			"ddmForm", _ddmBeanTranslator.translate(ddmForm));
 
 		User user = TestPropsValues.getUser();
 
@@ -520,6 +541,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 	private static ServiceTracker<VerifyProcess, VerifyProcess> _serviceTracker;
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 
 	@DeleteAfterTestRun
@@ -527,5 +549,6 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 	private String _originalName;
 	private PermissionChecker _originalPermissionChecker;
+	private ServiceReference<DDMBeanTranslator> _serviceReference;
 
 }

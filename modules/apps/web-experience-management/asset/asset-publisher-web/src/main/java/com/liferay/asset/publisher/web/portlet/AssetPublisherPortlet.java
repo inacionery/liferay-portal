@@ -14,12 +14,14 @@
 
 package com.liferay.asset.publisher.web.portlet;
 
+import com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
 import com.liferay.asset.publisher.web.util.AssetRSSUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -55,8 +57,10 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eudaldo Alonso
@@ -115,7 +119,7 @@ public class AssetPublisherPortlet extends MVCPortlet {
 				String fieldsNamespace = ParamUtil.getString(
 					resourceRequest, "fieldsNamespace");
 
-				fields = DDMUtil.getFields(
+				fields = _ddm.getFields(
 					structureId, fieldsNamespace, serviceContext);
 			}
 
@@ -143,13 +147,13 @@ public class AssetPublisherPortlet extends MVCPortlet {
 
 			String type = ddmStructure.getFieldType(fieldName);
 
-			Serializable displayValue = DDMUtil.getDisplayFieldValue(
+			Serializable displayValue = _ddm.getDisplayFieldValue(
 				themeDisplay, fieldValue, type);
 
 			jsonObject.put("displayValue", String.valueOf(displayValue));
 
 			if (fieldValue instanceof Boolean) {
-				jsonObject.put("value", (Boolean)fieldValue);
+				jsonObject.put("value", fieldValue);
 			}
 			else if (fieldValue instanceof Date) {
 				DateFormat dateFormat =
@@ -159,13 +163,13 @@ public class AssetPublisherPortlet extends MVCPortlet {
 				jsonObject.put("value", dateFormat.format(fieldValue));
 			}
 			else if (fieldValue instanceof Double) {
-				jsonObject.put("value", (Double)fieldValue);
+				jsonObject.put("value", fieldValue);
 			}
 			else if (fieldValue instanceof Float) {
-				jsonObject.put("value", (Float)fieldValue);
+				jsonObject.put("value", fieldValue);
 			}
 			else if (fieldValue instanceof Integer) {
-				jsonObject.put("value", (Integer)fieldValue);
+				jsonObject.put("value", fieldValue);
 			}
 			else if (fieldValue instanceof Number) {
 				jsonObject.put("value", String.valueOf(fieldValue));
@@ -208,12 +212,28 @@ public class AssetPublisherPortlet extends MVCPortlet {
 				resourceResponse.getPortletOutputStream()) {
 
 			byte[] bytes = AssetRSSUtil.getRSS(
-				resourceRequest, resourceResponse);
+				resourceRequest, resourceResponse, _ddmIndexer);
 
 			outputStream.write(bytes);
 		}
 		catch (Exception e) {
 		}
+	}
+
+	@Override
+	public void render(RenderRequest request, RenderResponse response)
+		throws IOException, PortletException {
+
+		HttpServletRequest httpServletRequest =
+			PortalUtil.getHttpServletRequest(request);
+
+		AssetPublisherDisplayContext assetPublisherDisplayContext =
+			new AssetPublisherDisplayContext(httpServletRequest, _ddmIndexer);
+
+		request.setAttribute(
+			WebKeys.PORTLET_DISPLAY_CONTEXT, assetPublisherDisplayContext);
+
+		super.render(request, response);
 	}
 
 	@Override
@@ -286,5 +306,18 @@ public class AssetPublisherPortlet extends MVCPortlet {
 
 		return false;
 	}
+
+	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
+		_ddmIndexer = ddmIndexer;
+	}
+
+	private DDM _ddm;
+	private DDMIndexer _ddmIndexer;
 
 }

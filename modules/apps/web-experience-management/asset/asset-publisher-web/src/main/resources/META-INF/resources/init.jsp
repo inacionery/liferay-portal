@@ -49,7 +49,6 @@ page import="com.liferay.asset.publisher.web.util.AssetPublisherHelper" %><%@
 page import="com.liferay.asset.publisher.web.util.AssetPublisherUtil" %><%@
 page import="com.liferay.document.library.kernel.util.DLUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.model.DDMStructure" %><%@
-page import="com.liferay.dynamic.data.mapping.util.DDMIndexerUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.ResultRow" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.exception.NoSuchGroupException" %><%@
@@ -126,7 +125,7 @@ page import="javax.portlet.PortletURL" %>
 <portlet:defineObjects />
 
 <%
-AssetPublisherDisplayContext assetPublisherDisplayContext = new AssetPublisherDisplayContext(request, portletPreferences);
+AssetPublisherDisplayContext assetPublisherDisplayContext = (AssetPublisherDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 
 Format dateFormatDate = FastDateFormatFactoryUtil.getDate(locale, timeZone);
 %>
