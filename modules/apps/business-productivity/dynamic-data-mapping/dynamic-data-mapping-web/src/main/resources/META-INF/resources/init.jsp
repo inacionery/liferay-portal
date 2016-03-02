@@ -65,6 +65,7 @@ page import="com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePerm
 page import="com.liferay.dynamic.data.mapping.storage.StorageType" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMDisplay" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMNavigationHelper" %><%@
+page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException" %><%@
 page import="com.liferay.dynamic.data.mapping.validator.DDMFormValidationException" %><%@
 page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurationKeys" %><%@
@@ -147,14 +148,28 @@ boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
 
 DDMDisplayContext ddmDisplayContext = (DDMDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 
-DDMGroupServiceConfiguration ddmGroupServiceConfiguration = ddmDisplayContext.getDDMGroupServiceConfiguration();
+DDMGroupServiceConfiguration ddmGroupServiceConfiguration = null;
 
-DDMDisplay ddmDisplay = ddmDisplayContext.getDDMDisplay(refererPortletName);
+DDMDisplay ddmDisplay = null;
 
-String scopeAvailableFields = ddmDisplay.getAvailableFields();
-long scopeClassNameId = PortalUtil.getClassNameId(ddmDisplay.getStructureType());
-String scopeStorageType = ddmDisplay.getStorageType();
-String scopeTemplateType = ddmDisplay.getTemplateType();
+DDMForm ddmForm = null;
+
+boolean changeableDefaultLanguage = false;
+
+String scopeAvailableFields = StringPool.BLANK;
+long scopeClassNameId = 0;
+String scopeStorageType = StringPool.BLANK;
+String scopeTemplateType = StringPool.BLANK;
+
+if (ddmDisplayContext != null) {
+	ddmGroupServiceConfiguration = ddmDisplayContext.getDDMGroupServiceConfiguration();
+	changeableDefaultLanguage = ddmDisplayContext.changeableDefaultLanguage();
+	ddmDisplay = ddmDisplayContext.getDDMDisplay(refererPortletName);
+	scopeAvailableFields = ddmDisplay.getAvailableFields();
+	scopeClassNameId = PortalUtil.getClassNameId(ddmDisplay.getStructureType());
+	scopeStorageType = ddmDisplay.getStorageType();
+	scopeTemplateType = ddmDisplay.getTemplateType();
+}
 
 String storageTypeValue = StringPool.BLANK;
 
@@ -208,7 +223,7 @@ private JSONArray _getFieldReadOnlyAttributes(DDMStructure structure, String fie
 }
 
 private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String script) throws Exception {
-	JSONArray jsonArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structure, script);
+	JSONArray jsonArray = structure.getDDMFormFieldsJSONArray(script);
 
 	_addFormTemplateFieldAttributes(structure, jsonArray);
 

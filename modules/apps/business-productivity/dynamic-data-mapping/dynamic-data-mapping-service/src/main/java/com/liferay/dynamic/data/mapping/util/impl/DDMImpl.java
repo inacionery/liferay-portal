@@ -130,6 +130,13 @@ public class DDMImpl implements DDM {
 	public static final String TYPE_SELECT = "select";
 
 	@Override
+	public DDMForm deserialize(String serializedDDMForm)
+		throws PortalException {
+
+		return _ddmFormJSONDeserializer.deserialize(serializedDDMForm);
+	}
+
+	@Override
 	public DDMForm getDDMForm(long classNameId, long classPK)
 		throws PortalException {
 
@@ -422,29 +429,6 @@ public class DDMImpl implements DDM {
 		}
 
 		return getFields(ddmStructureId, 0, fieldNamespace, serviceContext);
-	}
-
-	@Override
-	public String[] getFieldsDisplayValues(Field fieldsDisplayField)
-		throws Exception {
-
-		DDMStructure ddmStructure = fieldsDisplayField.getDDMStructure();
-
-		List<String> fieldsDisplayValues = new ArrayList<>();
-
-		String[] values = splitFieldsDisplayValue(fieldsDisplayField);
-
-		for (String value : values) {
-			String fieldName = StringUtil.extractFirst(
-				value, DDMImpl.INSTANCE_SEPARATOR);
-
-			if (ddmStructure.hasField(fieldName)) {
-				fieldsDisplayValues.add(fieldName);
-			}
-		}
-
-		return fieldsDisplayValues.toArray(
-			new String[fieldsDisplayValues.size()]);
 	}
 
 	@Override

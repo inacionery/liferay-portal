@@ -70,6 +70,9 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormField> getDDMFormFields(
 		boolean includeTransientFields);
 
+	public com.liferay.portal.kernel.json.JSONArray getDDMFormFieldsJSONArray(
+		java.lang.String script);
+
 	public com.liferay.dynamic.data.mapping.model.DDMFormLayout getDDMFormLayout()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
@@ -147,6 +150,9 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 
 	public boolean isFieldTransient(java.lang.String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	@org.osgi.service.component.annotations.Reference(unbind = "-")
+	public void setDDM(com.liferay.dynamic.data.mapping.util.DDM ddm);
 
 	public void setDDMForm(
 		com.liferay.dynamic.data.mapping.model.DDMForm ddmForm);

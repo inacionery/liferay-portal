@@ -27,9 +27,11 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalServiceUt
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CacheField;
@@ -51,6 +53,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
@@ -142,6 +146,11 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		}
 
 		return filterTransientDDMFormFields(ddmFormFields);
+	}
+
+	@Override
+	public JSONArray getDDMFormFieldsJSONArray(String script) {
+		return _ddm.getDDMFormFieldsJSONArray(this, script);
 	}
 
 	@Override
@@ -420,6 +429,11 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		}
 	}
 
+	@Reference(unbind = "-")
+	public void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
 	@Override
 	public void setDDMForm(DDMForm ddmForm) {
 		_ddmForm = ddmForm;
@@ -477,6 +491,8 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMStructureImpl.class);
+
+	private DDM _ddm;
 
 	@CacheField(methodName = "DDMForm")
 	private DDMForm _ddmForm;
