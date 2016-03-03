@@ -14,24 +14,18 @@
 
 package com.liferay.dynamic.data.mapping.internal;
 
-import com.liferay.dynamic.data.mapping.kernel.DDMForm;
-import com.liferay.dynamic.data.mapping.kernel.DDMFormField;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
@@ -74,32 +68,6 @@ public class DDMStructureImpl implements DDMStructure {
 	@Override
 	public Date getCreateDate() {
 		return _ddmStructure.getCreateDate();
-	}
-
-	@Override
-	public DDMForm getDDMForm() {
-		return _ddmBeanTranslator.translate(_ddmStructure.getDDMForm());
-	}
-
-	@Override
-	public DDMFormField getDDMFormField(String fieldName)
-		throws PortalException {
-
-		return _ddmBeanTranslator.translate(
-			_ddmStructure.getDDMFormField(fieldName));
-	}
-
-	@Override
-	public List<DDMFormField> getDDMFormFields(boolean includeTransientFields) {
-		List<DDMFormField> ddmFormFields = new ArrayList<>();
-
-		for (com.liferay.dynamic.data.mapping.model.DDMFormField ddmFormField :
-				_ddmStructure.getDDMFormFields(includeTransientFields)) {
-
-			ddmFormFields.add(_ddmBeanTranslator.translate(ddmFormField));
-		}
-
-		return ddmFormFields;
 	}
 
 	@Override
@@ -147,12 +115,6 @@ public class DDMStructureImpl implements DDMStructure {
 	@Override
 	public String getFieldType(String fieldName) throws PortalException {
 		return _ddmStructure.getFieldType(fieldName);
-	}
-
-	@Override
-	public DDMForm getFullHierarchyDDMForm() {
-		return _ddmBeanTranslator.translate(
-			_ddmStructure.getFullHierarchyDDMForm());
 	}
 
 	@Override
@@ -280,11 +242,6 @@ public class DDMStructureImpl implements DDMStructure {
 		_ddmStructure.setCreateDate(createDate);
 	}
 
-	@Reference(unbind = "-")
-	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
-		_ddmBeanTranslator = ddmBeanTranslator;
-	}
-
 	@Override
 	public void setDefinition(String definition) {
 		_ddmStructure.setDefinition(definition);
@@ -330,7 +287,6 @@ public class DDMStructureImpl implements DDMStructure {
 		_ddmStructure.setUuid(uuid);
 	}
 
-	private DDMBeanTranslator _ddmBeanTranslator;
 	private final com.liferay.dynamic.data.mapping.model.DDMStructure
 		_ddmStructure;
 
