@@ -32,6 +32,7 @@ import com.liferay.dynamic.data.lists.web.search.RecordSetSearch;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePermission;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -70,12 +71,14 @@ public class DDLDisplayContext {
 		HttpServletRequest request, DDL ddl,
 		DDLRecordSetLocalService ddlRecordSetLocalService,
 		DDLWebConfiguration ddlWebConfiguration,
-		DDMTemplateLocalService ddmTemplateLocalService) {
+		DDMTemplateLocalService ddmTemplateLocalService,
+		StorageEngine storageEngine) {
 
 		_ddl = ddl;
 		_ddlRecordSetLocalService = ddlRecordSetLocalService;
 		_ddlWebConfiguration = ddlWebConfiguration;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
+		_storageEngine = storageEngine;
 
 		_ddlRequestHelper = new DDLRequestHelper(request);
 
@@ -582,5 +585,6 @@ public class DDLDisplayContext {
 	private Boolean _hasViewPermission;
 	private DDLRecordSet _recordSet;
 	private Boolean _showConfigurationIcon;
+	private final StorageEngine _storageEngine;
 
 }
