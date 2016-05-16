@@ -65,10 +65,6 @@ public class DDMFormValuesMergerImpl implements DDMFormValuesMerger {
 			existingDDMFormFieldValues);
 
 		for (DDMFormFieldValue newDDMFormFieldValue : newDDMFormFieldValues) {
-			if (newDDMFormFieldValue.getDDMFormField().isTransient()) {
-				continue;
-			}
-
 			DDMFormFieldValue actualDDMFormFieldValue =
 				getDDMFormFieldValueByName(
 					existingDDMFormFieldValues, newDDMFormFieldValue.getName());
