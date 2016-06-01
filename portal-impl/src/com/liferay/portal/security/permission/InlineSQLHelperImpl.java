@@ -640,57 +640,82 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 			permissionJoin = bridgeJoin;
 		}
 
-		permissionJoin += CustomSQLUtil.get(JOIN_RESOURCE_PERMISSION);
+		for (int i = 0; i < groupIds.length; i++) {
+			if (i > 0) {
+				permissionJoin += " OR ";
+			}
 
-		StringBundler sb = new StringBundler(8);
+			if (!isEnabled(0, groupIds[i])) {
+				StringBundler sb = new StringBundler(3);
 
-		sb.append("((ResourcePermission.primKeyId = ");
-		sb.append(classPKField);
+				sb.append(groupIdField);
+				sb.append(" = ");
+				sb.append(groupIds[i]);
 
-		if (Validator.isNotNull(groupIdField) && (groupIds.length > 0)) {
-			sb.append(") AND (");
-
-			sb.append(groupIdField);
-
-			if (groupIds.length > 1) {
-				sb.append(" IN (");
-				sb.append(StringUtil.merge(groupIds));
-				sb.append(StringPool.CLOSE_PARENTHESIS);
+				permissionJoin += sb.toString();
 			}
 			else {
-				sb.append(" = ");
-				sb.append(groupIds[0]);
+				permissionJoin += CustomSQLUtil.get(JOIN_RESOURCE_PERMISSION);
+
+				StringBundler sb = new StringBundler(8);
+
+				sb.append("((ResourcePermission.primKeyId = ");
+				sb.append(classPKField);
+
+				if (Validator.isNotNull(groupIdField) &&
+					(groupIds.length > 0)) {
+
+					sb.append(") AND (");
+
+					sb.append(groupIdField);
+
+					if (groupIds.length > 1) {
+						sb.append(" IN (");
+						sb.append(StringUtil.merge(groupIds));
+						sb.append(StringPool.CLOSE_PARENTHESIS);
+					}
+					else {
+						sb.append(" = ");
+						sb.append(groupIds[0]);
+					}
+				}
+
+				sb.append("))");
+
+				String roleIdsOrOwnerIdSQL = getRoleIdsOrOwnerIdSQL(
+					permissionChecker, groupIds, userIdField);
+
+				int scope = ResourceConstants.SCOPE_INDIVIDUAL;
+
+				permissionJoin = StringUtil.replace(
+					permissionJoin,
+					new String[] {
+						"[$CLASS_NAME$]", "[$COMPANY_ID$]", "[$GROUP_ID$]",
+						"[$PRIM_KEYS$]", "[$RESOURCE_SCOPE_INDIVIDUAL$]",
+						"[$ROLE_IDS_OR_OWNER_ID$]"
+					},
+					new String[] {
+						className, String.valueOf(companyId), groupIdField,
+						sb.toString(), String.valueOf(scope),
+						roleIdsOrOwnerIdSQL
+					});
 			}
 		}
-
-		sb.append("))");
-
-		String roleIdsOrOwnerIdSQL = getRoleIdsOrOwnerIdSQL(
-			permissionChecker, groupIds, userIdField);
-
-		int scope = ResourceConstants.SCOPE_INDIVIDUAL;
-
-		permissionJoin = StringUtil.replace(
-			permissionJoin,
-			new String[] {
-				"[$CLASS_NAME$]", "[$COMPANY_ID$]", "[$PRIM_KEYS$]",
-				"[$RESOURCE_SCOPE_INDIVIDUAL$]", "[$ROLE_IDS_OR_OWNER_ID$]"
-			},
-			new String[] {
-				className, String.valueOf(companyId), sb.toString(),
-				String.valueOf(scope), roleIdsOrOwnerIdSQL
-			});
 
 		int pos = sql.indexOf(_WHERE_CLAUSE);
 
 		if (pos != -1) {
-			return sql.substring(0, pos + 1).concat(permissionJoin).concat(
-				sql.substring(pos + 1));
+			permissionJoin = permissionJoin.concat(" AND ");
+			return sql.substring(
+				0,
+				pos + _WHERE_CLAUSE.length()).concat(permissionJoin).concat(
+					sql.substring(pos + _WHERE_CLAUSE.length()));
 		}
 
 		pos = sql.indexOf(_GROUP_BY_CLAUSE);
 
 		if (pos != -1) {
+			permissionJoin = _WHERE_CLAUSE.concat(permissionJoin);
 			return sql.substring(0, pos + 1).concat(permissionJoin).concat(
 				sql.substring(pos + 1));
 		}
@@ -698,6 +723,7 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 		pos = sql.indexOf(_ORDER_BY_CLAUSE);
 
 		if (pos != -1) {
+			permissionJoin = _WHERE_CLAUSE.concat(permissionJoin);
 			return sql.substring(0, pos + 1).concat(permissionJoin).concat(
 				sql.substring(pos + 1));
 		}

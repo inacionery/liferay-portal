@@ -41,13 +41,18 @@
 	</sql>
 	<sql id="com.liferay.portal.kernel.security.permission.InlineSQLHelper.joinResourcePermission">
 		<![CDATA[
-			INNER JOIN ResourcePermission ON
-				(ResourcePermission.companyId = [$COMPANY_ID$]) AND
-				(ResourcePermission.name = '[$CLASS_NAME$]') AND
-				(ResourcePermission.scope = [$RESOURCE_SCOPE_INDIVIDUAL$]) AND
-				(ResourcePermission.viewActionId = [$TRUE$]) AND
-				[$ROLE_IDS_OR_OWNER_ID$] AND
-				[$PRIM_KEYS$]
+			[$GROUP_ID$] IN (
+				SELECT
+					[$GROUP_ID$]
+				FROM
+					ResourcePermission WHERE
+					(ResourcePermission.companyId = [$COMPANY_ID$]) AND
+					(ResourcePermission.name = '[$CLASS_NAME$]') AND
+					(ResourcePermission.scope = [$RESOURCE_SCOPE_INDIVIDUAL$]) AND
+					(ResourcePermission.viewActionId = [$TRUE$]) AND
+					[$ROLE_IDS_OR_OWNER_ID$] AND
+					[$PRIM_KEYS$]
+				)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.kernel.service.persistence.GroupFinder.countByLayouts">
