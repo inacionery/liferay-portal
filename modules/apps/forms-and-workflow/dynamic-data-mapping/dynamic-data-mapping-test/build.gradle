@@ -12,6 +12,7 @@ dependencies {
 
 	testCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-api")
 	testCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-data-provider")
+	testCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-data-provider-rest")
 	testCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-form-evaluator")
 	testCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-form-field-type")
 	testCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-io")
