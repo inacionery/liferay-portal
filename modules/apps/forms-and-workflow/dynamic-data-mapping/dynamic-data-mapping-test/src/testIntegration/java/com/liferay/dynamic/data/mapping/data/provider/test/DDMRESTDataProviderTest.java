@@ -181,22 +181,22 @@ public class DDMRESTDataProviderTest {
 		List<Map<Object, Object>> expectedData = new ArrayList<>();
 
 		Map<Object, Object> map = new HashMap<>();
-		
+
 		map.put("3", "France");
 		expectedData.add(map);
 
 		map = new HashMap<>();
-		
+
 		map.put("15", "Spain");
 		expectedData.add(map);
 
 		map = new HashMap<>();
-		
+
 		map.put("19", "United States");
 		expectedData.add(map);
 
 		map = new HashMap<>();
-		
+
 		map.put("48", "Brazil");
 		expectedData.add(map);
 
