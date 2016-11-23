@@ -51,36 +51,6 @@ public class AssetVocabularySettingsExportHelper
 		return settingsMetadataJSONObject.toJSONString();
 	}
 
-	protected JSONObject createMetadataJSONObject(
-			long classNameId, long classTypePK)
-		throws PortalException {
-
-		JSONObject metadataJSONObject = _jsonFactory.createJSONObject();
-
-		metadataJSONObject.put(
-			"className", PortalUtil.getClassName(classNameId));
-
-		if (classTypePK == AssetCategoryConstants.ALL_CLASS_TYPE_PK) {
-			return metadataJSONObject;
-		}
-
-		metadataJSONObject.put("classTypePK", classTypePK);
-
-		AssetRendererFactory<?> assetRendererFactory =
-			AssetRendererFactoryRegistryUtil.
-				getAssetRendererFactoryByClassNameId(classNameId);
-
-		ClassTypeReader classTypeReader =
-			assetRendererFactory.getClassTypeReader();
-
-		ClassType classType = classTypeReader.getClassType(
-			classTypePK, _locale);
-
-		metadataJSONObject.put("classTypeName", classType.getName());
-
-		return metadataJSONObject;
-	}
-
 	protected JSONObject createSettingsMetadataJSONObject()
 		throws PortalException {
 
@@ -104,19 +74,71 @@ public class AssetVocabularySettingsExportHelper
 
 				long classTypePK = getClassTypePK(classNameIdAndClassTypePK);
 
-				JSONObject metadataJSONObject = createMetadataJSONObject(
-					classNameId, classTypePK);
+				JSONObject classTypeJSONObject = getClassTypeJSONObject(
+					settingsMetadataJSONObject, classNameId);
 
-				settingsMetadataJSONObject.put(
-					String.valueOf(classNameId), metadataJSONObject);
+				putClassTypeJSONObject(
+					classTypeJSONObject, classNameId, classTypePK);
 			}
 		}
 
 		return settingsMetadataJSONObject;
 	}
 
+	protected JSONObject getClassTypeJSONObject(
+		JSONObject settingsMetadataJSONObject, long classNameId) {
+
+		JSONObject classTypeJSONObject = null;
+
+		JSONObject metadataJSONObject =
+			settingsMetadataJSONObject.getJSONObject(
+				String.valueOf(classNameId));
+
+		if (metadataJSONObject != null) {
+			classTypeJSONObject = metadataJSONObject.getJSONObject(
+				"classTypes");
+		}
+		else {
+			metadataJSONObject = _jsonFactory.createJSONObject();
+
+			settingsMetadataJSONObject.put(
+				String.valueOf(classNameId), metadataJSONObject);
+
+			metadataJSONObject.put(
+				"className", PortalUtil.getClassName(classNameId));
+
+			classTypeJSONObject = _jsonFactory.createJSONObject();
+
+			metadataJSONObject.put("classTypes", classTypeJSONObject);
+		}
+
+		return classTypeJSONObject;
+	}
+
 	protected String getSettings() {
 		return super.toString();
+	}
+
+	protected void putClassTypeJSONObject(
+			JSONObject classTypeJSONObject, long classNameId, long classTypePK)
+		throws PortalException {
+
+		if (classTypePK == AssetCategoryConstants.ALL_CLASS_TYPE_PK) {
+			return;
+		}
+
+		AssetRendererFactory<?> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.
+				getAssetRendererFactoryByClassNameId(classNameId);
+
+		ClassTypeReader classTypeReader =
+			assetRendererFactory.getClassTypeReader();
+
+		ClassType classType = classTypeReader.getClassType(
+			classTypePK, _locale);
+
+		classTypeJSONObject.put(
+			String.valueOf(classTypePK), classType.getName());
 	}
 
 	private final JSONFactory _jsonFactory;

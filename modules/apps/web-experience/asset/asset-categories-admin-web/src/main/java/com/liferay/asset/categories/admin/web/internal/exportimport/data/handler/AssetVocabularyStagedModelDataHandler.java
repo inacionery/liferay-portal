@@ -260,12 +260,15 @@ public class AssetVocabularyStagedModelDataHandler
 
 		long groupId = portletDataContext.getScopeGroupId();
 
+		long[] groupIds =
+			new long[] {portletDataContext.getCompanyGroupId(), groupId};
+
 		Locale locale = PortalUtil.getSiteDefaultLocale(groupId);
 
 		AssetVocabularySettingsImportHelper
 			assetVocabularySettingsImportHelper =
 				new AssetVocabularySettingsImportHelper(
-					vocabulary.getSettings(), _classNameLocalService, groupId,
+					vocabulary.getSettings(), _classNameLocalService, groupIds,
 					locale, settingsMetadataJSONObject);
 
 		return assetVocabularySettingsImportHelper.getSettings();

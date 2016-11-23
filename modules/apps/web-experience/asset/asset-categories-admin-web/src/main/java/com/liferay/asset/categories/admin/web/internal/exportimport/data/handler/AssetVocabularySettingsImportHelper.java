@@ -36,12 +36,12 @@ public class AssetVocabularySettingsImportHelper
 
 	public AssetVocabularySettingsImportHelper(
 		String settings, ClassNameLocalService classNameLocalService,
-		long groupId, Locale locale, JSONObject settingsMetadataJSONObject) {
+		long[] groupIds, Locale locale, JSONObject settingsMetadataJSONObject) {
 
 		super(settings);
 
 		_classNameLocalService = classNameLocalService;
-		_groupId = groupId;
+		_groupIds = groupIds;
 		_locale = locale;
 		_settingsMetadataJSONObject = settingsMetadataJSONObject;
 
@@ -120,15 +120,16 @@ public class AssetVocabularySettingsImportHelper
 			String.valueOf(classNameId));
 	}
 
-	protected long getNewClassNameId(long oldClassNameId) {
-		if (oldClassNameId == AssetCategoryConstants.ALL_CLASS_NAME_ID) {
+	protected long getNewClassNameId(long classNameId) {
+		if (classNameId == AssetCategoryConstants.ALL_CLASS_NAME_ID) {
 			return AssetCategoryConstants.ALL_CLASS_NAME_ID;
 		}
 
-		String oldClassName = _settingsMetadataJSONObject.getString(
-			String.valueOf(oldClassNameId));
+		JSONObject metadataJSONObject = getMetadataJSONObject(classNameId);
 
-		return _classNameLocalService.getClassNameId(oldClassName);
+		String className = metadataJSONObject.getString("className");
+
+		return _classNameLocalService.getClassNameId(className);
 	}
 
 	protected long getNewClassTypePK(long classNameId, long classTypePK) {
@@ -144,12 +145,15 @@ public class AssetVocabularySettingsImportHelper
 			assetRendererFactory.getClassTypeReader();
 
 		List<ClassType> availableClassTypes =
-			classTypeReader.getAvailableClassTypes(
-				new long[] {_groupId}, _locale);
+			classTypeReader.getAvailableClassTypes(_groupIds, _locale);
 
 		JSONObject metadataJSONObject = getMetadataJSONObject(classNameId);
 
-		String classTypeName = metadataJSONObject.getString("classTypeName");
+		JSONObject classTypesJSONObject = metadataJSONObject.getJSONObject(
+			"classTypes");
+
+		String classTypeName = classTypesJSONObject.getString(
+			String.valueOf(classTypePK));
 
 		for (ClassType classType : availableClassTypes) {
 			if (classType.getName().equals(classTypeName)) {
@@ -161,7 +165,7 @@ public class AssetVocabularySettingsImportHelper
 	}
 
 	private final ClassNameLocalService _classNameLocalService;
-	private final long _groupId;
+	private final long[] _groupIds;
 	private final Locale _locale;
 	private final JSONObject _settingsMetadataJSONObject;
 
