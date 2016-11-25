@@ -50,6 +50,13 @@ public class DDLFormRulesToDDMFormRulesConverterTest
 			"ddl-form-rules-boolean-actions.json",
 			"ddm-form-rules-boolean-actions.json");
 	}
+	
+	@Test
+	public void testJumpToPageActions() throws Exception {
+		assertConversion(
+			"ddl-form-rules-jump-to-page-actions.json",
+			"ddm-form-rules-jump-to-page-actions.json");
+	}
 
 	@Test
 	public void testComparisonOperatorsCondition() throws Exception {
