@@ -17,8 +17,23 @@ package com.liferay.portal.kaleo.runtime.integration.impl.internal.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
+import com.liferay.dynamic.data.lists.model.DDLRecord;
+import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
+import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.StorageType;
+import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
+import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
+import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
@@ -27,6 +42,7 @@ import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalServiceUtil;
@@ -35,21 +51,30 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowException;
+import com.liferay.portal.kernel.workflow.WorkflowInstance;
+import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -77,6 +102,8 @@ public class WorkflowTaskManagerImplTest {
 		_originalPermissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
+		_group = GroupTestUtil.addGroup();
+
 		_adminUser = createUser(
 			RoleConstants.ADMINISTRATOR, RoleConstants.TYPE_REGULAR);
 
@@ -85,30 +112,96 @@ public class WorkflowTaskManagerImplTest {
 
 		_siteAdminUser = createUser(
 			RoleConstants.SITE_ADMINISTRATOR, RoleConstants.TYPE_SITE);
-
-		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
-			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
-			TestPropsValues.getGroupId(), BlogsEntry.class.getName(), 0, 0,
-			"Single Approver@1");
 	}
 
 	@After
 	public void tearDown() throws PortalException {
-		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
-			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
-			TestPropsValues.getGroupId(), BlogsEntry.class.getName(), 0, 0,
-			null);
-
 		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 	}
 
 	@Sync
 	@Test
+	public void testApproveDynamicdatalistCP() throws Exception {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm("TextField1");
+
+		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
+			ddmForm);
+
+		DDMFormFieldValue ddmFormFieldValue =
+			DDMFormValuesTestUtil.createLocalizedDDMFormFieldValue(
+				"TextField1", StringPool.BLANK);
+
+		ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+
+		DDMStructureTestHelper ddmStructureTestHelper =
+			new DDMStructureTestHelper(
+				PortalUtil.getClassNameId(DDLRecordSet.class), _group);
+
+		DDMStructure ddmStructure = ddmStructureTestHelper.addStructure(
+			ddmForm, StorageType.JSON.toString());
+
+		Map<Locale, String> nameMap = new HashMap<>();
+
+		nameMap.put(LocaleUtil.US, RandomTestUtil.randomString());
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.addRecordSet(
+			_adminUser.getUserId(), _group.getGroupId(),
+			ddmStructure.getStructureId(), null, nameMap, null,
+			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
+			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, serviceContext);
+
+		activeWorkflow(
+			DDLRecordSet.class.getName(), recordSet.getRecordSetId());
+
+		DDLRecord record = DDLRecordLocalServiceUtil.addRecord(
+			_adminUser.getUserId(), _group.getGroupId(),
+			recordSet.getRecordSetId(),
+			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
+			serviceContext);
+
+		WorkflowTask workflowTask = getWorkflowTask(_adminUser);
+
+		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
+			_adminUser.getCompanyId(), _adminUser.getUserId(),
+			workflowTask.getWorkflowTaskId(), _adminUser.getUserId(),
+			StringPool.BLANK, null, null);
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_PENDING, record.getStatus());
+
+		WorkflowTaskManagerUtil.completeWorkflowTask(
+			_adminUser.getCompanyId(), _adminUser.getUserId(),
+			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
+			null);
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_APPROVED, record.getStatus());
+
+		List<WorkflowInstance> workflowInstances =
+			WorkflowInstanceManagerUtil.getWorkflowInstances(
+				_adminUser.getCompanyId(),
+				workflowTask.getWorkflowDefinitionName(),
+				workflowTask.getWorkflowDefinitionVersion(), true,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		Assert.assertEquals(1, workflowInstances.size());
+
+		deactiveWorkflow(
+			DDLRecordSet.class.getName(), recordSet.getRecordSetId());
+	}
+
+	@Sync
+	@Test
 	public void testApproveWorkflowTaskAsSiteAdmin() throws Exception {
+		activeWorkflow(BlogsEntry.class.getName(), 0);
+
 		BlogsEntry blogsEntry = BlogsEntryLocalServiceUtil.addEntry(
 			_adminUser.getUserId(), StringUtil.randomString(),
 			StringUtil.randomString(), new Date(),
-			ServiceContextTestUtil.getServiceContext());
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
 		_blogsEntries.add(blogsEntry);
 
@@ -136,6 +229,8 @@ public class WorkflowTaskManagerImplTest {
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
+
+		deactiveWorkflow(BlogsEntry.class.getName(), 0);
 	}
 
 	@Sync
@@ -146,7 +241,7 @@ public class WorkflowTaskManagerImplTest {
 		BlogsEntry blogsEntry = BlogsEntryLocalServiceUtil.addEntry(
 			_adminUser.getUserId(), StringUtil.randomString(),
 			StringUtil.randomString(), new Date(),
-			ServiceContextTestUtil.getServiceContext());
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
 		_blogsEntries.add(blogsEntry);
 
@@ -200,6 +295,14 @@ public class WorkflowTaskManagerImplTest {
 			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
 	}
 
+	protected void activeWorkflow(String className, long classPK)
+		throws PortalException {
+
+		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
+			_adminUser.getUserId(), TestPropsValues.getCompanyId(),
+			_group.getGroupId(), className, classPK, 0, "Single Approver@1");
+	}
+
 	protected void checkUserNotificationEvents(long userId) {
 		List<UserNotificationEvent> userNotificationEvents =
 			UserNotificationEventLocalServiceUtil.
@@ -221,7 +324,7 @@ public class WorkflowTaskManagerImplTest {
 	}
 
 	protected User createUser(String roleName, int roleType) throws Exception {
-		User user = UserTestUtil.addUser();
+		User user = UserTestUtil.addUser(_group.getGroupId());
 
 		Role role = RoleTestUtil.addRole(roleName, roleType);
 
@@ -231,9 +334,17 @@ public class WorkflowTaskManagerImplTest {
 		long[] userIds = {user.getUserId()};
 
 		UserGroupRoleLocalServiceUtil.addUserGroupRoles(
-			userIds, TestPropsValues.getGroupId(), role.getRoleId());
+			userIds, _group.getGroupId(), role.getRoleId());
 
 		return user;
+	}
+
+	protected void deactiveWorkflow(String className, long classPK)
+		throws PortalException {
+
+		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
+			_adminUser.getUserId(), TestPropsValues.getCompanyId(),
+			_group.getGroupId(), className, classPK, 0, null);
 	}
 
 	protected WorkflowTask getWorkflowTask(User user) throws WorkflowException {
@@ -252,6 +363,9 @@ public class WorkflowTaskManagerImplTest {
 
 	@DeleteAfterTestRun
 	private final List<BlogsEntry> _blogsEntries = new ArrayList<>();
+
+	@DeleteAfterTestRun
+	private Group _group;
 
 	private PermissionChecker _originalPermissionChecker;
 
