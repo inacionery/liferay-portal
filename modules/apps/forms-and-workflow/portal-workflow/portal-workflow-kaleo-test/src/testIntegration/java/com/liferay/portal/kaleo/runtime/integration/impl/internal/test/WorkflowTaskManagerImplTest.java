@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -53,7 +54,6 @@ import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
@@ -164,18 +164,12 @@ public class WorkflowTaskManagerImplTest {
 
 		WorkflowTask workflowTask = getWorkflowTask(_adminUser);
 
-		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
-			_adminUser.getCompanyId(), _adminUser.getUserId(),
-			workflowTask.getWorkflowTaskId(), _adminUser.getUserId(),
-			StringPool.BLANK, null, null);
+		assignWorkflowTaskToUser(_adminUser, workflowTask, _adminUser);
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_PENDING, record.getStatus());
 
-		WorkflowTaskManagerUtil.completeWorkflowTask(
-			_adminUser.getCompanyId(), _adminUser.getUserId(),
-			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
-			null);
+		completeWorkflowTask(_adminUser, workflowTask);
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_APPROVED, record.getStatus());
@@ -209,20 +203,9 @@ public class WorkflowTaskManagerImplTest {
 
 		WorkflowTask workflowTask = getWorkflowTask(_adminUser);
 
-		PermissionChecker siteAdminPermissionChecker =
-			PermissionCheckerFactoryUtil.create(_siteAdminUser);
+		assignWorkflowTaskToUser(_siteAdminUser, workflowTask, _siteAdminUser);
 
-		PermissionThreadLocal.setPermissionChecker(siteAdminPermissionChecker);
-
-		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
-			_siteAdminUser.getCompanyId(), _siteAdminUser.getUserId(),
-			workflowTask.getWorkflowTaskId(), _siteAdminUser.getUserId(),
-			StringPool.BLANK, null, null);
-
-		WorkflowTaskManagerUtil.completeWorkflowTask(
-			_siteAdminUser.getCompanyId(), _siteAdminUser.getUserId(),
-			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
-			null);
+		completeWorkflowTask(_siteAdminUser, workflowTask);
 
 		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
 			blogsEntry.getEntryId());
@@ -238,6 +221,8 @@ public class WorkflowTaskManagerImplTest {
 	public void testAssignApproveWorkflowTaskAsPortalContentReviewer()
 		throws Exception {
 
+		activeWorkflow(BlogsEntry.class.getName(), 0);
+
 		BlogsEntry blogsEntry = BlogsEntryLocalServiceUtil.addEntry(
 			_adminUser.getUserId(), StringUtil.randomString(),
 			StringUtil.randomString(), new Date(),
@@ -251,40 +236,17 @@ public class WorkflowTaskManagerImplTest {
 
 		WorkflowTask workflowTask = getWorkflowTask(_adminUser);
 
-		PermissionChecker portalContentReviewerPermissionChecker =
-			PermissionCheckerFactoryUtil.create(_portalContentReviewerUser);
-
-		PermissionThreadLocal.setPermissionChecker(
-			portalContentReviewerPermissionChecker);
-
-		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
-			_adminUser.getCompanyId(), _portalContentReviewerUser.getUserId(),
-			workflowTask.getWorkflowTaskId(), _adminUser.getUserId(),
-			StringPool.BLANK, null, null);
+		assignWorkflowTaskToUser(
+			_portalContentReviewerUser, workflowTask, _adminUser);
 
 		checkUserNotificationEvents(_adminUser.getUserId());
 
-		PermissionChecker adminPermissionChecker =
-			PermissionCheckerFactoryUtil.create(_adminUser);
-
-		PermissionThreadLocal.setPermissionChecker(adminPermissionChecker);
-
-		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
-			_portalContentReviewerUser.getCompanyId(), _adminUser.getUserId(),
-			workflowTask.getWorkflowTaskId(),
-			_portalContentReviewerUser.getUserId(), StringPool.BLANK, null,
-			null);
+		assignWorkflowTaskToUser(
+			_adminUser, workflowTask, _portalContentReviewerUser);
 
 		checkUserNotificationEvents(_portalContentReviewerUser.getUserId());
 
-		PermissionThreadLocal.setPermissionChecker(
-			portalContentReviewerPermissionChecker);
-
-		WorkflowTaskManagerUtil.completeWorkflowTask(
-			_portalContentReviewerUser.getCompanyId(),
-			_portalContentReviewerUser.getUserId(),
-			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
-			null);
+		completeWorkflowTask(_portalContentReviewerUser, workflowTask);
 
 		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
 			blogsEntry.getEntryId());
@@ -293,6 +255,8 @@ public class WorkflowTaskManagerImplTest {
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
+
+		deactiveWorkflow(BlogsEntry.class.getName(), 0);
 	}
 
 	protected void activeWorkflow(String className, long classPK)
@@ -301,6 +265,21 @@ public class WorkflowTaskManagerImplTest {
 		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
 			_adminUser.getUserId(), TestPropsValues.getCompanyId(),
 			_group.getGroupId(), className, classPK, 0, "Single Approver@1");
+	}
+
+	protected void assignWorkflowTaskToUser(
+			User user, WorkflowTask workflowTask, User assigneeUser)
+		throws Exception {
+
+		PermissionChecker userPermissionChecker =
+			PermissionCheckerFactoryUtil.create(user);
+
+		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+
+		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
+			_group.getCompanyId(), user.getUserId(),
+			workflowTask.getWorkflowTaskId(), assigneeUser.getUserId(),
+			StringPool.BLANK, null, null);
 	}
 
 	protected void checkUserNotificationEvents(long userId) {
@@ -323,13 +302,27 @@ public class WorkflowTaskManagerImplTest {
 			userNotificationEvent);
 	}
 
+	protected void completeWorkflowTask(User user, WorkflowTask workflowTask)
+		throws Exception {
+
+		PermissionChecker userPermissionChecker =
+			PermissionCheckerFactoryUtil.create(user);
+
+		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+
+		WorkflowTaskManagerUtil.completeWorkflowTask(
+			_group.getCompanyId(), user.getUserId(),
+			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
+			null);
+	}
+
 	protected User createUser(String roleName, int roleType) throws Exception {
 		User user = UserTestUtil.addUser(_group.getGroupId());
 
-		Role role = RoleTestUtil.addRole(roleName, roleType);
+		Role role = RoleLocalServiceUtil.getRole(
+			TestPropsValues.getCompanyId(), roleName);
 
-		UserLocalServiceUtil.setRoleUsers(
-			role.getRoleId(), new long[] {user.getUserId()});
+		UserLocalServiceUtil.addRoleUser(role.getRoleId(), user);
 
 		long[] userIds = {user.getUserId()};
 
