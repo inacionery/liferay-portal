@@ -171,7 +171,7 @@ public class SynchronousDestinationTestCallback
 
 			serviceDependencyManager.registerDependencies(
 				asyncFilter, backgroundTaskFilter, backgroundTaskStatusFilter,
-				kaleoGraphWalkerFilter, mailFilter, pdfProcessorFilter, 
+				kaleoGraphWalkerFilter, mailFilter, pdfProcessorFilter,
 				rawMetaDataProcessorFilter, subscrpitionSenderFilter);
 
 			serviceDependencyManager.waitForDependencies();
