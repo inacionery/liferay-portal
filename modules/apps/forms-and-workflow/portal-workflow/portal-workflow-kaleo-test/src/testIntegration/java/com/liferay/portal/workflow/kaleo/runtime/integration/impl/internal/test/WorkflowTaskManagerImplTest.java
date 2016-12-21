@@ -15,8 +15,6 @@
 package com.liferay.portal.workflow.kaleo.runtime.integration.impl.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.blogs.model.BlogsEntry;
-import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
@@ -68,28 +66,6 @@ public class WorkflowTaskManagerImplTest
 	}
 
 	@Test
-	public void testApproveWorkflowBlogsEntryAsSiteAdmin() throws Exception {
-		activeSingleApproverWorkflow(BlogsEntry.class.getName(), 0);
-
-		BlogsEntry blogsEntry = addBlogsEntry();
-
-		checkUserNotificationEventsByUsers(
-			adminUser, portalContentReviewerUser, siteAdminUser);
-
-		assignWorkflowTaskToUser(siteAdminUser, siteAdminUser);
-
-		approveWorkflowTask(siteAdminUser);
-
-		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
-			blogsEntry.getEntryId());
-
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
-
-		deactiveWorkflow(BlogsEntry.class.getName(), 0);
-	}
-
-	@Test
 	public void testApproveWorkflowDDLRecordAsAdmin() throws Exception {
 		DDLRecordSet recordSet = addRecordSet();
 
@@ -122,36 +98,6 @@ public class WorkflowTaskManagerImplTest
 
 		deactiveWorkflow(
 			DDLRecordSet.class.getName(), recordSet.getRecordSetId());
-	}
-
-	@Test
-	public void testAssignApproveWorkflowBlogsEntryAsPortalContentReviewer()
-		throws Exception {
-
-		activeSingleApproverWorkflow(BlogsEntry.class.getName(), 0);
-
-		BlogsEntry blogsEntry = addBlogsEntry();
-
-		checkUserNotificationEventsByUsers(
-			adminUser, portalContentReviewerUser, siteAdminUser);
-
-		assignWorkflowTaskToUser(portalContentReviewerUser, adminUser);
-
-		checkUserNotificationEventsByUsers(adminUser);
-
-		assignWorkflowTaskToUser(adminUser, portalContentReviewerUser);
-
-		checkUserNotificationEventsByUsers(portalContentReviewerUser);
-
-		approveWorkflowTask(portalContentReviewerUser);
-
-		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
-			blogsEntry.getEntryId());
-
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
-
-		deactiveWorkflow(BlogsEntry.class.getName(), 0);
 	}
 
 	private PermissionChecker _originalPermissionChecker;
