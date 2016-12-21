@@ -1180,6 +1180,15 @@ public class CalendarPortlet extends MVCPortlet {
 		int[] statuses = ParamUtil.getIntegerValues(
 			resourceRequest, "statuses");
 
+		int eventsPerPage = ParamUtil.getInteger(
+			resourceRequest, "eventsPerPage");
+
+		int maxDaysDisplayed = ParamUtil.getInteger(
+			resourceRequest, "maxDaysDisplayed");
+
+		endTimeJCalendar.setTime(startTimeJCalendar.getTime());
+		endTimeJCalendar.add(java.util.Calendar.DATE, maxDaysDisplayed);
+
 		List<CalendarBooking> calendarBookings =
 			Collections.<CalendarBooking>emptyList();
 
@@ -1187,8 +1196,8 @@ public class CalendarPortlet extends MVCPortlet {
 			calendarBookings = _calendarBookingService.search(
 				themeDisplay.getCompanyId(), new long[0], calendarIds,
 				new long[0], -1, null, startTimeJCalendar.getTimeInMillis(),
-				endTimeJCalendar.getTimeInMillis(), true, statuses,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+				endTimeJCalendar.getTimeInMillis(), true, statuses, 0,
+				eventsPerPage, null);
 		}
 
 		JSONArray jsonArray = CalendarUtil.toCalendarBookingsJSONArray(

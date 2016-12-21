@@ -487,7 +487,9 @@ AUI.add(
 					var scheduler = instance.get('scheduler');
 
 					var activeView = scheduler.get('activeView');
+					var eventsPerPage = scheduler.get('eventsPerPage');
 					var filterCalendarBookings = scheduler.get('filterCalendarBookings');
+					var maxDaysDisplayed = scheduler.get('maxDaysDisplayed');
 
 					var calendarContainer = scheduler.get('calendarContainer');
 
@@ -497,6 +499,8 @@ AUI.add(
 
 					remoteServices.getEvents(
 						calendarIds,
+						eventsPerPage,
+						maxDaysDisplayed,
 						instance.getLoadStartDate(activeView),
 						instance.getLoadEndDate(activeView),
 						[CalendarWorkflow.STATUS_APPROVED, CalendarWorkflow.STATUS_DRAFT, CalendarWorkflow.STATUS_MAYBE, CalendarWorkflow.STATUS_PENDING],
