@@ -17,10 +17,6 @@ package com.liferay.portal.workflow.kaleo.runtime.integration.impl.internal.test
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.dynamic.data.lists.model.DDLRecord;
-import com.liferay.dynamic.data.lists.model.DDLRecordSet;
-import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
-import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
@@ -79,71 +75,6 @@ public class WorkflowTaskManagerImplTest
 		assignWorkflowTaskToUser(siteAdminUser, siteAdminUser);
 
 		approveWorkflowTask(siteAdminUser);
-
-		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
-			blogsEntry.getEntryId());
-
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
-
-		deactiveWorkflow(BlogsEntry.class.getName(), 0);
-	}
-
-	@Test
-	public void testApproveWorkflowDDLRecordAsAdmin() throws Exception {
-		DDLRecordSet recordSet = addRecordSet();
-
-		activeSingleApproverWorkflow(
-			DDLRecordSet.class.getName(), recordSet.getRecordSetId());
-
-		DDLRecord record = addRecord(recordSet);
-
-		checkUserNotificationEventsByUsers(
-			adminUser, portalContentReviewerUser, siteAdminUser);
-
-		assignWorkflowTaskToUser(adminUser, adminUser);
-
-		record = DDLRecordLocalServiceUtil.getRecord(record.getRecordId());
-
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_PENDING, record.getStatus());
-
-		approveWorkflowTask(adminUser);
-
-		record = DDLRecordLocalServiceUtil.getRecord(record.getRecordId());
-
-		DDLRecordVersion recordVersion = record.getRecordVersion();
-
-		checkWorkflowInstance(
-			DDLRecord.class.getName(), recordVersion.getRecordVersionId());
-
-		Assert.assertEquals(
-			WorkflowConstants.STATUS_APPROVED, record.getStatus());
-
-		deactiveWorkflow(
-			DDLRecordSet.class.getName(), recordSet.getRecordSetId());
-	}
-
-	@Test
-	public void testAssignApproveWorkflowBlogsEntryAsPortalContentReviewer()
-		throws Exception {
-
-		activeSingleApproverWorkflow(BlogsEntry.class.getName(), 0);
-
-		BlogsEntry blogsEntry = addBlogsEntry();
-
-		checkUserNotificationEventsByUsers(
-			adminUser, portalContentReviewerUser, siteAdminUser);
-
-		assignWorkflowTaskToUser(portalContentReviewerUser, adminUser);
-
-		checkUserNotificationEventsByUsers(adminUser);
-
-		assignWorkflowTaskToUser(adminUser, portalContentReviewerUser);
-
-		checkUserNotificationEventsByUsers(portalContentReviewerUser);
-
-		approveWorkflowTask(portalContentReviewerUser);
 
 		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
 			blogsEntry.getEntryId());
