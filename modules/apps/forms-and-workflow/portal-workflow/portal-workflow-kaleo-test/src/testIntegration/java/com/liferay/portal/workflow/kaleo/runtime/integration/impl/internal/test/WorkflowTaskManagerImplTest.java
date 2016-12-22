@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -76,9 +77,13 @@ public class WorkflowTaskManagerImplTest
 		checkUserNotificationEventsByUsers(
 			adminUser, portalContentReviewerUser, siteAdminUser);
 
-		assignWorkflowTaskToUser(siteAdminUser, siteAdminUser);
+		PermissionChecker siteAdminUserPermissionChecker =
+			PermissionCheckerFactoryUtil.create(siteAdminUser);
 
-		approveWorkflowTask(siteAdminUser);
+		assignWorkflowTaskToUser(
+			siteAdminUser, siteAdminUser, siteAdminUserPermissionChecker);
+
+		approveWorkflowTask(siteAdminUser, siteAdminUserPermissionChecker);
 
 		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
 			blogsEntry.getEntryId());
@@ -101,14 +106,18 @@ public class WorkflowTaskManagerImplTest
 		checkUserNotificationEventsByUsers(
 			adminUser, portalContentReviewerUser, siteAdminUser);
 
-		assignWorkflowTaskToUser(adminUser, adminUser);
+		PermissionChecker adminUserPermissionChecker =
+			PermissionCheckerFactoryUtil.create(adminUser);
+
+		assignWorkflowTaskToUser(
+			adminUser, adminUser, adminUserPermissionChecker);
 
 		record = DDLRecordLocalServiceUtil.getRecord(record.getRecordId());
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_PENDING, record.getStatus());
 
-		approveWorkflowTask(adminUser);
+		approveWorkflowTask(adminUser, adminUserPermissionChecker);
 
 		record = DDLRecordLocalServiceUtil.getRecord(record.getRecordId());
 
@@ -135,15 +144,26 @@ public class WorkflowTaskManagerImplTest
 		checkUserNotificationEventsByUsers(
 			adminUser, portalContentReviewerUser, siteAdminUser);
 
-		assignWorkflowTaskToUser(portalContentReviewerUser, adminUser);
+		PermissionChecker portalContentReviewerUserPermissionChecker =
+			PermissionCheckerFactoryUtil.create(portalContentReviewerUser);
+
+		assignWorkflowTaskToUser(
+			portalContentReviewerUser, adminUser,
+			portalContentReviewerUserPermissionChecker);
 
 		checkUserNotificationEventsByUsers(adminUser);
 
-		assignWorkflowTaskToUser(adminUser, portalContentReviewerUser);
+		PermissionChecker adminUserPermissionChecker =
+			PermissionCheckerFactoryUtil.create(adminUser);
+
+		assignWorkflowTaskToUser(
+			adminUser, portalContentReviewerUser, adminUserPermissionChecker);
 
 		checkUserNotificationEventsByUsers(portalContentReviewerUser);
 
-		approveWorkflowTask(portalContentReviewerUser);
+		approveWorkflowTask(
+			portalContentReviewerUser,
+			portalContentReviewerUserPermissionChecker);
 
 		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
 			blogsEntry.getEntryId());

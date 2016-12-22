@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -149,13 +148,13 @@ public class BaseWorkflowTaskManagerTestCase {
 		return recordSet;
 	}
 
-	protected void approveWorkflowTask(User user) throws Exception {
+	protected void approveWorkflowTask(
+			User user, PermissionChecker permissionChecker)
+		throws Exception {
+
 		WorkflowTask workflowTask = getWorkflowTask();
 
-		PermissionChecker userPermissionChecker =
-			PermissionCheckerFactoryUtil.create(user);
-
-		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+		PermissionThreadLocal.setPermissionChecker(permissionChecker);
 
 		WorkflowTaskManagerUtil.completeWorkflowTask(
 			group.getCompanyId(), user.getUserId(),
@@ -163,15 +162,13 @@ public class BaseWorkflowTaskManagerTestCase {
 			null);
 	}
 
-	protected void assignWorkflowTaskToUser(User user, User assigneeUser)
+	protected void assignWorkflowTaskToUser(
+			User user, User assigneeUser, PermissionChecker permissionChecker)
 		throws Exception {
 
 		WorkflowTask workflowTask = getWorkflowTask();
 
-		PermissionChecker userPermissionChecker =
-			PermissionCheckerFactoryUtil.create(user);
-
-		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+		PermissionThreadLocal.setPermissionChecker(permissionChecker);
 
 		WorkflowTaskManagerUtil.assignWorkflowTaskToUser(
 			group.getCompanyId(), user.getUserId(),
