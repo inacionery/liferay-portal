@@ -261,17 +261,5 @@
 				{"xy":[680,295]}
 			]]>
 		</metadata>
-		<actions>
-			<action>
-				<name>approve</name>
-				<script>
-					<![CDATA[
-						println "Hello world!"
-					]]>
-				</script>
-				<script-language>groovy</script-language>
-				<execution-type>onEntry</execution-type>
-			</action>
-		</actions>
 	</state>
 </workflow-definition>
