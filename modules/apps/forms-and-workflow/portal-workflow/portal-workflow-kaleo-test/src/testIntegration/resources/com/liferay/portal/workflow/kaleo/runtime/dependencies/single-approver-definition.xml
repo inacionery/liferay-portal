@@ -141,7 +141,10 @@
 				<name>approve</name>
 				<script>
 					<![CDATA[
-						println "Hello world!"
+						import com.liferay.portal.kernel.workflow.WorkflowStatusManagerUtil;
+						import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+						WorkflowStatusManagerUtil.updateStatus(WorkflowConstants.toStatus("approved"), workflowContext);
 					]]>
 				</script>
 				<script-language>groovy</script-language>
