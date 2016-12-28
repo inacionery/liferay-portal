@@ -56,7 +56,7 @@ public class GroovyExecutor extends BaseScriptingExecutor {
 		
 		System.out.println("start GroovyExecutor parse");
 		Script compiledScript = groovyShell.parse(script);
-		System.out.println("compiledScript = " + compiledScript);
+		System.out.println("script = " + script);
 		System.out.println("end GroovyExecutor parse");
 		
 		Binding binding = new Binding(inputObjects);
