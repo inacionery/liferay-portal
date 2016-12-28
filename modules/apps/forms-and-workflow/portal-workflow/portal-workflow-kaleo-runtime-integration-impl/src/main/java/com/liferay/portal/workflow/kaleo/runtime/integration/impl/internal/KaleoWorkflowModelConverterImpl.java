@@ -210,7 +210,7 @@ public class KaleoWorkflowModelConverterImpl
 			KaleoTaskInstanceToken kaleoTaskInstanceToken,
 			Map<String, Serializable> workflowContext)
 		throws PortalException {
-
+		System.out.println("start in KaleoWorkflowModelConverterImpl toWorkflowTask");
 		DefaultWorkflowTask defaultWorkflowTask = new DefaultWorkflowTask();
 
 		defaultWorkflowTask.setCreateDate(
@@ -253,7 +253,7 @@ public class KaleoWorkflowModelConverterImpl
 
 		defaultWorkflowTask.setWorkflowTaskId(
 			kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId());
-
+		System.out.println("end in KaleoWorkflowModelConverterImpl toWorkflowTask");
 		return defaultWorkflowTask;
 	}
 

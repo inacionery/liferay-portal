@@ -63,7 +63,6 @@ import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -71,14 +70,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Before;
 
 /**
  * @author Inácio Nery
  */
 public class BaseWorkflowTaskManagerTestCase {
 
-	@Before
 	public void setUp() throws Exception {
 		group = GroupTestUtil.addGroup();
 
@@ -91,23 +88,29 @@ public class BaseWorkflowTaskManagerTestCase {
 	protected void activeSingleApproverWorkflow(String className, long classPK)
 		throws PortalException {
 
+		System.out.println("Start activeSingleApproverWorkflow");
+
 		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
 			adminUser.getUserId(), TestPropsValues.getCompanyId(),
 			group.getGroupId(), className, classPK, 0, "Single Approver@1");
+
+		System.out.println("End activeSingleApproverWorkflow");
 	}
 
 	protected BlogsEntry addBlogsEntry() throws PortalException {
+		System.out.println("Start addBlogsEntry");
 		BlogsEntry blogsEntry = BlogsEntryLocalServiceUtil.addEntry(
 			adminUser.getUserId(), StringUtil.randomString(),
 			StringUtil.randomString(), new Date(), serviceContext);
-
-		_blogsEntries.add(blogsEntry);
+		System.out.println("End addBlogsEntry");
 
 		return blogsEntry;
 	}
 
 	protected DDLRecord addRecord(DDLRecordSet recordSet)
 		throws PortalException {
+
+		System.out.println("Start addRecord");
 
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm("TextField1");
 
@@ -119,12 +122,14 @@ public class BaseWorkflowTaskManagerTestCase {
 			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
 			serviceContext);
 
-		_records.add(record);
+		System.out.println("End addRecord");
 
 		return record;
 	}
 
 	protected DDLRecordSet addRecordSet() throws Exception, PortalException {
+		System.out.println("Start addRecordSet");
+
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm("TextField1");
 
 		DDMStructureTestHelper ddmStructureTestHelper =
@@ -144,28 +149,46 @@ public class BaseWorkflowTaskManagerTestCase {
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
 			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, serviceContext);
 
-		_recordSets.add(recordSet);
+		System.out.println("End addRecordSet");
 
 		return recordSet;
 	}
 
 	protected void approveWorkflowTask(User user) throws Exception {
-		WorkflowTask workflowTask = getWorkflowTask();
+		System.out.println("Start approveWorkflowTask");
 
+		WorkflowTask workflowTask = getWorkflowTask();
+		
+		System.out.println("in approveWorkflowTask start PermissionCheckerFactoryUtil.create(user)");
+		
 		PermissionChecker userPermissionChecker =
 			PermissionCheckerFactoryUtil.create(user);
+		
+		System.out.println("in approveWorkflowTask end PermissionCheckerFactoryUtil.create(user)");
+		
+		System.out.println("in approveWorkflowTask start PermissionThreadLocal.setPermissionChecker(userPermissionChecker)");
 
 		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+		
+		System.out.println("in approveWorkflowTask end PermissionThreadLocal.setPermissionChecker(userPermissionChecker)");
+		
+		System.out.println("in approveWorkflowTask start completeWorkflowTask");
 
 		WorkflowTaskManagerUtil.completeWorkflowTask(
 			group.getCompanyId(), user.getUserId(),
 			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
 			null);
+		
+		System.out.println("in approveWorkflowTask end completeWorkflowTask");
+
+
+		System.out.println("End approveWorkflowTask");
 	}
 
 	protected void assignWorkflowTaskToUser(User user, User assigneeUser)
 		throws Exception {
 
+		System.out.println("Start assignWorkflowTaskToUser");
 		WorkflowTask workflowTask = getWorkflowTask();
 
 		PermissionChecker userPermissionChecker =
@@ -177,17 +200,19 @@ public class BaseWorkflowTaskManagerTestCase {
 			group.getCompanyId(), user.getUserId(),
 			workflowTask.getWorkflowTaskId(), assigneeUser.getUserId(),
 			StringPool.BLANK, null, null);
+
+		System.out.println("End assignWorkflowTaskToUser");
 	}
 
 	protected void checkUserNotificationEventsByUsers(User... users) {
+		System.out.println("Start checkUserNotificationEventsByUsers");
+
 		for (User user : users) {
 			List<UserNotificationEvent> userNotificationEvents =
 				UserNotificationEventLocalServiceUtil.
 					getArchivedUserNotificationEvents(
 						user.getUserId(),
 						UserNotificationDeliveryConstants.TYPE_WEBSITE, false);
-
-			_userNotificationEvents.addAll(userNotificationEvents);
 
 			Assert.assertEquals(1, userNotificationEvents.size());
 
@@ -199,20 +224,24 @@ public class BaseWorkflowTaskManagerTestCase {
 			UserNotificationEventLocalServiceUtil.updateUserNotificationEvent(
 				userNotificationEvent);
 		}
+
+		System.out.println("End checkUserNotificationEventsByUsers");
 	}
 
 	protected void checkWorkflowInstance(String className, long classPK)
 		throws WorkflowException {
 
+		System.out.println("Start checkWorkflowInstance");
 		List<WorkflowInstance> workflowInstances =
 			WorkflowInstanceManagerUtil.getWorkflowInstances(
 				adminUser.getCompanyId(), adminUser.getUserId(), className,
 				classPK, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-
+		System.out.println("End checkWorkflowInstance");
 		Assert.assertEquals(1, workflowInstances.size());
 	}
 
 	protected DDMFormValues createDDMFormValues(DDMForm ddmForm) {
+		System.out.println("Start createDDMFormValues");
 		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
 			ddmForm);
 
@@ -222,10 +251,13 @@ public class BaseWorkflowTaskManagerTestCase {
 
 		ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
 
+		System.out.println("End createDDMFormValues");
+
 		return ddmFormValues;
 	}
 
 	protected User createUser(String roleName) throws Exception {
+		System.out.println("Start createUser");
 		User user = UserTestUtil.addUser(group.getGroupId());
 
 		Role role = RoleLocalServiceUtil.getRole(
@@ -238,18 +270,23 @@ public class BaseWorkflowTaskManagerTestCase {
 		UserGroupRoleLocalServiceUtil.addUserGroupRoles(
 			userIds, group.getGroupId(), role.getRoleId());
 
+		System.out.println("End createUser");
+
 		return user;
 	}
 
 	protected void deactiveWorkflow(String className, long classPK)
 		throws PortalException {
 
+		System.out.println("Start deactiveWorkflow");
 		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
 			adminUser.getUserId(), TestPropsValues.getCompanyId(),
 			group.getGroupId(), className, classPK, 0, null);
+		System.out.println("End deactiveWorkflow");
 	}
 
 	protected WorkflowTask getWorkflowTask() throws WorkflowException {
+		System.out.println("Start getWorkflowTask");
 		List<WorkflowTask> workflowTasks =
 			WorkflowTaskManagerUtil.getWorkflowTasksBySubmittingUser(
 				adminUser.getCompanyId(), adminUser.getUserId(), false,
@@ -257,6 +294,7 @@ public class BaseWorkflowTaskManagerTestCase {
 
 		Assert.assertEquals(1, workflowTasks.size());
 
+		System.out.println("End getWorkflowTask");
 		return workflowTasks.get(0);
 	}
 
@@ -269,31 +307,13 @@ public class BaseWorkflowTaskManagerTestCase {
 		siteAdminUser = createUser(RoleConstants.SITE_ADMINISTRATOR);
 	}
 
-	@DeleteAfterTestRun
 	protected User adminUser;
 
 	@DeleteAfterTestRun
 	protected Group group;
 
-	@DeleteAfterTestRun
 	protected User portalContentReviewerUser;
-
 	protected ServiceContext serviceContext;
-
-	@DeleteAfterTestRun
 	protected User siteAdminUser;
-
-	@DeleteAfterTestRun
-	private final List<BlogsEntry> _blogsEntries = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<DDLRecord> _records = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<DDLRecordSet> _recordSets = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<UserNotificationEvent> _userNotificationEvents =
-		new ArrayList<>();
 
 }

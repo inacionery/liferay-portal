@@ -52,7 +52,7 @@ public class UserNotificationMessageSender
 				notificationRecipients, String defaultSubject,
 			String notificationMessage, ExecutionContext executionContext)
 		throws Exception {
-
+		System.out.println("start in UserNotificationMessageSender doSendNotification");
 		JSONObject jsonObject = populateJSONObject(
 			notificationMessage, executionContext);
 
@@ -72,6 +72,7 @@ public class UserNotificationMessageSender
 					UserNotificationDeliveryConstants.TYPE_WEBSITE, jsonObject);
 			}
 		}
+		System.out.println("end in UserNotificationMessageSender doSendNotification");
 	}
 
 	protected JSONObject populateJSONObject(

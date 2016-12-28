@@ -71,7 +71,7 @@ public class ScriptActionExecutor implements ActionExecutor {
 	protected void doExecute(
 			KaleoAction kaleoAction, ExecutionContext executionContext)
 		throws Exception {
-
+		System.out.println("start ScriptActionExecutor doExecute");
 		Map<String, Object> inputObjects =
 			_scriptingContextBuilder.buildScriptingContext(executionContext);
 
@@ -85,6 +85,7 @@ public class ScriptActionExecutor implements ActionExecutor {
 
 		WorkflowContextUtil.mergeWorkflowContexts(
 			executionContext, resultsWorkflowContext);
+		System.out.println("end ScriptActionExecutor doExecute");
 	}
 
 	private final Set<String> _outputObjects = new HashSet<>();

@@ -43,7 +43,7 @@ public class KaleoActionExecutorImpl implements KaleoActionExecutor {
 			String kaleoClassName, long kaleoClassPK,
 			ExecutionType executionType, ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start KaleoActionExecutorImpl executeKaleoActions");
 		List<KaleoAction> kaleoActions =
 			_kaleoActionLocalService.getKaleoActions(
 				kaleoClassName, kaleoClassPK, executionType.getValue());
@@ -79,6 +79,7 @@ public class KaleoActionExecutorImpl implements KaleoActionExecutor {
 					executionContext.getServiceContext());
 			}
 		}
+		System.out.println("end KaleoActionExecutorImpl executeKaleoActions");
 	}
 
 	@Reference

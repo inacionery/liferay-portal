@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.SynchronousMailTestRule;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -51,7 +52,8 @@ public class WorkflowTaskManagerImplTest
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(), GraphWalkerTestRule.INSTANCE,
-			SynchronousDestinationTestRule.INSTANCE);
+			SynchronousDestinationTestRule.INSTANCE,
+			SynchronousMailTestRule.INSTANCE);
 
 	@Before
 	@Override
@@ -69,6 +71,7 @@ public class WorkflowTaskManagerImplTest
 
 	@Test
 	public void testApproveWorkflowBlogsEntryAsSiteAdmin() throws Exception {
+		System.out.println("Start testApproveWorkflowBlogsEntryAsSiteAdmin");
 		activeSingleApproverWorkflow(BlogsEntry.class.getName(), 0);
 
 		BlogsEntry blogsEntry = addBlogsEntry();
@@ -80,17 +83,24 @@ public class WorkflowTaskManagerImplTest
 
 		approveWorkflowTask(siteAdminUser);
 
+		System.out.println("Start getBlogsEntry");
+
 		blogsEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
 			blogsEntry.getEntryId());
+
+		System.out.println("End getBlogsEntry");
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_APPROVED, blogsEntry.getStatus());
 
 		deactiveWorkflow(BlogsEntry.class.getName(), 0);
+
+		System.out.println("End testApproveWorkflowBlogsEntryAsSiteAdmin");
 	}
 
 	@Test
 	public void testApproveWorkflowDDLRecordAsAdmin() throws Exception {
+		System.out.println("Start testApproveWorkflowDDLRecordAsAdmin");
 		DDLRecordSet recordSet = addRecordSet();
 
 		activeSingleApproverWorkflow(
@@ -122,6 +132,8 @@ public class WorkflowTaskManagerImplTest
 
 		deactiveWorkflow(
 			DDLRecordSet.class.getName(), recordSet.getRecordSetId());
+
+		System.out.println("End testApproveWorkflowDDLRecordAsAdmin");
 	}
 
 	@Test

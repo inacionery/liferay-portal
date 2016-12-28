@@ -14,16 +14,12 @@
 
 package com.liferay.portal.workflow.kaleo.runtime.integration.impl.internal.test;
 
-import com.liferay.portal.kernel.messaging.Destination;
+import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.proxy.ProxyModeThreadLocal;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.callback.BaseTestCallback;
 import com.liferay.portal.kernel.test.rule.callback.SynchronousDestinationTestCallback.SyncHandler;
 import com.liferay.portal.workflow.kaleo.runtime.constants.KaleoRuntimeDestinationNames;
-import com.liferay.registry.Filter;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.dependency.ServiceDependencyManager;
 
 import org.junit.runner.Description;
 
@@ -60,30 +56,11 @@ public class GraphWalkerTestCallback
 
 		syncHandler.enableSync();
 
-		ServiceDependencyManager serviceDependencyManager =
-			new ServiceDependencyManager();
-
-		Filter kaleoGraphWalkerFilter = _registerDestinationFilter(
-			KaleoRuntimeDestinationNames.KALEO_GRAPH_WALKER);
-
-		serviceDependencyManager.registerDependencies(kaleoGraphWalkerFilter);
-
-		serviceDependencyManager.waitForDependencies();
-
-		ProxyModeThreadLocal.setForceSync(true);
-
 		syncHandler.replaceDestination(
 			KaleoRuntimeDestinationNames.KALEO_GRAPH_WALKER);
+		syncHandler.replaceDestination(DestinationNames.SCHEDULER_DISPATCH);
 
 		return syncHandler;
-	}
-
-	private Filter _registerDestinationFilter(String destinationName) {
-		Registry registry = RegistryUtil.getRegistry();
-
-		return registry.getFilter(
-			"(&(destination.name=" + destinationName + ")(objectClass=" +
-				Destination.class.getName() + "))");
 	}
 
 }

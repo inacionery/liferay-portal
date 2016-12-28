@@ -46,32 +46,47 @@ public class DefaultGraphWalker extends BaseKaleoBean implements GraphWalker {
 			ExecutionContext executionContext)
 		throws PortalException {
 
+		System.out.println("start in DefaultGraphWalker follow");
+
 		if (sourceKaleoNode != null) {
+			System.out.println("start in DefaultGraphWalker _nodeExecutorFactory.getNodeExecutor");
 			NodeExecutor nodeExecutor = _nodeExecutorFactory.getNodeExecutor(
 				sourceKaleoNode.getType());
 
 			nodeExecutor.exit(
 				sourceKaleoNode, executionContext, remainingPathElements);
+			System.out.println("end in DefaultGraphWalker _nodeExecutorFactory.getNodeExecutor");
 		}
 
 		if (targetKaleoNode != null) {
+			System.out.println("start in DefaultGraphWalker kaleoLogLocalService.addNodeEntryKaleoLog");
 			kaleoLogLocalService.addNodeEntryKaleoLog(
 				executionContext.getKaleoInstanceToken(), sourceKaleoNode,
 				targetKaleoNode, executionContext.getServiceContext());
+			System.out.println("end in DefaultGraphWalker kaleoLogLocalService.addNodeEntryKaleoLog");
 
+			System.out.println("start in DefaultGraphWalker _nodeExecutorFactory.getNodeExecutor");
+			System.out.println("targetKaleoNode.getType() = " + targetKaleoNode.getType());
 			NodeExecutor nodeExecutor = _nodeExecutorFactory.getNodeExecutor(
 				targetKaleoNode.getType());
+			System.out.println("end in DefaultGraphWalker _nodeExecutorFactory.getNodeExecutor");
 
+			System.out.println("start in DefaultGraphWalker nodeExecutor.enter");
 			boolean performExecute = nodeExecutor.enter(
 				targetKaleoNode, executionContext);
+			System.out.println("end in DefaultGraphWalker nodeExecutor.enter");
 
 			if (performExecute) {
+				System.out.println("star in DefaultGraphWalker nodeExecutor.execute");
 				nodeExecutor.execute(
 					targetKaleoNode, executionContext, remainingPathElements);
+				System.out.println("end in DefaultGraphWalker nodeExecutor.execute");
 			}
 		}
 
 		_executionContextHelper.checkKaleoInstanceComplete(executionContext);
+		
+		System.out.println("end in DefaultGraphWalker follow");
 	}
 
 	@ServiceReference(type = ExecutionContextHelper.class)

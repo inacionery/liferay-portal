@@ -32,6 +32,7 @@ public class DefaultDueDateCalculator implements DueDateCalculator {
 
 	@Override
 	public Date getDueDate(Date startDate, DelayDuration delayDuration) {
+		System.out.println("start DefaultDueDateCalculator getDueDate");
 		Calendar cal = CalendarFactoryUtil.getCalendar();
 
 		cal.setTime(startDate);
@@ -58,7 +59,7 @@ public class DefaultDueDateCalculator implements DueDateCalculator {
 		else if (durationScale.equals(DurationScale.YEAR)) {
 			cal.add(Calendar.YEAR, duration);
 		}
-
+		System.out.println("end DefaultDueDateCalculator getDueDate");
 		return cal.getTime();
 	}
 

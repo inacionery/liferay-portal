@@ -47,22 +47,26 @@ public class GroovyExecutor extends BaseScriptingExecutor {
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, String script)
 		throws ScriptingException {
-
+		System.out.println("start GroovyExecutor eval");
 		if (allowedClasses != null) {
 			throw new ExecutionException(
 				"Constrained execution not supported for Groovy");
 		}
-
 		GroovyShell groovyShell = new GroovyShell(getClassLoader());
-
+		
+		System.out.println("start GroovyExecutor parse");
 		Script compiledScript = groovyShell.parse(script);
-
+		System.out.println("compiledScript = " + compiledScript);
+		System.out.println("end GroovyExecutor parse");
+		
 		Binding binding = new Binding(inputObjects);
 
 		compiledScript.setBinding(binding);
-
+		
+		System.out.println("start GroovyExecutor run");
 		compiledScript.run();
-
+		System.out.println("end GroovyExecutor run");
+		
 		if (outputNames == null) {
 			return null;
 		}
@@ -72,7 +76,7 @@ public class GroovyExecutor extends BaseScriptingExecutor {
 		for (String outputName : outputNames) {
 			outputObjects.put(outputName, binding.getVariable(outputName));
 		}
-
+		System.out.println("end GroovyExecutor eval");
 		return outputObjects;
 	}
 
