@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.scripting.ScriptingExecutor;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -30,6 +31,12 @@ import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -60,8 +67,26 @@ public class WorkflowTaskManagerImplTest
 	public void setUp() throws Exception {
 		super.setUp();
 
+		setUpGroovy();
+
 		_originalPermissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
+	}
+
+	public void setUpGroovy() throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
+
+		ScriptingExecutor[] scriptingExecutors;
+
+		scriptingExecutors = registry.getServices(
+			"com.liferay.portal.kernel.scripting.ScriptingExecutor",
+			"(scripting.language=groovy)");
+
+		Map<String, Object> inputObjects = Collections.emptyMap();
+		Set<String> outputNames = Collections.emptySet();
+
+		scriptingExecutors[0].eval(
+			null, inputObjects, outputNames, "println \"Hello World\"");
 	}
 
 	@After
