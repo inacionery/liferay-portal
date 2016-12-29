@@ -158,29 +158,32 @@ public class BaseWorkflowTaskManagerTestCase {
 		System.out.println("Start approveWorkflowTask");
 
 		WorkflowTask workflowTask = getWorkflowTask();
-		
-		System.out.println("in approveWorkflowTask start PermissionCheckerFactoryUtil.create(user)");
-		
+
+		System.out.println(
+			"in approveWorkflowTask start PermissionCheckerFactoryUtil.create(user)");
+
 		PermissionChecker userPermissionChecker =
 			PermissionCheckerFactoryUtil.create(user);
-		
-		System.out.println("in approveWorkflowTask end PermissionCheckerFactoryUtil.create(user)");
-		
-		System.out.println("in approveWorkflowTask start PermissionThreadLocal.setPermissionChecker(userPermissionChecker)");
+
+		System.out.println(
+			"in approveWorkflowTask end PermissionCheckerFactoryUtil.create(user)");
+
+		System.out.println(
+			"in approveWorkflowTask start PermissionThreadLocal.setPermissionChecker(userPermissionChecker)");
 
 		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
-		
-		System.out.println("in approveWorkflowTask end PermissionThreadLocal.setPermissionChecker(userPermissionChecker)");
-		
+
+		System.out.println(
+			"in approveWorkflowTask end PermissionThreadLocal.setPermissionChecker(userPermissionChecker)");
+
 		System.out.println("in approveWorkflowTask start completeWorkflowTask");
 
 		WorkflowTaskManagerUtil.completeWorkflowTask(
 			group.getCompanyId(), user.getUserId(),
 			workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
 			null);
-		
-		System.out.println("in approveWorkflowTask end completeWorkflowTask");
 
+		System.out.println("in approveWorkflowTask end completeWorkflowTask");
 
 		System.out.println("End approveWorkflowTask");
 	}

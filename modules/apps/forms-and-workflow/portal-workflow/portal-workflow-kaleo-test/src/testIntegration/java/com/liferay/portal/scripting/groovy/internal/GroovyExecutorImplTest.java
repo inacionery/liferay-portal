@@ -16,12 +16,17 @@ package com.liferay.portal.scripting.groovy.internal;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.scripting.ScriptingExecutor;
-import com.liferay.portal.scripting.ScriptingExecutorTestCase;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,32 +34,35 @@ import org.junit.runner.RunWith;
  * @author Inácio Nery
  */
 @RunWith(Arquillian.class)
-public class GroovyExecutorTest extends ScriptingExecutorTestCase {
+public class GroovyExecutorImplTest {
 
-	@Override
-	public String getScriptExtension() {
-		return ".groovy";
+	@ClassRule
+	@Rule
+	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+		new LiferayIntegrationTestRule();
+
+	@Before
+	public void setUp() throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
+
+		ScriptingExecutor[] scriptingExecutors;
+
+		scriptingExecutors = registry.getServices(
+			"com.liferay.portal.kernel.scripting.ScriptingExecutor",
+			"(scripting.language=groovy)");
+
+		_scriptingExecutor = scriptingExecutors[0];
 	}
 
-	@Override
-	public ScriptingExecutor getScriptingExecutor() {
-		return new GroovyExecutor();
-	}
-
-	@Test(expected = RuntimeException.class)
-	public void testRuntimeError() throws Exception {
+	@Test
+	public void testSimpleScript() throws Exception {
 		Map<String, Object> inputObjects = Collections.emptyMap();
 		Set<String> outputNames = Collections.emptySet();
 
-		execute(inputObjects, outputNames, "runtime-error");
+		_scriptingExecutor.eval(
+			null, inputObjects, outputNames, "println \"Hello World\"");
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void testSyntaxError() throws Exception {
-		Map<String, Object> inputObjects = Collections.emptyMap();
-		Set<String> outputNames = Collections.emptySet();
-
-		execute(inputObjects, outputNames, "syntax-error");
-	}
+	private ScriptingExecutor _scriptingExecutor;
 
 }
