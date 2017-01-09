@@ -139,7 +139,7 @@ public class LockLocalServiceImpl extends LockLocalServiceBaseImpl {
 			long userId, String className, String key, String owner,
 			boolean inheritable, long expirationTime)
 		throws PortalException {
-
+		System.out.println("start in LockLocalServiceImpl lock");
 		Date now = new Date();
 
 		Lock lock = lockPersistence.fetchByC_K(className, key);
@@ -181,7 +181,7 @@ public class LockLocalServiceImpl extends LockLocalServiceBaseImpl {
 		}
 
 		lockPersistence.update(lock);
-
+		System.out.println("start in LockLocalServiceImpl lock");
 		return lock;
 	}
 

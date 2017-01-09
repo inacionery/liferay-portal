@@ -43,41 +43,43 @@ public class JoinXorNodeExecutor extends BaseNodeExecutor {
 	protected boolean doEnter(
 			KaleoNode currentKaleoNode, ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start JoinXorNodeExecutor doEnter");
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
-
+		System.out.println("start JoinXorNodeExecutor getKaleoInstanceToken");
 		kaleoInstanceToken =
 			_kaleoInstanceTokenLocalService.getKaleoInstanceToken(
 				kaleoInstanceToken.getKaleoInstanceTokenId());
-
+		System.out.println("end JoinXorNodeExecutor getKaleoInstanceToken");
 		if (kaleoInstanceToken.isCompleted()) {
 			return false;
 		}
-
+		System.out.println("start JoinXorNodeExecutor completeKaleoInstanceToken");
 		kaleoInstanceToken =
 			_kaleoInstanceTokenLocalService.completeKaleoInstanceToken(
 				kaleoInstanceToken.getKaleoInstanceTokenId());
-
+		System.out.println("end JoinXorNodeExecutor completeKaleoInstanceToken");
+		System.out.println("start JoinXorNodeExecutor parentKaleoInstanceToken");
 		KaleoInstanceToken parentKaleoInstanceToken =
 			kaleoInstanceToken.getParentKaleoInstanceToken();
-
+		System.out.println("end JoinXorNodeExecutor parentKaleoInstanceToken");
 		if (!parentKaleoInstanceToken.
 				hasIncompleteChildrenKaleoInstanceToken()) {
 
 			return false;
 		}
-
+		System.out.println("start JoinXorNodeExecutor childrenKaleoInstanceTokens");
 		List<KaleoInstanceToken> childrenKaleoInstanceTokens =
 			parentKaleoInstanceToken.getChildrenKaleoInstanceTokens();
-
+		System.out.println("end JoinXorNodeExecutor childrenKaleoInstanceTokens");
 		for (KaleoInstanceToken childrenKaleoInstanceToken :
 				childrenKaleoInstanceTokens) {
-
+			System.out.println("start JoinXorNodeExecutor completeKaleoInstanceToken");
 			_kaleoInstanceTokenLocalService.completeKaleoInstanceToken(
 				childrenKaleoInstanceToken.getKaleoInstanceTokenId());
+			System.out.println("end JoinXorNodeExecutor completeKaleoInstanceToken");
 		}
-
+		System.out.println("end JoinXorNodeExecutor doEnter");
 		return true;
 	}
 

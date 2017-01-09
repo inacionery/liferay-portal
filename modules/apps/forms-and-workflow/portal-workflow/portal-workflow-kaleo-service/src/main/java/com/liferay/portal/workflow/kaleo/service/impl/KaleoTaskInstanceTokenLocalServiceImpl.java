@@ -148,7 +148,7 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 	public KaleoTaskInstanceToken completeKaleoTaskInstanceToken(
 			long kaleoTaskInstanceTokenId, ServiceContext serviceContext)
 		throws PortalException {
-
+		System.out.println("start in KaleoTaskInstanceTokenLocalServiceImpl completeKaleoTaskInstanceToken");
 		// Kaleo task instance token
 
 		KaleoTaskInstanceToken kaleoTaskInstanceToken =
@@ -162,15 +162,16 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 		kaleoTaskInstanceTokenPersistence.update(kaleoTaskInstanceToken);
 
 		// Kaleo task assignment instance
-
+		System.out.println("start in KaleoTaskInstanceTokenLocalServiceImpl kaleoTaskAssignmentInstanceLocalService.completeKaleoTaskInstanceToken");
 		kaleoTaskAssignmentInstanceLocalService.completeKaleoTaskInstanceToken(
 			kaleoTaskInstanceTokenId, serviceContext);
-
+		System.out.println("end in KaleoTaskInstanceTokenLocalServiceImpl kaleoTaskAssignmentInstanceLocalService.completeKaleoTaskInstanceToken");
 		// Kaleo timers
-
+		System.out.println("start in KaleoTaskInstanceTokenLocalServiceImpl kaleoTimerInstanceTokenLocalService.completeKaleoTaskInstanceToken");
 		kaleoTimerInstanceTokenLocalService.completeKaleoTimerInstanceTokens(
 			kaleoTaskInstanceToken.getKaleoInstanceTokenId(), serviceContext);
-
+		System.out.println("end in KaleoTaskInstanceTokenLocalServiceImpl kaleoTimerInstanceTokenLocalService.completeKaleoTaskInstanceToken");
+		System.out.println("end in KaleoTaskInstanceTokenLocalServiceImpl completeKaleoTaskInstanceToken");
 		return kaleoTaskInstanceToken;
 	}
 

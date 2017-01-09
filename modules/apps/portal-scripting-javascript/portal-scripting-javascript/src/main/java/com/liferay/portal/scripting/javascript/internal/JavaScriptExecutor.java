@@ -53,7 +53,7 @@ public class JavaScriptExecutor extends BaseScriptingExecutor {
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, String script)
 		throws ScriptingException {
-
+		System.out.println("JavaScriptExecutor eval");
 		Script compiledScript = getCompiledScript(script);
 
 		try {

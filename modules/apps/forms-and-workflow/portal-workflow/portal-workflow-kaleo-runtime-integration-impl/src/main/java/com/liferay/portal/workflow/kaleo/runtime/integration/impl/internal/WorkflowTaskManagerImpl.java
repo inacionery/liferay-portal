@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.kaleo.runtime.integration.impl.internal;
+package com.liferay.portal.workflow.kaleo.runtime.integration.impl.internal;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -116,15 +116,20 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			String transitionName, String comment,
 			Map<String, Serializable> workflowContext)
 		throws WorkflowException {
-
+		System.out.println("Start in WorkflowTaskManagerImpl completeWorkflowTask");
 		Lock lock = null;
 
 		try {
+			System.out.println("start in WorkflowTaskManagerImpl lockManager.lock");
 			lock = lockManager.lock(
 				userId, WorkflowTask.class.getName(), workflowTaskInstanceId,
 				String.valueOf(userId), false, 1000);
+			System.out.println("end in WorkflowTaskManagerImpl lockManager.lock");
 		}
 		catch (PortalException pe) {
+			System.out.println("start in WorkflowTaskManagerImpl PortalException");
+			pe.printStackTrace();
+			System.out.println("end in WorkflowTaskManagerImpl PortalException");
 			if (pe instanceof DuplicateLockException) {
 				throw new WorkflowException(
 					"Workflow task " + workflowTaskInstanceId +
@@ -142,9 +147,11 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			serviceContext.setCompanyId(companyId);
 			serviceContext.setUserId(userId);
 
+			System.out.println("start in WorkflowTaskManagerImpl _taskManager.completeWorkflowTask");
 			WorkflowTask workflowTask = _taskManager.completeWorkflowTask(
 				workflowTaskInstanceId, transitionName, comment,
 				workflowContext, serviceContext);
+			System.out.println("end in WorkflowTaskManagerImpl _taskManager.completeWorkflowTask");
 
 			KaleoTaskInstanceToken kaleoTaskInstanceToken =
 				_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
@@ -154,8 +161,10 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				kaleoTaskInstanceToken.getKaleoInstanceToken();
 
 			if (workflowContext == null) {
+				System.out.println("start in WorkflowTaskManagerImpl WorkflowContextUtil.convert");
 				workflowContext = WorkflowContextUtil.convert(
 					kaleoInstanceToken.getKaleoInstance().getWorkflowContext());
+				System.out.println("end in WorkflowTaskManagerImpl WorkflowContextUtil.convert");
 			}
 
 			workflowContext.put(
@@ -167,15 +176,24 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				kaleoInstanceToken, kaleoTaskInstanceToken, workflowContext,
 				serviceContext);
 
+			System.out.println("start in WorkflowTaskManagerImpl _kaleoSignaler.signalExit");
 			_kaleoSignaler.signalExit(transitionName, executionContext);
-
+			System.out.println("end in WorkflowTaskManagerImpl _kaleoSignaler.signalExit");
+			
+			System.out.println("end in WorkflowTaskManagerImpl completeWorkflowTask");
+			
 			return workflowTask;
 		}
 		catch (Exception e) {
+			System.out.println("start in WorkflowTaskManagerImpl Exception");
+			e.printStackTrace();
+			System.out.println("end in WorkflowTaskManagerImpl Exception");
 			throw new WorkflowException("Unable to complete task", e);
 		}
 		finally {
+			System.out.println("start in WorkflowTaskManagerImpl lockManager.unlock");
 			lockManager.unlock(lock.getClassName(), lock.getKey());
+			System.out.println("end in WorkflowTaskManagerImpl lockManager.unlock");
 		}
 	}
 

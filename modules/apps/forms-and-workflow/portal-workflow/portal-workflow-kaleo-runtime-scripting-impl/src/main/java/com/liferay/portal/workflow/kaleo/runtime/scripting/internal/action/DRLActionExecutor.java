@@ -60,23 +60,24 @@ public class DRLActionExecutor implements ActionExecutor {
 	protected void doExecute(
 			KaleoAction kaleoAction, ExecutionContext executionContext)
 		throws Exception {
-
+		System.out.println("start DRLActionExecutor doExecute");
 		List<Fact<?>> facts = _rulesContextBuilder.buildRulesContext(
 			executionContext);
 
 		RulesResourceRetriever rulesResourceRetriever =
 			new RulesResourceRetriever(
 				new StringResourceRetriever(kaleoAction.getScript()));
-
+		System.out.println("start DRLActionExecutor _rulesEngine.execute");
 		Map<String, ?> results = _rulesEngine.execute(
 			rulesResourceRetriever, facts, Query.createStandardQuery());
-
+		System.out.println("end DRLActionExecutor _rulesEngine.execute");
 		Map<String, Serializable> resultsWorkflowContext =
 			(Map<String, Serializable>)results.get(
 				WorkflowContextUtil.WORKFLOW_CONTEXT_NAME);
 
 		WorkflowContextUtil.mergeWorkflowContexts(
 			executionContext, resultsWorkflowContext);
+		System.out.println("end DRLActionExecutor doExecute");
 	}
 
 	@Reference

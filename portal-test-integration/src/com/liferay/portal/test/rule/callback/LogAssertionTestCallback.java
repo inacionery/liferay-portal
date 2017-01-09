@@ -143,9 +143,14 @@ public class LogAssertionTestCallback
 		_thread = Thread.currentThread();
 		_uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
-		Thread.setDefaultUncaughtExceptionHandler(
-			new LogAssertionUncaughtExceptionHandler(
-				_uncaughtExceptionHandler));
+		if ((_uncaughtExceptionHandler != null) &&
+			(!_uncaughtExceptionHandler.getClass().equals(
+				LogAssertionUncaughtExceptionHandler.class))) {
+
+			Thread.setDefaultUncaughtExceptionHandler(
+				new LogAssertionUncaughtExceptionHandler(
+					_uncaughtExceptionHandler));
+		}
 
 		List<CaptureAppender> captureAppenders = new ArrayList<>(
 			expectedLogsList.size());

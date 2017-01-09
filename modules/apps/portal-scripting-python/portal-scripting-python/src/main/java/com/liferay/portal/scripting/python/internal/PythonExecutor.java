@@ -52,7 +52,7 @@ public class PythonExecutor extends BaseScriptingExecutor {
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, String script)
 		throws ScriptingException {
-
+		System.out.println("PythonExecutor eval");
 		if (allowedClasses != null) {
 			throw new ExecutionException(
 				"Constrained execution not supported for Python");

@@ -45,7 +45,7 @@ public class StateNodeExecutor extends BaseNodeExecutor {
 	@Override
 	protected boolean doEnter(
 		KaleoNode currentKaleoNode, ExecutionContext executionContext) {
-
+		System.out.println("StateNodeExecutor doEnter");
 		return true;
 	}
 

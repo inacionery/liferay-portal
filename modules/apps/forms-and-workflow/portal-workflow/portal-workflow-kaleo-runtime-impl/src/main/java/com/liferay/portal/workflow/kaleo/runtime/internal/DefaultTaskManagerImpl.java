@@ -340,7 +340,7 @@ public class DefaultTaskManagerImpl
 			Map<String, Serializable> workflowContext,
 			ServiceContext serviceContext)
 		throws Exception {
-
+		System.out.println("start in DefaultTaskManagerImpl doCompleteWorkflowTask");
 		KaleoTaskInstanceToken kaleoTaskInstanceToken =
 			kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
 				workflowTaskInstanceId);
@@ -353,13 +353,14 @@ public class DefaultTaskManagerImpl
 			KaleoTask kaleoTask = kaleoTaskInstanceToken.getKaleoTask();
 
 			KaleoNode currentKaleoNode = kaleoTask.getKaleoNode();
-
+			System.out.println("start in DefaultTaskManagerImpl getKaleoTransition");
 			currentKaleoNode.getKaleoTransition(transitionName);
+			System.out.println("end in DefaultTaskManagerImpl getKaleoTransition");
 		}
-
+		System.out.println("start in DefaultTaskManagerImpl updateWorkflowContext");
 		workflowContext = updateWorkflowContext(
 			workflowContext, kaleoTaskInstanceToken);
-
+		System.out.println("end in DefaultTaskManagerImpl updateWorkflowContext");
 		if (kaleoTaskInstanceToken.isCompleted()) {
 			throw new WorkflowException(
 				"Cannot complete an already completed task " +
@@ -368,15 +369,18 @@ public class DefaultTaskManagerImpl
 		}
 
 		serviceContext.setScopeGroupId(kaleoTaskInstanceToken.getGroupId());
-
+		System.out.println("start in DefaultTaskManagerImpl completeKaleoTaskInstanceToken");
 		kaleoTaskInstanceToken =
 			kaleoTaskInstanceTokenLocalService.completeKaleoTaskInstanceToken(
 				kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
 				serviceContext);
-
+		System.out.println("end in DefaultTaskManagerImpl completeKaleoTaskInstanceToken");
+		System.out.println("start in DefaultTaskManagerImpl addTaskCompletionKaleoLog");
 		kaleoLogLocalService.addTaskCompletionKaleoLog(
 			kaleoTaskInstanceToken, comment, workflowContext, serviceContext);
-
+		System.out.println("end in DefaultTaskManagerImpl addTaskCompletionKaleoLog");
+		System.out.println("end in DefaultTaskManagerImpl doCompleteWorkflowTask");
+		
 		return _kaleoWorkflowModelConverter.toWorkflowTask(
 			kaleoTaskInstanceToken, workflowContext);
 	}
@@ -395,13 +399,17 @@ public class DefaultTaskManagerImpl
 				kaleoTaskInstanceToken.getKaleoInstanceId());
 
 		if (workflowContext == null) {
+			System.out.println("start in DefaultTaskManagerImpl workflowContext WorkflowContextUtil.convert");
 			workflowContext = WorkflowContextUtil.convert(
 				kaleoInstance.getWorkflowContext());
+			System.out.println("end in DefaultTaskManagerImpl workflowContext WorkflowContextUtil.convert");
 		}
 		else {
+			System.out.println("start in DefaultTaskManagerImpl storedWorkflowContext WorkflowContextUtil.convert");
 			Map<String, Serializable> storedWorkflowContext =
 				WorkflowContextUtil.convert(kaleoInstance.getWorkflowContext());
-
+			System.out.println("end in DefaultTaskManagerImpl storedWorkflowContext WorkflowContextUtil.convert");
+			System.out.println("start in DefaultTaskManagerImpl for");
 			for (Map.Entry<String, Serializable> entry :
 					storedWorkflowContext.entrySet()) {
 
@@ -411,6 +419,7 @@ public class DefaultTaskManagerImpl
 					workflowContext.put(key, entry.getValue());
 				}
 			}
+			System.out.println("end in DefaultTaskManagerImpl for");
 		}
 
 		return workflowContext;

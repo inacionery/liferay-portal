@@ -45,7 +45,7 @@ public class RulesContextBuilderImpl implements RulesContextBuilder {
 	@Override
 	public List<Fact<?>> buildRulesContext(ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start RulesContextBuilderImpl buildRulesContext");
 		Map<String, Serializable> workflowContext =
 			executionContext.getWorkflowContext();
 
@@ -62,11 +62,11 @@ public class RulesContextBuilderImpl implements RulesContextBuilder {
 		List<Fact<?>> facts = new ArrayList<>(workflowContext.size() + 4);
 
 		facts.add(
-			new Fact<KaleoInstanceToken>(
+			new Fact<>(
 				"kaleoInstanceToken",
 				executionContext.getKaleoInstanceToken()));
 		facts.add(
-			new Fact<Map<String, Serializable>>(
+			new Fact<>(
 				"workflowContext", workflowContext));
 
 		KaleoTaskInstanceToken kaleoTaskInstanceToken =
@@ -74,22 +74,22 @@ public class RulesContextBuilderImpl implements RulesContextBuilder {
 
 		if (kaleoTaskInstanceToken != null) {
 			facts.add(
-				new Fact<KaleoTaskInstanceToken>(
+				new Fact<>(
 					"kaleoTaskInstanceToken", kaleoTaskInstanceToken));
 
 			KaleoTask kaleoTask = kaleoTaskInstanceToken.getKaleoTask();
 
-			facts.add(new Fact<String>("taskName", kaleoTask.getName()));
+			facts.add(new Fact<>("taskName", kaleoTask.getName()));
 
 			if (kaleoTaskInstanceToken.getCompletionUserId() != 0) {
 				facts.add(
-					new Fact<Long>(
+					new Fact<>(
 						"userId",
 						kaleoTaskInstanceToken.getCompletionUserId()));
 			}
 			else {
 				facts.add(
-					new Fact<Long>(
+					new Fact<>(
 						"userId", kaleoTaskInstanceToken.getUserId()));
 			}
 
@@ -98,23 +98,23 @@ public class RulesContextBuilderImpl implements RulesContextBuilder {
 					kaleoTaskInstanceToken);
 
 			facts.add(
-				new Fact<List<WorkflowTaskAssignee>>(
+				new Fact<>(
 					"workflowTaskAssignees", workflowTaskAssignees));
 		}
 		else {
 			KaleoInstanceToken kaleoInstanceToken =
 				executionContext.getKaleoInstanceToken();
 
-			facts.add(new Fact<Long>("userId", kaleoInstanceToken.getUserId()));
+			facts.add(new Fact<>("userId", kaleoInstanceToken.getUserId()));
 		}
 
 		if (executionContext.getKaleoTimerInstanceToken() != null) {
 			facts.add(
-				new Fact<KaleoTimerInstanceToken>(
+				new Fact<>(
 					"kaleoTimerInstanceToken",
 					executionContext.getKaleoTimerInstanceToken()));
 		}
-
+		System.out.println("start RulesContextBuilderImpl buildRulesContext");
 		return facts;
 	}
 

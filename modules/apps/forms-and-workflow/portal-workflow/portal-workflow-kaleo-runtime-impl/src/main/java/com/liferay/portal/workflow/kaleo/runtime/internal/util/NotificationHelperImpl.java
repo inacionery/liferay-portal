@@ -60,12 +60,16 @@ public class NotificationHelperImpl implements NotificationHelper {
 			KaleoNotification kaleoNotification,
 			ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start in NotificationHelperImpl sendKaleoNotifications");
+		
+		System.out.println("start in NotificationHelperImpl notificationMessageGenerator");
 		NotificationMessageGenerator notificationMessageGenerator =
 			_notificationMessageGeneratorFactory.
 				getNotificationMessageGenerator(
 					kaleoNotification.getTemplateLanguage());
-
+		System.out.println("end in NotificationHelperImpl notificationMessageGenerator");
+		
+		System.out.println("start in NotificationHelperImpl 1 generateMessage");
 		String notificationMessage =
 			notificationMessageGenerator.generateMessage(
 				kaleoNotification.getKaleoClassName(),
@@ -73,35 +77,43 @@ public class NotificationHelperImpl implements NotificationHelper {
 				kaleoNotification.getName(),
 				kaleoNotification.getTemplateLanguage(),
 				kaleoNotification.getTemplate(), executionContext);
-
+		System.out.println("end in NotificationHelperImpl 1 generateMessage");
+		
 		String notificationSubject = StringPool.BLANK;
 
 		if (Validator.isNotNull(kaleoNotification.getDescription())) {
+			System.out.println("start in NotificationHelperImpl 2 generateMessage");
 			notificationSubject = notificationMessageGenerator.generateMessage(
 				kaleoNotification.getKaleoClassName(),
 				kaleoNotification.getKaleoClassPK(),
 				kaleoNotification.getName(),
 				kaleoNotification.getTemplateLanguage(),
 				kaleoNotification.getDescription(), executionContext);
+			System.out.println("end in NotificationHelperImpl 2 generateMessage");
 		}
 
 		String[] notificationTypes = StringUtil.split(
 			kaleoNotification.getNotificationTypes());
 
+		System.out.println("start in NotificationHelperImpl kaleoNotificationRecipient");
 		List<KaleoNotificationRecipient> kaleoNotificationRecipient =
 			_kaleoNotificationRecipientLocalService.
 				getKaleoNotificationRecipients(
 					kaleoNotification.getKaleoNotificationId());
-
+		System.out.println("end in NotificationHelperImpl kaleoNotificationRecipient");
+		
 		for (String notificationType : notificationTypes) {
 			NotificationSender notificationSender =
 				_notificationSenderFactory.getNotificationSender(
 					notificationType);
 
+			System.out.println("start in NotificationHelperImpl sendNotification");
 			notificationSender.sendNotification(
 				kaleoNotificationRecipient, notificationSubject,
 				notificationMessage, executionContext);
+			System.out.println("end in NotificationHelperImpl sendNotification");
 		}
+		System.out.println("end in NotificationHelperImpl sendKaleoNotifications");
 	}
 
 	@Reference
