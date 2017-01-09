@@ -16,6 +16,7 @@ package com.liferay.portal.scripting.groovy.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.scripting.ScriptingExecutor;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.registry.Registry;
@@ -43,16 +44,14 @@ public class GroovyExecutorTest {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
 
 	@Before
 	public void setUp() throws Exception {
 		Registry registry = RegistryUtil.getRegistry();
 
-		ScriptingExecutor[] scriptingExecutors;
-
-		scriptingExecutors = registry.getServices(
+		ScriptingExecutor[] scriptingExecutors = registry.getServices(
 			"com.liferay.portal.kernel.scripting.ScriptingExecutor",
 			"(scripting.language=groovy)");
 
