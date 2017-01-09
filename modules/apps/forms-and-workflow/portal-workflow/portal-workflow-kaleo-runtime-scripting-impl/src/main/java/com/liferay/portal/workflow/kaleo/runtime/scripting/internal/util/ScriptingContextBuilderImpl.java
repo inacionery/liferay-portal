@@ -44,7 +44,7 @@ public class ScriptingContextBuilderImpl implements ScriptingContextBuilder {
 	public Map<String, Object> buildScriptingContext(
 			ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start ScriptingContextBuilderImpl buildScriptingContext");
 		Map<String, Serializable> workflowContext =
 			executionContext.getWorkflowContext();
 
@@ -101,7 +101,7 @@ public class ScriptingContextBuilderImpl implements ScriptingContextBuilder {
 				"kaleoTimerInstanceToken",
 				executionContext.getKaleoTimerInstanceToken());
 		}
-
+		System.out.println("end ScriptingContextBuilderImpl buildScriptingContext");
 		return inputObjects;
 	}
 

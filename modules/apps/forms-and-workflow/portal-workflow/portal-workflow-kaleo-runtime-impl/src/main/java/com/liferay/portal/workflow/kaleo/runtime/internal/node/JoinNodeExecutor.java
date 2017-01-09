@@ -43,13 +43,13 @@ public class JoinNodeExecutor extends BaseNodeExecutor {
 	protected boolean doEnter(
 			KaleoNode currentKaleoNode, ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start JoinNodeExecutor doEnter");
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
 
 		_kaleoInstanceTokenLocalService.completeKaleoInstanceToken(
 			kaleoInstanceToken.getKaleoInstanceTokenId());
-
+		System.out.println("end JoinNodeExecutor doEnter");
 		return true;
 	}
 

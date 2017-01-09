@@ -207,7 +207,7 @@ public class RubyExecutor extends BaseScriptingExecutor {
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, File scriptFile, String script)
 		throws ScriptingException {
-
+		System.out.println("RubyExecutor eval");
 		if (!_executeInSeparateThread) {
 			return doEval(
 				allowedClasses, inputObjects, outputNames, scriptFile, script);

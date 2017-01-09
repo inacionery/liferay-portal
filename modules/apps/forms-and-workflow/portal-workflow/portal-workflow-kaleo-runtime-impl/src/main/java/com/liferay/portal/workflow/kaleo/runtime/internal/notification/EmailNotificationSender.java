@@ -65,7 +65,7 @@ public class EmailNotificationSender
 			String defaultSubject, String notificationMessage,
 			ExecutionContext executionContext)
 		throws Exception {
-
+		System.out.println("start in EmailNotificationSender doSendNotification");
 		Map<String, Serializable> workflowContext =
 			executionContext.getWorkflowContext();
 
@@ -106,6 +106,7 @@ public class EmailNotificationSender
 				notificationRecipients.get(NotificationReceptionType.BCC)));
 
 		_mailService.sendEmail(mailMessage);
+		System.out.println("end in EmailNotificationSender doSendNotification");
 	}
 
 	protected InternetAddress[] getInternetAddresses(

@@ -72,7 +72,7 @@ public class ScriptingImpl implements Scripting {
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, String language, String script)
 		throws ScriptingException {
-
+		System.out.println("start ScriptingImpl eval");
 		ScriptingExecutor scriptingExecutor = _scriptingExecutors.get(language);
 
 		if (scriptingExecutor == null) {
@@ -84,8 +84,10 @@ public class ScriptingImpl implements Scripting {
 		stopWatch.start();
 
 		try {
-			return scriptingExecutor.eval(
-				allowedClasses, inputObjects, outputNames, script);
+			Map<String, Object> eval = scriptingExecutor.eval(
+					allowedClasses, inputObjects, outputNames, script);
+			System.out.println("end ScriptingImpl eval");
+			return eval;
 		}
 		catch (Exception e) {
 			throw new ScriptingException(getErrorMessage(script, e), e);
