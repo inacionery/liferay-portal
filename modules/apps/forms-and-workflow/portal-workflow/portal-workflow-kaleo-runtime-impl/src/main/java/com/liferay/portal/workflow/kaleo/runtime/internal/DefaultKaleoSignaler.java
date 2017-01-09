@@ -97,7 +97,7 @@ public class DefaultKaleoSignaler
 	public void signalExit(
 			String transitionName, ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start in DefaultKaleoSignaler signalExit");
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
 
@@ -108,7 +108,10 @@ public class DefaultKaleoSignaler
 		PathElement pathElement = new PathElement(
 			currentKaleoNode, null, executionContext);
 
+		System.out.println("start in DefaultKaleoSignaler _singleDestinationMessageSender.send");
 		_singleDestinationMessageSender.send(pathElement);
+		System.out.println("end in DefaultKaleoSignaler _singleDestinationMessageSender.send");
+		System.out.println("end in DefaultKaleoSignaler signalExit");
 	}
 
 	private String _destinationName;

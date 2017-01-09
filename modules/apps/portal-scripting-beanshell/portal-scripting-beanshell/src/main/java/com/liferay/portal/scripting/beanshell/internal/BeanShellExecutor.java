@@ -44,7 +44,7 @@ public class BeanShellExecutor extends BaseScriptingExecutor {
 			Set<String> allowedClasses, Map<String, Object> inputObjects,
 			Set<String> outputNames, String script)
 		throws ScriptingException {
-
+		System.out.println("BeanShellExecutor eval");
 		if (allowedClasses != null) {
 			throw new ExecutionException(
 				"Constrained execution not supported for BeanShell");

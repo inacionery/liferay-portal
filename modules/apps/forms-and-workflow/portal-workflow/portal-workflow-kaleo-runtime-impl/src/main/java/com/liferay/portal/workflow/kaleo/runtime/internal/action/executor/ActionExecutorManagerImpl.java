@@ -44,7 +44,7 @@ public class ActionExecutorManagerImpl implements ActionExecutorManager {
 	public void executeKaleoAction(
 			KaleoAction kaleoAction, ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start ActionExecutorManagerImpl executeKaleoAction");
 		String actionExecutorKey = getActionExecutorKey(
 			kaleoAction.getScriptLanguage(),
 			StringUtil.trim(kaleoAction.getScript()));
@@ -57,6 +57,7 @@ public class ActionExecutorManagerImpl implements ActionExecutorManager {
 		}
 
 		actionExecutor.execute(kaleoAction, executionContext);
+		System.out.println("end ActionExecutorManagerImpl executeKaleoAction");
 	}
 
 	protected String getActionExecutorKey(
