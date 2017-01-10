@@ -63,7 +63,6 @@ import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,13 +96,9 @@ public class BaseWorkflowTaskManagerTestCase {
 	}
 
 	protected BlogsEntry addBlogsEntry() throws PortalException {
-		BlogsEntry blogsEntry = BlogsEntryLocalServiceUtil.addEntry(
+		return BlogsEntryLocalServiceUtil.addEntry(
 			adminUser.getUserId(), StringUtil.randomString(),
 			StringUtil.randomString(), new Date(), serviceContext);
-
-		_blogsEntries.add(blogsEntry);
-
-		return blogsEntry;
 	}
 
 	protected DDLRecord addRecord(DDLRecordSet recordSet)
@@ -113,15 +108,11 @@ public class BaseWorkflowTaskManagerTestCase {
 
 		DDMFormValues ddmFormValues = createDDMFormValues(ddmForm);
 
-		DDLRecord record = DDLRecordLocalServiceUtil.addRecord(
+		return DDLRecordLocalServiceUtil.addRecord(
 			adminUser.getUserId(), group.getGroupId(),
 			recordSet.getRecordSetId(),
 			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
 			serviceContext);
-
-		_records.add(record);
-
-		return record;
 	}
 
 	protected DDLRecordSet addRecordSet() throws Exception, PortalException {
@@ -138,15 +129,11 @@ public class BaseWorkflowTaskManagerTestCase {
 
 		nameMap.put(LocaleUtil.US, RandomTestUtil.randomString());
 
-		DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.addRecordSet(
+		return DDLRecordSetLocalServiceUtil.addRecordSet(
 			adminUser.getUserId(), group.getGroupId(),
 			ddmStructure.getStructureId(), null, nameMap, null,
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
 			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, serviceContext);
-
-		_recordSets.add(recordSet);
-
-		return recordSet;
 	}
 
 	protected void approveWorkflowTask(User user) throws Exception {
@@ -186,8 +173,6 @@ public class BaseWorkflowTaskManagerTestCase {
 					getArchivedUserNotificationEvents(
 						user.getUserId(),
 						UserNotificationDeliveryConstants.TYPE_WEBSITE, false);
-
-			_userNotificationEvents.addAll(userNotificationEvents);
 
 			Assert.assertEquals(1, userNotificationEvents.size());
 
@@ -269,31 +254,13 @@ public class BaseWorkflowTaskManagerTestCase {
 		siteAdminUser = createUser(RoleConstants.SITE_ADMINISTRATOR);
 	}
 
-	@DeleteAfterTestRun
 	protected User adminUser;
 
 	@DeleteAfterTestRun
 	protected Group group;
 
-	@DeleteAfterTestRun
 	protected User portalContentReviewerUser;
-
 	protected ServiceContext serviceContext;
-
-	@DeleteAfterTestRun
 	protected User siteAdminUser;
-
-	@DeleteAfterTestRun
-	private final List<BlogsEntry> _blogsEntries = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<DDLRecord> _records = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<DDLRecordSet> _recordSets = new ArrayList<>();
-
-	@DeleteAfterTestRun
-	private final List<UserNotificationEvent> _userNotificationEvents =
-		new ArrayList<>();
 
 }
