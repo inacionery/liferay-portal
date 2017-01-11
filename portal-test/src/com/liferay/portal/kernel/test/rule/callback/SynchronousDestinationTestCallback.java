@@ -166,13 +166,21 @@ public class SynchronousDestinationTestCallback
 				DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR);
 			Filter rawMetaDataProcessorFilter = _registerDestinationFilter(
 				DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR);
-			Filter subscrpitionSenderFilter = _registerDestinationFilter(
+			Filter subscriptionSenderFilter = _registerDestinationFilter(
 				DestinationNames.SUBSCRIPTION_SENDER);
+			Filter workflowDefinitionLinkFilter = _registerDestinationFilter(
+				"destination.workflow_definition_link");
+			Filter workflowEngineFilter = _registerDestinationFilter(
+				DestinationNames.WORKFLOW_ENGINE);
+			Filter workflowTimerFilter = _registerDestinationFilter(
+				"destination.workflow_timer");
 
 			serviceDependencyManager.registerDependencies(
 				asyncFilter, backgroundTaskFilter, backgroundTaskStatusFilter,
 				kaleoGraphWalkerFilter, mailFilter, pdfProcessorFilter,
-				rawMetaDataProcessorFilter, subscrpitionSenderFilter);
+				rawMetaDataProcessorFilter, subscriptionSenderFilter,
+				workflowDefinitionLinkFilter, workflowEngineFilter,
+				workflowTimerFilter);
 
 			serviceDependencyManager.waitForDependencies();
 
@@ -190,6 +198,9 @@ public class SynchronousDestinationTestCallback
 			replaceDestination(DestinationNames.MAIL);
 			replaceDestination(DestinationNames.SCHEDULER_ENGINE);
 			replaceDestination(DestinationNames.SUBSCRIPTION_SENDER);
+			replaceDestination("destination.workflow_definition_link");
+			replaceDestination(DestinationNames.WORKFLOW_ENGINE);
+			replaceDestination("destination.workflow_timer");
 
 			for (String searchEngineId :
 					SearchEngineHelperUtil.getSearchEngineIds()) {
