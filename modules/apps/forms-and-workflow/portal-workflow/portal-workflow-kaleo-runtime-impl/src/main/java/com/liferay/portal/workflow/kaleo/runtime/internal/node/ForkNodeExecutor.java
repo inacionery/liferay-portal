@@ -44,7 +44,7 @@ public class ForkNodeExecutor extends BaseNodeExecutor {
 	@Override
 	protected boolean doEnter(
 		KaleoNode currentKaleoNode, ExecutionContext executionContext) {
-
+		System.out.println("ForkNodeExecutor doEnter");
 		return true;
 	}
 

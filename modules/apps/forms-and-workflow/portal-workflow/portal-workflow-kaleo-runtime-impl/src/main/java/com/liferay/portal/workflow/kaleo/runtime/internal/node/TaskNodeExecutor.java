@@ -70,6 +70,7 @@ import org.osgi.service.component.annotations.Reference;
 public class TaskNodeExecutor extends BaseNodeExecutor {
 
 	protected Date calculateDueDate(KaleoTask kaleoTask) {
+		System.out.println("start TaskNodeExecutor calculateDueDate");
 		List<KaleoTimer> kaleoTimers = kaleoTimerLocalService.getKaleoTimers(
 			KaleoNode.class.getName(), kaleoTask.getKaleoNodeId());
 
@@ -90,7 +91,7 @@ public class TaskNodeExecutor extends BaseNodeExecutor {
 
 			sortedDueDates.add(dueDate);
 		}
-
+		System.out.println("end TaskNodeExecutor calculateDueDate");
 		return sortedDueDates.first();
 	}
 
@@ -143,37 +144,48 @@ public class TaskNodeExecutor extends BaseNodeExecutor {
 	protected boolean doEnter(
 			KaleoNode currentKaleoNode, ExecutionContext executionContext)
 		throws PortalException {
-
+		System.out.println("start JoinXorNodeExecutor doEnter");
 		Map<String, Serializable> workflowContext =
 			executionContext.getWorkflowContext();
 		ServiceContext serviceContext = executionContext.getServiceContext();
-
+		
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
 
 		KaleoTask kaleoTask = _kaleoTaskLocalService.getKaleoNodeKaleoTask(
 			currentKaleoNode.getKaleoNodeId());
 
+		System.out.println("start JoinXorNodeExecutor calculateDueDate");
 		Date dueDate = calculateDueDate(kaleoTask);
+		System.out.println("end JoinXorNodeExecutor calculateDueDate");
 
+		System.out.println("start JoinXorNodeExecutor createTaskInstanceToken");
 		KaleoTaskInstanceToken kaleoTaskInstanceToken = createTaskInstanceToken(
 			executionContext, workflowContext, serviceContext,
 			kaleoInstanceToken, kaleoTask, dueDate);
+		System.out.println("end JoinXorNodeExecutor createTaskInstanceToken");
 
 		executionContext.setKaleoTaskInstanceToken(kaleoTaskInstanceToken);
 
+		System.out.println("start JoinXorNodeExecutor executeKaleoActions");
 		kaleoActionExecutor.executeKaleoActions(
 			KaleoNode.class.getName(), currentKaleoNode.getKaleoNodeId(),
 			ExecutionType.ON_ASSIGNMENT, executionContext);
+		System.out.println("end JoinXorNodeExecutor executeKaleoActions");
 
+		System.out.println("start JoinXorNodeExecutor sendKaleoNotifications");
 		notificationHelper.sendKaleoNotifications(
 			KaleoNode.class.getName(), currentKaleoNode.getKaleoNodeId(),
 			ExecutionType.ON_ASSIGNMENT, executionContext);
+		System.out.println("end JoinXorNodeExecutor sendKaleoNotifications");
 
+		System.out.println("start JoinXorNodeExecutor addTaskAssignmentKaleoLog");
 		_kaleoLogLocalService.addTaskAssignmentKaleoLog(
 			null, kaleoTaskInstanceToken, "Assigned initial task.",
 			workflowContext, serviceContext);
+		System.out.println("end JoinXorNodeExecutor addTaskAssignmentKaleoLog");
 
+		System.out.println("end JoinXorNodeExecutor doEnter");
 		return true;
 	}
 

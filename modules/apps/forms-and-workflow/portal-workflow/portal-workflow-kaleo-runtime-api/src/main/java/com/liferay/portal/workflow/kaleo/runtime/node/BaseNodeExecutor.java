@@ -42,31 +42,45 @@ public abstract class BaseNodeExecutor implements NodeExecutor {
 	public boolean enter(
 			KaleoNode currentKaleoNode, ExecutionContext executionContext)
 		throws PortalException {
+		System.out.println("start in BaseNodeExecutor enter");
 
+		System.out.println("start in BaseNodeExecutor executionContext.getKaleoInstanceToken()");
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
+		System.out.println("end in BaseNodeExecutor executionContext.getKaleoInstanceToken()");
 
 		kaleoInstanceToken.setCurrentKaleoNode(currentKaleoNode);
 
+		System.out.println("start in BaseNodeExecutor doEnter");
 		boolean performExecute = doEnter(currentKaleoNode, executionContext);
+		System.out.println("end in BaseNodeExecutor doEnter");
 
+		System.out.println("start in BaseNodeExecutor executeKaleoActions");
 		kaleoActionExecutor.executeKaleoActions(
 			KaleoNode.class.getName(), currentKaleoNode.getKaleoNodeId(),
 			ExecutionType.ON_ENTRY, executionContext);
+		System.out.println("end in BaseNodeExecutor executeKaleoActions");
 
+		System.out.println("start in BaseNodeExecutor sendKaleoNotifications");
 		notificationHelper.sendKaleoNotifications(
 			KaleoNode.class.getName(), currentKaleoNode.getKaleoNodeId(),
 			ExecutionType.ON_ENTRY, executionContext);
+		System.out.println("end in BaseNodeExecutor sendKaleoNotifications");
 
+		System.out.println("start in BaseNodeExecutor kaleoTimerLocalService.getKaleoTimer");
 		List<KaleoTimer> kaleoTimers = kaleoTimerLocalService.getKaleoTimers(
 			KaleoNode.class.getName(), currentKaleoNode.getKaleoNodeId());
+		System.out.println("end in BaseNodeExecutor kaleoTimerLocalService.getKaleoTimer");
 
+		System.out.println("start in BaseNodeExecutor addKaleoTimerInstanceTokens");
 		kaleoTimerInstanceTokenLocalService.addKaleoTimerInstanceTokens(
 			executionContext.getKaleoInstanceToken(),
 			executionContext.getKaleoTaskInstanceToken(), kaleoTimers,
 			executionContext.getWorkflowContext(),
 			executionContext.getServiceContext());
+		System.out.println("end in BaseNodeExecutor addKaleoTimerInstanceTokens");
 
+		System.out.println("end in BaseNodeExecutor enter");
 		return performExecute;
 	}
 
