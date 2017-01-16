@@ -158,19 +158,29 @@ public class SynchronousDestinationTestCallback
 				DestinationNames.BACKGROUND_TASK);
 			Filter backgroundTaskStatusFilter = _registerDestinationFilter(
 				DestinationNames.BACKGROUND_TASK_STATUS);
+			Filter kaleoGraphWalkerFilter = _registerDestinationFilter(
+				"liferay/kaleo_graph_walker");
 			Filter mailFilter = _registerDestinationFilter(
 				DestinationNames.MAIL);
 			Filter pdfProcessorFilter = _registerDestinationFilter(
 				DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR);
 			Filter rawMetaDataProcessorFilter = _registerDestinationFilter(
 				DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR);
-			Filter subscrpitionSenderFilter = _registerDestinationFilter(
+			Filter subscriptionSenderFilter = _registerDestinationFilter(
 				DestinationNames.SUBSCRIPTION_SENDER);
+			Filter workflowDefinitionLinkFilter = _registerDestinationFilter(
+				"destination.workflow_definition_link");
+			Filter workflowEngineFilter = _registerDestinationFilter(
+				DestinationNames.WORKFLOW_ENGINE);
+			Filter workflowTimerFilter = _registerDestinationFilter(
+				"destination.workflow_timer");
 
 			serviceDependencyManager.registerDependencies(
 				asyncFilter, backgroundTaskFilter, backgroundTaskStatusFilter,
-				mailFilter, pdfProcessorFilter, rawMetaDataProcessorFilter,
-				subscrpitionSenderFilter);
+				kaleoGraphWalkerFilter, mailFilter, pdfProcessorFilter,
+				rawMetaDataProcessorFilter, subscriptionSenderFilter,
+				workflowDefinitionLinkFilter, workflowEngineFilter,
+				workflowTimerFilter);
 
 			serviceDependencyManager.waitForDependencies();
 
@@ -184,9 +194,13 @@ public class SynchronousDestinationTestCallback
 				DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR);
 			replaceDestination(
 				DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR);
+			replaceDestination("liferay/kaleo_graph_walker");
 			replaceDestination(DestinationNames.MAIL);
 			replaceDestination(DestinationNames.SCHEDULER_ENGINE);
 			replaceDestination(DestinationNames.SUBSCRIPTION_SENDER);
+			replaceDestination("destination.workflow_definition_link");
+			replaceDestination(DestinationNames.WORKFLOW_ENGINE);
+			replaceDestination("destination.workflow_timer");
 
 			for (String searchEngineId :
 					SearchEngineHelperUtil.getSearchEngineIds()) {
