@@ -65,6 +65,7 @@ import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 import com.liferay.portal.test.log.CaptureAppender;
 import com.liferay.portal.test.log.Log4JLoggerTestUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -270,10 +271,16 @@ public class BaseWorkflowTaskManagerTestCase {
 	protected void setUpUsers() throws Exception {
 		adminUser = createUser(RoleConstants.ADMINISTRATOR);
 
+		_users.add(adminUser);
+
 		portalContentReviewerUser = createUser(
 			RoleConstants.PORTAL_CONTENT_REVIEWER);
 
+		_users.add(portalContentReviewerUser);
+
 		siteAdminUser = createUser(RoleConstants.SITE_ADMINISTRATOR);
+
+		_users.add(siteAdminUser);
 	}
 
 	protected User adminUser;
@@ -284,5 +291,8 @@ public class BaseWorkflowTaskManagerTestCase {
 	protected User portalContentReviewerUser;
 	protected ServiceContext serviceContext;
 	protected User siteAdminUser;
+
+	@DeleteAfterTestRun
+	private final List<User> _users = new ArrayList<>();
 
 }
