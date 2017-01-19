@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroupRole;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -105,9 +106,13 @@ public class BaseWorkflowTaskManagerTestCase {
 				Log4JLoggerTestUtil.configureLog4JLogger(
 					"com.liferay.util.mail.MailEngine", Level.OFF)) {
 
-			return BlogsEntryLocalServiceUtil.addEntry(
+			BlogsEntry blog = BlogsEntryLocalServiceUtil.addEntry(
 				adminUser.getUserId(), StringUtil.randomString(),
 				StringUtil.randomString(), new Date(), serviceContext);
+
+			_blogs.add(blog);
+
+			return blog;
 		}
 	}
 
@@ -122,11 +127,15 @@ public class BaseWorkflowTaskManagerTestCase {
 
 			DDMFormValues ddmFormValues = createDDMFormValues(ddmForm);
 
-			return DDLRecordLocalServiceUtil.addRecord(
+			DDLRecord record = DDLRecordLocalServiceUtil.addRecord(
 				adminUser.getUserId(), group.getGroupId(),
 				recordSet.getRecordSetId(),
 				DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
 				serviceContext);
+
+			_records.add(record);
+
+			return record;
 		}
 	}
 
@@ -140,15 +149,21 @@ public class BaseWorkflowTaskManagerTestCase {
 		DDMStructure ddmStructure = ddmStructureTestHelper.addStructure(
 			ddmForm, StorageType.JSON.toString());
 
+		_structures.add(ddmStructure);
+
 		Map<Locale, String> nameMap = new HashMap<>();
 
 		nameMap.put(LocaleUtil.US, RandomTestUtil.randomString());
 
-		return DDLRecordSetLocalServiceUtil.addRecordSet(
+		DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.addRecordSet(
 			adminUser.getUserId(), group.getGroupId(),
 			ddmStructure.getStructureId(), null, nameMap, null,
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
 			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, serviceContext);
+
+		_recordSets.add(recordSet);
+
+		return recordSet;
 	}
 
 	protected void approveWorkflowTask(User user) throws Exception {
@@ -204,8 +219,11 @@ public class BaseWorkflowTaskManagerTestCase {
 
 			userNotificationEvent.setArchived(true);
 
-			UserNotificationEventLocalServiceUtil.updateUserNotificationEvent(
-				userNotificationEvent);
+			userNotificationEvent =
+				UserNotificationEventLocalServiceUtil.
+					updateUserNotificationEvent(userNotificationEvent);
+
+			_notificationEvents.add(userNotificationEvent);
 		}
 	}
 
@@ -243,8 +261,9 @@ public class BaseWorkflowTaskManagerTestCase {
 
 		long[] userIds = {user.getUserId()};
 
-		UserGroupRoleLocalServiceUtil.addUserGroupRoles(
-			userIds, group.getGroupId(), role.getRoleId());
+		_groupRoles.addAll(
+			UserGroupRoleLocalServiceUtil.addUserGroupRoles(
+				userIds, group.getGroupId(), role.getRoleId()));
 
 		return user;
 	}
@@ -291,6 +310,25 @@ public class BaseWorkflowTaskManagerTestCase {
 	protected User portalContentReviewerUser;
 	protected ServiceContext serviceContext;
 	protected User siteAdminUser;
+
+	@DeleteAfterTestRun
+	private final List<BlogsEntry> _blogs = new ArrayList<>();
+
+	@DeleteAfterTestRun
+	private final List<UserGroupRole> _groupRoles = new ArrayList<>();
+
+	@DeleteAfterTestRun
+	private final List<UserNotificationEvent> _notificationEvents =
+		new ArrayList<>();
+
+	@DeleteAfterTestRun
+	private final List<DDLRecord> _records = new ArrayList<>();
+
+	@DeleteAfterTestRun
+	private final List<DDLRecordSet> _recordSets = new ArrayList<>();
+
+	@DeleteAfterTestRun
+	private final List<DDMStructure> _structures = new ArrayList<>();
 
 	@DeleteAfterTestRun
 	private final List<User> _users = new ArrayList<>();
