@@ -17,7 +17,6 @@ package com.liferay.portal.workflow.kaleo.service.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.workflow.kaleo.exception.NoSuchDefinitionVersionException;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
@@ -36,11 +35,11 @@ public class KaleoDefinitionVersionLocalServiceImpl
 
 	@Override
 	public KaleoDefinitionVersion getKaleoDefinitionVersion(
-			String name, String version, ServiceContext serviceContext)
+			long kaleoDefinitionId, String version)
 		throws PortalException {
 
-		return kaleoDefinitionVersionPersistence.findByC_N_V(
-			serviceContext.getCompanyId(), name, version);
+		return kaleoDefinitionVersionPersistence.findByD_V(
+			kaleoDefinitionId, version);
 	}
 
 	@Override
