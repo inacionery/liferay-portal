@@ -64,6 +64,10 @@ AUI.add(
 						value: ''
 					},
 
+					getRolesURL: {
+						value: ''
+					},
+
 					layout: {
 					},
 
@@ -422,7 +426,7 @@ AUI.add(
 						var modifiedDate = new Date(event.modifiedDate);
 
 						var autosaveMessage = A.Lang.sub(
-							Liferay.Language.get('draft-saved-at-x'),
+							Liferay.Language.get('draft-saved-on-x'),
 							[
 								modifiedDate
 							]
