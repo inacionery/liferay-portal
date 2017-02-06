@@ -49,7 +49,7 @@ AUI.add(
 						value: {
 							and: Liferay.Language.get('and'),
 							cancel: Liferay.Language.get('cancel'),
-							description: Liferay.Language.get('define-here-a-condition-to-change-fields-and-elements-from-your-current-form'),
+							description: Liferay.Language.get('define-condition-and-action-to-change-fields-and-elements-on-the-form'),
 							enable: Liferay.Language.get('enable'),
 							if: Liferay.Language.get('if'),
 							jumpToPage: Liferay.Language.get('jump-to-page'),
@@ -301,10 +301,22 @@ AUI.add(
 
 						var conditions = [];
 
+						var logicOperator = instance.get('logicOperator');
+
+						var strings = instance.get('strings');
+
+						if (logicOperator === 'OR') {
+							logicOperator = strings.or;
+						}
+						else {
+							logicOperator = strings.and;
+						}
+
 						for (var i = 0; i < instance._conditionsIndexes.length; i++) {
 							var index = instance._conditionsIndexes[i];
 
 							var condition = {
+								logicOperator: logicOperator.toLowerCase(),
 								'operands': [
 									{
 										label: instance._getFieldLabel(instance._getFirstOperandValue(index)),
