@@ -14,4 +14,5 @@ dependencies {
 	provided project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-form-evaluator")
 
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.test.util", version: "2.0.0"
+	testCompile group: "org.jabsorb", name: "jabsorb", version: "1.3.1"
 }
