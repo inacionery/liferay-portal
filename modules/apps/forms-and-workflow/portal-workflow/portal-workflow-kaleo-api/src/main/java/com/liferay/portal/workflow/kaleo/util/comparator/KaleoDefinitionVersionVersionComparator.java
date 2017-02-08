@@ -14,17 +14,16 @@
 
 package com.liferay.portal.workflow.kaleo.util.comparator;
 
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
-
-import java.util.Comparator;
 
 /**
  * @author Inácio Nery
  */
 public class KaleoDefinitionVersionVersionComparator
-	implements Comparator<KaleoDefinitionVersion> {
+	extends OrderByComparator<KaleoDefinitionVersion> {
 
 	public KaleoDefinitionVersionVersionComparator() {
 		this(false);
@@ -77,9 +76,33 @@ public class KaleoDefinitionVersionVersionComparator
 		}
 	}
 
+	@Override
+	public String getOrderBy() {
+		if (_ascending) {
+			return _ORDER_BY_ASC;
+		}
+		else {
+			return _ORDER_BY_DESC;
+		}
+	}
+
+	@Override
+	public String[] getOrderByFields() {
+		return _ORDER_BY_FIELDS;
+	}
+
+	@Override
 	public boolean isAscending() {
 		return _ascending;
 	}
+
+	private static final String _ORDER_BY_ASC =
+		"KaleoDefinitionVersion.version ASC";
+
+	private static final String _ORDER_BY_DESC =
+		"KaleoDefinitionVersion.version DESC";
+
+	private static final String[] _ORDER_BY_FIELDS = {"version"};
 
 	private final boolean _ascending;
 

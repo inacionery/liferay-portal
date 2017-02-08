@@ -218,12 +218,51 @@ public class KaleoDefinitionVersionPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_N() throws Exception {
+		_persistence.countByC_N(RandomTestUtil.nextLong(), StringPool.BLANK);
+
+		_persistence.countByC_N(0L, StringPool.NULL);
+
+		_persistence.countByC_N(0L, (String)null);
+	}
+
+	@Test
+	public void testCountByC_A() throws Exception {
+		_persistence.countByC_A(RandomTestUtil.nextLong(),
+			RandomTestUtil.randomBoolean());
+
+		_persistence.countByC_A(0L, RandomTestUtil.randomBoolean());
+	}
+
+	@Test
 	public void testCountByD_V() throws Exception {
 		_persistence.countByD_V(RandomTestUtil.nextLong(), StringPool.BLANK);
 
 		_persistence.countByD_V(0L, StringPool.NULL);
 
 		_persistence.countByD_V(0L, (String)null);
+	}
+
+	@Test
+	public void testCountByC_N_V() throws Exception {
+		_persistence.countByC_N_V(RandomTestUtil.nextLong(), StringPool.BLANK,
+			StringPool.BLANK);
+
+		_persistence.countByC_N_V(0L, StringPool.NULL, StringPool.NULL);
+
+		_persistence.countByC_N_V(0L, (String)null, (String)null);
+	}
+
+	@Test
+	public void testCountByC_N_A() throws Exception {
+		_persistence.countByC_N_A(RandomTestUtil.nextLong(), StringPool.BLANK,
+			RandomTestUtil.randomBoolean());
+
+		_persistence.countByC_N_A(0L, StringPool.NULL,
+			RandomTestUtil.randomBoolean());
+
+		_persistence.countByC_N_A(0L, (String)null,
+			RandomTestUtil.randomBoolean());
 	}
 
 	@Test
@@ -476,6 +515,19 @@ public class KaleoDefinitionVersionPersistenceTest {
 				existingKaleoDefinitionVersion.getKaleoDefinitionId()),
 			ReflectionTestUtil.<Long>invoke(existingKaleoDefinitionVersion,
 				"getOriginalKaleoDefinitionId", new Class<?>[0]));
+		Assert.assertTrue(Objects.equals(
+				existingKaleoDefinitionVersion.getVersion(),
+				ReflectionTestUtil.invoke(existingKaleoDefinitionVersion,
+					"getOriginalVersion", new Class<?>[0])));
+
+		Assert.assertEquals(Long.valueOf(
+				existingKaleoDefinitionVersion.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingKaleoDefinitionVersion,
+				"getOriginalCompanyId", new Class<?>[0]));
+		Assert.assertTrue(Objects.equals(
+				existingKaleoDefinitionVersion.getName(),
+				ReflectionTestUtil.invoke(existingKaleoDefinitionVersion,
+					"getOriginalName", new Class<?>[0])));
 		Assert.assertTrue(Objects.equals(
 				existingKaleoDefinitionVersion.getVersion(),
 				ReflectionTestUtil.invoke(existingKaleoDefinitionVersion,

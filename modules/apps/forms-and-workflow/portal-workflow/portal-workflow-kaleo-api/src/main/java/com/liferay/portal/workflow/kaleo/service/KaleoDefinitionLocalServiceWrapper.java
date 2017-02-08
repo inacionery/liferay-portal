@@ -128,6 +128,14 @@ public class KaleoDefinitionLocalServiceWrapper
 
 	@Override
 	public com.liferay.portal.workflow.kaleo.model.KaleoDefinition fetchKaleoDefinition(
+		long companyId, java.lang.String name, int version)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kaleoDefinitionLocalService.fetchKaleoDefinition(companyId,
+			name, version);
+	}
+
+	@Override
+	public com.liferay.portal.workflow.kaleo.model.KaleoDefinition fetchKaleoDefinition(
 		long kaleoDefinitionId) {
 		return _kaleoDefinitionLocalService.fetchKaleoDefinition(kaleoDefinitionId);
 	}

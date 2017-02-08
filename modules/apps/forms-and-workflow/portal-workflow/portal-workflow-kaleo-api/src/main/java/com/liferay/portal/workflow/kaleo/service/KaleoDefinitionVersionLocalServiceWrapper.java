@@ -124,6 +124,14 @@ public class KaleoDefinitionVersionLocalServiceWrapper
 
 	@Override
 	public com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion getKaleoDefinitionVersion(
+		long companyId, java.lang.String name, java.lang.String version)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersion(companyId,
+			name, version);
+	}
+
+	@Override
+	public com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion getKaleoDefinitionVersion(
 		long kaleoDefinitionId, java.lang.String version)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersion(kaleoDefinitionId,
@@ -171,6 +179,31 @@ public class KaleoDefinitionVersionLocalServiceWrapper
 	@Override
 	public int getKaleoDefinitionVersionsCount() {
 		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersionsCount();
+	}
+
+	@Override
+	public int getKaleoDefinitionVersionsCount(long companyId) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersionsCount(companyId);
+	}
+
+	@Override
+	public int getKaleoDefinitionVersionsCount(long companyId, boolean active) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersionsCount(companyId,
+			active);
+	}
+
+	@Override
+	public int getKaleoDefinitionVersionsCount(long companyId,
+		java.lang.String name) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersionsCount(companyId,
+			name);
+	}
+
+	@Override
+	public int getKaleoDefinitionVersionsCount(long companyId,
+		java.lang.String name, boolean active) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersionsCount(companyId,
+			name, active);
 	}
 
 	/**
@@ -253,6 +286,47 @@ public class KaleoDefinitionVersionLocalServiceWrapper
 		int start, int end) {
 		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(start,
 			end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> getKaleoDefinitionVersions(
+		long companyId, boolean active, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> orderByComparator) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(companyId,
+			active, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> getKaleoDefinitionVersions(
+		long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> orderByComparator) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(companyId,
+			start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> getKaleoDefinitionVersions(
+		long companyId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(companyId,
+			name);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> getKaleoDefinitionVersions(
+		long companyId, java.lang.String name, boolean active, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> orderByComparator) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(companyId,
+			name, active, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> getKaleoDefinitionVersions(
+		long companyId, java.lang.String name, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion> orderByComparator) {
+		return _kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(companyId,
+			name, start, end, orderByComparator);
 	}
 
 	/**

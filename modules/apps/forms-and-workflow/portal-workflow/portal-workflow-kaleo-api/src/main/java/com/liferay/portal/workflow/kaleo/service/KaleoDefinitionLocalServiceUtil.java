@@ -125,6 +125,12 @@ public class KaleoDefinitionLocalServiceUtil {
 	}
 
 	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinition fetchKaleoDefinition(
+		long companyId, java.lang.String name, int version)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().fetchKaleoDefinition(companyId, name, version);
+	}
+
+	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinition fetchKaleoDefinition(
 		long kaleoDefinitionId) {
 		return getService().fetchKaleoDefinition(kaleoDefinitionId);
 	}

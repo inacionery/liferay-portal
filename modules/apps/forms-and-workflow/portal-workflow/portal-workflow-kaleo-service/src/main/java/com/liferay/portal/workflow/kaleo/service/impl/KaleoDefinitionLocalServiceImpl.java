@@ -158,7 +158,7 @@ public class KaleoDefinitionLocalServiceImpl
 
 		updateKaleoDefinitionVersionActive(
 			kaleoDefinition.getKaleoDefinitionId(),
-			String.valueOf(kaleoDefinition.getVersion()), false);
+			getVersion(kaleoDefinition.getVersion()), false);
 	}
 
 	@Override
@@ -253,6 +253,15 @@ public class KaleoDefinitionLocalServiceImpl
 
 		kaleoTransitionLocalService.deleteKaleoDefinitionKaleoTransitions(
 			kaleoDefinition.getKaleoDefinitionId());
+	}
+
+	@Override
+	public KaleoDefinition fetchKaleoDefinition(
+			long companyId, String name, int version)
+		throws PortalException {
+
+		return kaleoDefinitionPersistence.fetchByC_N_V(
+			companyId, name, version);
 	}
 
 	@Override
@@ -432,7 +441,7 @@ public class KaleoDefinitionLocalServiceImpl
 
 		updateKaleoDefinitionVersionTitle(
 			kaleoDefinition.getKaleoDefinitionId(),
-			String.valueOf(kaleoDefinition.getVersion()), title);
+			getVersion(kaleoDefinition.getVersion()), title);
 
 		return kaleoDefinition;
 	}
