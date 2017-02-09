@@ -219,14 +219,8 @@ public class DefaultWorkflowEngineImpl
 			Boolean completed, ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.getKaleoInstancesCount(
-				userId, assetClassName, assetClassPK, completed,
-				serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.getKaleoInstancesCount(
+			userId, assetClassName, assetClassPK, completed, serviceContext);
 	}
 
 	@Override
@@ -235,13 +229,8 @@ public class DefaultWorkflowEngineImpl
 			ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.getKaleoInstancesCount(
-				userId, assetClassNames, completed, serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.getKaleoInstancesCount(
+			userId, assetClassNames, completed, serviceContext);
 	}
 
 	@Override
@@ -250,14 +239,9 @@ public class DefaultWorkflowEngineImpl
 			boolean completed, ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.getKaleoInstancesCount(
-				workflowDefinitionName, workflowDefinitionVersion, completed,
-				serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.getKaleoInstancesCount(
+			workflowDefinitionName, workflowDefinitionVersion, completed,
+			serviceContext);
 	}
 
 	@Override
@@ -364,14 +348,9 @@ public class DefaultWorkflowEngineImpl
 			ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.searchCount(
-				userId, assetType, nodeName, kaleoDefinitionName, completed,
-				serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.searchCount(
+			userId, assetType, nodeName, kaleoDefinitionName, completed,
+			serviceContext);
 	}
 
 	public void setKaleoSignaler(KaleoSignaler kaleoSignaler) {
