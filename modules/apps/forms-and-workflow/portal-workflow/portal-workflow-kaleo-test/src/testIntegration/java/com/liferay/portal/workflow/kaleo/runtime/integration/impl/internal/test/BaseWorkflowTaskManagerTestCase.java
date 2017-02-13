@@ -24,12 +24,20 @@ import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
+import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
+import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalFolder;
+import com.liferay.journal.model.JournalFolderConstants;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
@@ -92,12 +100,14 @@ public class BaseWorkflowTaskManagerTestCase {
 		setUpUsers();
 	}
 
-	protected void activeSingleApproverWorkflow(String className, long classPK)
+	protected void activeSingleApproverWorkflow(
+			String className, long classPK, long typePK)
 		throws PortalException {
 
 		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
 			adminUser.getUserId(), TestPropsValues.getCompanyId(),
-			group.getGroupId(), className, classPK, 0, "Single Approver@1");
+			group.getGroupId(), className, classPK, typePK,
+			"Single Approver@1");
 	}
 
 	protected BlogsEntry addBlogsEntry() throws PortalException {
@@ -108,6 +118,59 @@ public class BaseWorkflowTaskManagerTestCase {
 			return BlogsEntryLocalServiceUtil.addEntry(
 				adminUser.getUserId(), StringUtil.randomString(),
 				StringUtil.randomString(), new Date(), serviceContext);
+		}
+	}
+
+	protected void addDDMStructure() throws Exception, PortalException {
+		long groupId = group.getGroupId();
+
+		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm();
+
+		ddmStructure = DDMStructureTestUtil.addStructure(
+			groupId, JournalArticle.class.getName(), ddmForm);
+
+		ddmTemplate = DDMTemplateTestUtil.addTemplate(
+			groupId, ddmStructure.getStructureId(),
+			PortalUtil.getClassNameId(JournalArticle.class));
+
+		structurePK = ddmStructure.getPrimaryKey();
+	}
+
+	protected JournalArticle addJournalArticle(long folderId)
+		throws PortalException {
+
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					"com.liferay.util.mail.MailEngine", Level.OFF)) {
+
+			Map<Locale, String> titleMap = new HashMap<>();
+
+			titleMap.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString());
+
+			Map<Locale, String> descriptionMap = new HashMap<>();
+
+			descriptionMap.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString());
+
+			String content = DDMStructureTestUtil.getSampleStructuredContent();
+
+			return JournalArticleLocalServiceUtil.addArticle(
+				adminUser.getUserId(), group.getGroupId(), folderId, titleMap,
+				descriptionMap, content, ddmStructure.getStructureKey(),
+				ddmTemplate.getTemplateKey(), serviceContext);
+		}
+	}
+
+	protected JournalFolder addJournalFolder() throws PortalException {
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					"com.liferay.util.mail.MailEngine", Level.OFF)) {
+
+			return JournalFolderLocalServiceUtil.addFolder(
+				adminUser.getUserId(), group.getGroupId(),
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, "Folder Name",
+				"This is a test folder.", serviceContext);
 		}
 	}
 
@@ -149,24 +212,6 @@ public class BaseWorkflowTaskManagerTestCase {
 			ddmStructure.getStructureId(), null, nameMap, null,
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
 			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, serviceContext);
-	}
-
-	protected void approveWorkflowTask(User user) throws Exception {
-		try (CaptureAppender captureAppender =
-				Log4JLoggerTestUtil.configureLog4JLogger(
-					"com.liferay.util.mail.MailEngine", Level.OFF)) {
-			WorkflowTask workflowTask = getWorkflowTask();
-
-			PermissionChecker userPermissionChecker =
-				PermissionCheckerFactoryUtil.create(user);
-
-			PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
-
-			WorkflowTaskManagerUtil.completeWorkflowTask(
-				group.getCompanyId(), user.getUserId(),
-				workflowTask.getWorkflowTaskId(), "approve", StringPool.BLANK,
-				null);
-		}
 	}
 
 	protected void assignWorkflowTaskToUser(User user, User assigneeUser)
@@ -221,6 +266,26 @@ public class BaseWorkflowTaskManagerTestCase {
 
 		Assert.assertEquals(
 			workflowInstances.toString(), 1, workflowInstances.size());
+	}
+
+	protected void completeWorkflowTask(User user, String transition)
+		throws Exception {
+
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					"com.liferay.util.mail.MailEngine", Level.OFF)) {
+			WorkflowTask workflowTask = getWorkflowTask();
+
+			PermissionChecker userPermissionChecker =
+				PermissionCheckerFactoryUtil.create(user);
+
+			PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+
+			WorkflowTaskManagerUtil.completeWorkflowTask(
+				group.getCompanyId(), user.getUserId(),
+				workflowTask.getWorkflowTaskId(), transition, StringPool.BLANK,
+				null);
+		}
 	}
 
 	protected DDMFormValues createDDMFormValues(DDMForm ddmForm) {
@@ -286,7 +351,26 @@ public class BaseWorkflowTaskManagerTestCase {
 		_users.add(siteAdminUser);
 	}
 
+	protected void updateJournalFolder(
+			long folderId, long ddmStructureId, int restrictionType)
+		throws PortalException {
+
+		long[] ddmStructureIds = {ddmStructureId};
+
+		JournalFolderLocalServiceUtil.updateFolder(
+			adminUser.getUserId(), group.getGroupId(), folderId,
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, "Folder Name",
+			"This is a test folder.", ddmStructureIds, restrictionType, false,
+			serviceContext);
+	}
+
 	protected User adminUser;
+
+	@DeleteAfterTestRun
+	protected DDMStructure ddmStructure;
+
+	@DeleteAfterTestRun
+	protected DDMTemplate ddmTemplate;
 
 	@DeleteAfterTestRun
 	protected Group group;
@@ -294,6 +378,7 @@ public class BaseWorkflowTaskManagerTestCase {
 	protected User portalContentReviewerUser;
 	protected ServiceContext serviceContext;
 	protected User siteAdminUser;
+	protected long structurePK;
 
 	@DeleteAfterTestRun
 	private final List<User> _users = new ArrayList<>();
