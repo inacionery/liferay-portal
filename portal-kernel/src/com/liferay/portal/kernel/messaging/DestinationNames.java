@@ -135,6 +135,9 @@ public interface DestinationNames {
 
 	public static final String WORKFLOW_DEFINITION =
 		"liferay/workflow_definition";
+	
+	public static final String WORKFLOW_DEFINITION_VERSION =
+		"liferay/workflow_definition_version";
 
 	public static final String WORKFLOW_ENGINE = "liferay/workflow_engine";
 

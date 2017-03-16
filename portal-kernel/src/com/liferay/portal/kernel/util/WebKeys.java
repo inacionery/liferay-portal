@@ -669,6 +669,8 @@ public interface WebKeys {
 
 	public static final String WORKFLOW_DEFINITION = "WORKFLOW_DEFINITION";
 
+	public static final String WORKFLOW_DEFINITION_VERSION = "WORKFLOW_DEFINITION_VERSION";
+
 	public static final String WORKFLOW_DEFINITIONS = "WORKFLOW_DEFINITIONS";
 
 	public static final String WORKFLOW_INSTANCE = "WORKFLOW_INSTANCE";

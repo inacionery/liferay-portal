@@ -47,6 +47,10 @@ public class DefaultWorkflowDestinationEventListener
 		MessageBusUtil.unregisterMessageListener(
 			DestinationNames.WORKFLOW_DEFINITION,
 			_workflowDefinitionManagerListener);
+		
+		MessageBusUtil.unregisterMessageListener(
+			DestinationNames.WORKFLOW_DEFINITION_VERSION,
+			_workflowDefinitionVersionManagerListener);
 
 		MessageBusUtil.unregisterMessageListener(
 			DestinationNames.WORKFLOW_ENGINE, _workflowEngineManagerListener);
@@ -82,6 +86,10 @@ public class DefaultWorkflowDestinationEventListener
 		MessageBusUtil.registerMessageListener(
 			DestinationNames.WORKFLOW_DEFINITION,
 			_workflowDefinitionManagerListener);
+		
+		MessageBusUtil.registerMessageListener(
+			DestinationNames.WORKFLOW_DEFINITION_VERSION,
+			_workflowDefinitionVersionManagerListener);
 
 		MessageBusUtil.registerMessageListener(
 			DestinationNames.WORKFLOW_ENGINE, _workflowEngineManagerListener);
@@ -107,6 +115,12 @@ public class DefaultWorkflowDestinationEventListener
 		MessageListener workflowDefinitionManagerListener) {
 
 		_workflowDefinitionManagerListener = workflowDefinitionManagerListener;
+	}
+	
+	public void setWorkflowDefinitionVersionManagerListener(
+			MessageListener workflowDefinitionVersionManagerListener) {
+		
+		_workflowDefinitionVersionManagerListener = workflowDefinitionVersionManagerListener;
 	}
 
 	public void setWorkflowEngineManagerListener(
@@ -153,6 +167,7 @@ public class DefaultWorkflowDestinationEventListener
 
 	private MessageListener _workflowComparatorFactoryListener;
 	private MessageListener _workflowDefinitionManagerListener;
+	private MessageListener _workflowDefinitionVersionManagerListener;
 	private MessageListener _workflowEngineManagerListener;
 	private String _workflowEngineName;
 	private MessageListener _workflowInstanceManagerListener;

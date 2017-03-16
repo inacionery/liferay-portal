@@ -45,6 +45,11 @@
 		<property name="synchronousDestinationName" value="liferay/workflow_definition" />
 		<property name="synchronousMessageSenderMode" value="DIRECT" />
 	</bean>
+	<bean class="com.liferay.portal.workflow.WorkflowDefinitionVersionManagerProxyBean" id="com.liferay.portal.workflow.WorkflowDefinitionVersionManagerProxyBean">
+		<property name="destinationName" value="liferay/workflow_definition_version" />
+		<property name="synchronousDestinationName" value="liferay/workflow_definition_version" />
+		<property name="synchronousMessageSenderMode" value="DIRECT" />
+	</bean>
 	<bean class="com.liferay.portal.workflow.WorkflowEngineManagerProxyBean" id="com.liferay.portal.workflow.WorkflowEngineManagerProxyBean">
 		<property name="destinationName" value="liferay/workflow_engine" />
 		<property name="synchronousDestinationName" value="liferay/workflow_engine" />
@@ -81,6 +86,9 @@
 	<bean class="com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil">
 		<property name="workflowDefinitionManager" ref="com.liferay.portal.workflow.WorkflowDefinitionManagerProxyBean" />
 	</bean>
+	<bean class="com.liferay.portal.kernel.workflow.WorkflowDefinitionVersionManagerUtil">
+		<property name="workflowDefinitionVersionManager" ref="com.liferay.portal.workflow.WorkflowDefinitionVersionManagerProxyBean" />
+	</bean>
 	<bean class="com.liferay.portal.kernel.workflow.WorkflowEngineManagerUtil">
 		<property name="workflowEngineManager" ref="com.liferay.portal.workflow.WorkflowEngineManagerProxyBean" />
 	</bean>
@@ -113,6 +121,12 @@
 				</bean>
 				<bean class="com.liferay.portal.kernel.messaging.DestinationConfiguration">
 					<constructor-arg name="destinationName" value="liferay/workflow_definition" />
+					<constructor-arg name="destinationType">
+						<util:constant static-field="com.liferay.portal.kernel.messaging.DestinationConfiguration.DESTINATION_TYPE_SYNCHRONOUS" />
+					</constructor-arg>
+				</bean>
+				<bean class="com.liferay.portal.kernel.messaging.DestinationConfiguration">
+					<constructor-arg name="destinationName" value="liferay/workflow_definition_version" />
 					<constructor-arg name="destinationType">
 						<util:constant static-field="com.liferay.portal.kernel.messaging.DestinationConfiguration.DESTINATION_TYPE_SYNCHRONOUS" />
 					</constructor-arg>
