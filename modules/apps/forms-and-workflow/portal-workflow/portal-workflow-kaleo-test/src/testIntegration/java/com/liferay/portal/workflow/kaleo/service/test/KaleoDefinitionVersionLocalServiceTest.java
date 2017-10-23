@@ -103,28 +103,6 @@ public class KaleoDefinitionVersionLocalServiceTest {
 		Assert.assertEquals("2.0", kaleoDefinitionVersion.getVersion());
 	}
 
-	@Test
-	public void testUpdateKaleoDefinitionShouldIncrementVersion2()
-		throws Exception {
-
-		KaleoDefinition kaleoDefinition = addKaleoDefinition();
-
-		kaleoDefinition = updateKaleoDefinition(kaleoDefinition);
-
-		deactivateKaleoDefinition(kaleoDefinition);
-
-		deleteKaleoDefinition(kaleoDefinition);
-
-		kaleoDefinition = updateKaleoDefinition(kaleoDefinition);
-
-		KaleoDefinitionVersion kaleoDefinitionVersion =
-			KaleoDefinitionVersionLocalServiceUtil.getKaleoDefinitionVersion(
-				kaleoDefinition.getCompanyId(), kaleoDefinition.getName(),
-				getVersion(kaleoDefinition.getVersion()));
-
-		Assert.assertEquals("3.0", kaleoDefinitionVersion.getVersion());
-	}
-
 	protected KaleoDefinition addKaleoDefinition()
 		throws IOException, PortalException {
 
