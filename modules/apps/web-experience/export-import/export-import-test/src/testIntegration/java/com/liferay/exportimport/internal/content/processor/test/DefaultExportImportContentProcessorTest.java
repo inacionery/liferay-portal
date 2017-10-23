@@ -33,6 +33,7 @@ import com.liferay.exportimport.test.util.TestReaderWriter;
 import com.liferay.exportimport.test.util.TestUserIdStrategy;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.test.util.JournalTestUtil;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -49,7 +50,6 @@ import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -92,6 +92,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -116,7 +117,10 @@ public class DefaultExportImportContentProcessorTest {
 	@Before
 	public void setUp() throws Exception {
 		_liveGroup = GroupTestUtil.addGroup();
-		_stagingGroup = GroupTestUtil.addGroup();
+
+		GroupTestUtil.enableLocalStaging(_liveGroup);
+
+		_stagingGroup = _liveGroup.getStagingGroup();
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -202,6 +206,17 @@ public class DefaultExportImportContentProcessorTest {
 		_exportImportContentProcessor =
 			ExportImportContentProcessorRegistryUtil.
 				getExportImportContentProcessor(String.class.getName());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		GroupLocalServiceUtil.deleteGroup(_liveGroup);
+
+		try {
+			GroupLocalServiceUtil.deleteGroup(_stagingGroup);
+		}
+		catch (NoSuchGroupException nsge) {
+		}
 	}
 
 	@Test
@@ -931,20 +946,14 @@ public class DefaultExportImportContentProcessorTest {
 
 	private ExportImportContentProcessor<String> _exportImportContentProcessor;
 	private FileEntry _fileEntry;
-
-	@DeleteAfterTestRun
 	private Group _liveGroup;
-
 	private Layout _livePrivateLayout;
 	private Layout _livePublicLayout;
 	private final Pattern _pattern = Pattern.compile("href=|\\{|\\[");
 	private PortletDataContext _portletDataContextExport;
 	private PortletDataContext _portletDataContextImport;
 	private StagedModel _referrerStagedModel;
-
-	@DeleteAfterTestRun
 	private Group _stagingGroup;
-
 	private Layout _stagingPrivateLayout;
 	private Layout _stagingPublicLayout;
 
