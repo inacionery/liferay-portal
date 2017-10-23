@@ -548,6 +548,35 @@ public class DefaultExportImportContentProcessorTest {
 	}
 
 	@Test
+	public void testImportLayoutReferencesFriendlyURL() throws Exception {
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("<a href='");
+		sb.append(PortalUtil.getPathContext());
+		sb.append("/web");
+		sb.append(_stagingGroup.getFriendlyURL());
+		sb.append("'>Link</a>");
+
+		String content = sb.toString();
+
+		content = _exportImportContentProcessor.replaceExportContentReferences(
+			_portletDataContextExport, _referrerStagedModel, content, true,
+			false);
+		content = _exportImportContentProcessor.replaceImportContentReferences(
+			_portletDataContextImport, _referrerStagedModel, content);
+
+		StringBundler expectedContent = new StringBundler(5);
+
+		expectedContent.append("<a href='");
+		expectedContent.append(PortalUtil.getPathContext());
+		expectedContent.append("/web");
+		expectedContent.append(_liveGroup.getFriendlyURL());
+		expectedContent.append("'>Link</a>");
+
+		Assert.assertEquals(expectedContent.toString(), content);
+	}
+
+	@Test
 	public void testImportLinksToLayouts() throws Exception {
 		String content = replaceLinksToLayoutsParameters(
 			getContent("layout_links.txt"), _stagingPrivateLayout,
