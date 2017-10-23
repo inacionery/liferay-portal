@@ -1069,7 +1069,8 @@ public class DefaultTextExportImportContentProcessor
 				_groupLocalService.fetchGroupByUuidAndCompanyId(
 					groupUuid, portletDataContext.getCompanyId());
 
-			if (groupFriendlyUrlGroup == null) {
+			if ((groupFriendlyUrlGroup == null) ||
+				groupFriendlyUrlGroup.isStaged()) {
 
 				// Fall back to the current group if the group is not found
 
