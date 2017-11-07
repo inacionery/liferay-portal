@@ -45,6 +45,5 @@ linearData.add(linearDataCol2);
 		<div class="col">
 			<chart:line columns="<%= linearData %>" id="line" />
 		</div>
-
 	</div>
 </div>

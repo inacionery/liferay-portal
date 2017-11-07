@@ -24,7 +24,7 @@ import com.liferay.portal.workflow.analytics.WorkflowAnalyticsTracker;
 import com.liferay.portal.workflow.analytics.internal.metrics.WorkflowAnalyticsEventEntry;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,9 +75,9 @@ public class WorkflowAnalyticsServlet extends HttpServlet {
 
 			JSONObject jsonObject = workflowAnalytics.getData(
 				_workflowAnalyticsEventEntries, request);
-			
+
 			response.setContentType(ContentTypes.APPLICATION_JSON);
-	        response.setStatus(HttpServletResponse.SC_OK);
+			response.setStatus(HttpServletResponse.SC_OK);
 
 			ServletResponseUtil.write(response, jsonObject.toJSONString());
 		}

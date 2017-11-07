@@ -20,8 +20,13 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.workflow.analytics.WorkflowAnalytics;
 
+import java.time.Duration;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,38 +54,94 @@ public class WorkflowAnalyticsThroughput implements WorkflowAnalytics {
 		Stream<WorkflowAnalyticsEventEntry> stream = eventEntries.stream();
 
 		long companyId = ParamUtil.getLong(
-			request, WorkflowConstants.CONTEXT_COMPANY_ID);
+		    request, WorkflowConstants.CONTEXT_COMPANY_ID);
 
 		stream = stream.filter(
 			event -> event.getCompanyId() == companyId &&
 			(event.getEvent().equals(Event.KALEO_INSTANCE_TOKEN_CREATE) ||
 			event.getEvent().equals(Event.KALEO_INSTANCE_TOKEN_COMPLETE)));
+		
+		stream = stream.sorted();
 
-		Stream<WorkflowAnalyticsKaleoInstanceEvent> kaleoInstanceEventstream =
-			stream.map(
-				e -> new WorkflowAnalyticsKaleoInstanceEvent(
-					e.getKaleoInstanceId(), e.getEvent()));
-
-		Map<Event, Long> map = kaleoInstanceEventstream.collect(
+		Map<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>> map = stream.collect(
 			Collectors.groupingBy(
-				WorkflowAnalyticsKaleoInstanceEvent::getEvent,
-				Collectors.counting()));
+				WorkflowAnalyticsEventEntry::getKaleoDefinitionId, 
+				    Collectors.groupingBy(
+	                WorkflowAnalyticsEventEntry::getKaleoInstanceId)));
 
-		Long created = map.get(Event.KALEO_INSTANCE_TOKEN_CREATE);
-		Long completed = map.get(Event.KALEO_INSTANCE_TOKEN_COMPLETE);
+		Set<Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>>> entrySet =
+			map.entrySet();
 
-		jsonObject.put("created", created);
+		Stream<Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>>> entrySetStream =
+			entrySet.stream();
 
-		jsonObject.put("completed", completed);
+		List<Map<Long, Integer>> timeSpentPerProcess = entrySetStream.map(
+			this::map
+		).collect(
+			Collectors.toList()
+		);
 
-		if (completed != null) {
-			jsonObject.put("running", created - completed);
-		}
-		else {
-			jsonObject.put("running", created);
+		Stream<Map<Long, Integer>> timeSpentPerProcessStream =
+			timeSpentPerProcess.stream();
+
+		Map<Object, Double> timeSpentPerProcessMap =
+			timeSpentPerProcessStream.flatMap(
+				mapper -> mapper.entrySet().stream()
+			).collect(
+				Collectors.groupingBy(
+					Map.Entry::getKey,
+					Collectors.averagingInt(Map.Entry::getValue))
+			);
+
+		for (Map.Entry<Object, Double> entry : 
+		        timeSpentPerProcessMap.entrySet()) {
+
+			jsonObject.put(
+				entry.getKey().toString(), entry.getValue().intValue());
 		}
 
 		return jsonObject;
+	}
+
+	protected Map<Long, Integer> map(
+		Map.Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>> entry) {
+
+		Map<Long, Integer> processDurationMap = new HashMap<>();
+		
+		Map<Long, List<WorkflowAnalyticsEventEntry>> value = entry.getValue();
+		
+		for (Map.Entry<Long, List<WorkflowAnalyticsEventEntry>> valueEntry :
+            value.entrySet()) {
+		    
+        		List<WorkflowAnalyticsEventEntry> events = valueEntry.getValue();
+        
+        		int total = 0;
+        
+        		for (int i = 0; i < events.size(); i++) {
+        			int createdIndex = i;
+        			int closedIndex = i + 1 < events.size() ? i + 1 : i;
+        
+        			if (closedIndex != createdIndex) {
+        				WorkflowAnalyticsEventEntry createdEvent = events.get(
+        					createdIndex);
+        				WorkflowAnalyticsEventEntry closedEvent = events.get(
+        					closedIndex);
+        
+        				Duration duration = Duration.between(
+        					createdEvent.getDate().toInstant(),
+        					closedEvent.getDate().toInstant());
+        
+        				total += duration.getSeconds();
+        
+        				i++;
+        			}
+        		}
+        		
+        		processDurationMap.put(entry.getKey(), total);
+		}
+
+
+		return processDurationMap;
 	}
 
 	@Reference

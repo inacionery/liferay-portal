@@ -24,22 +24,21 @@ import org.osgi.service.component.annotations.Component;
  * @author Inácio Nery
  */
 @Component(
-    immediate = true,
-    property = {
-        "com.liferay.portlet.css-class-wrapper=portlet-workflow-health",
-        "com.liferay.portlet.display-category=category.analytics",
-        "com.liferay.portlet.friendly-url-mapping=workflow_health",
-        "com.liferay.portlet.preferences-owned-by-group=true",
-        "javax.portlet.display-name=Workflow Health",
-        "javax.portlet.expiration-cache=0",
-        "javax.portlet.init-param.view-template=/view.jsp",
-        "javax.portlet.name=com_liferay_portal_workflow_task_web_portlet_WorkflowHealthPortlet",
-        "javax.portlet.resource-bundle=content.Language",
-        "javax.portlet.security-role-ref=power-user,user",
-        "javax.portlet.supports.mime-type=text/html"
-    },
-    service = Portlet.class
+	immediate = true,
+	property = {
+		"com.liferay.portlet.css-class-wrapper=portlet-workflow-health",
+		"com.liferay.portlet.display-category=category.analytics",
+		"com.liferay.portlet.friendly-url-mapping=workflow_health",
+		"com.liferay.portlet.preferences-owned-by-group=true",
+		"javax.portlet.display-name=Workflow Health",
+		"javax.portlet.expiration-cache=0",
+		"javax.portlet.init-param.view-template=/view.jsp",
+		"javax.portlet.name=com_liferay_portal_workflow_task_web_portlet_WorkflowHealthPortlet",
+		"javax.portlet.resource-bundle=content.Language",
+		"javax.portlet.security-role-ref=power-user,user",
+		"javax.portlet.supports.mime-type=text/html"
+	},
+	service = Portlet.class
 )
 public class WorkflowHealthPortlet extends MVCPortlet {
-
 }

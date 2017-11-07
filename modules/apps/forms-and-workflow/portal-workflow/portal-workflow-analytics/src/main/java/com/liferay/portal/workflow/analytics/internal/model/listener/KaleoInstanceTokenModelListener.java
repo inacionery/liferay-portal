@@ -70,7 +70,9 @@ public class KaleoInstanceTokenModelListener
 			KaleoInstance kaleoInstance = kaleoInstanceToken.getKaleoInstance();
 
 			attributes.put(
-				"kaleoDefinitionName", kaleoInstance.getKaleoDefinitionName());
+				"kaleoDefinitionId", kaleoInstance.getKaleoDefinitionId());
+			attributes.put(
+			    "kaleoDefinitionName", kaleoInstance.getKaleoDefinitionName());
 			attributes.put(
 				"kaleoDefinitionVersion",
 				String.valueOf(kaleoInstance.getKaleoDefinitionVersion()));
