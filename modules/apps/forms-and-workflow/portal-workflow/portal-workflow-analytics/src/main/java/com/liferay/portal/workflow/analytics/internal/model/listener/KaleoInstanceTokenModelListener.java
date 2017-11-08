@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.workflow.analytics.internal.metrics.Event;
 import com.liferay.portal.workflow.analytics.internal.metrics.WorkflowAnalyticsEventEntry;
 import com.liferay.portal.workflow.analytics.internal.servlet.WorkflowAnalyticsServlet;
-import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
 
 import org.osgi.service.component.annotations.Component;
@@ -67,18 +66,6 @@ public class KaleoInstanceTokenModelListener
 				"currentKaleoNodeName",
 				kaleoInstanceToken.getCurrentKaleoNodeName());
 
-			KaleoInstance kaleoInstance = kaleoInstanceToken.getKaleoInstance();
-
-			attributes.put(
-				"kaleoDefinitionId", kaleoInstance.getKaleoDefinitionId());
-			attributes.put(
-			    "kaleoDefinitionName", kaleoInstance.getKaleoDefinitionName());
-			attributes.put(
-				"kaleoDefinitionVersion",
-				String.valueOf(kaleoInstance.getKaleoDefinitionVersion()));
-			attributes.put(
-				"kaleoInstanceId", kaleoInstance.getKaleoInstanceId());
-
 			WorkflowAnalyticsServlet.add(
 				new WorkflowAnalyticsEventEntry(
 					kaleoInstanceToken.getUserId(), attributes,
@@ -118,16 +105,6 @@ public class KaleoInstanceTokenModelListener
 			attributes.put(
 				"currentKaleoNodeName",
 				kaleoInstanceToken.getCurrentKaleoNodeName());
-
-			KaleoInstance kaleoInstance = kaleoInstanceToken.getKaleoInstance();
-
-			attributes.put(
-				"kaleoDefinitionName", kaleoInstance.getKaleoDefinitionName());
-			attributes.put(
-				"kaleoDefinitionVersion",
-				String.valueOf(kaleoInstance.getKaleoDefinitionVersion()));
-			attributes.put(
-				"kaleoInstanceId", kaleoInstance.getKaleoInstanceId());
 
 			Event event = Event.KALEO_INSTANCE_TOKEN_UPDATE;
 

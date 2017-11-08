@@ -54,26 +54,27 @@ public class WorkflowAnalyticsThroughput implements WorkflowAnalytics {
 		Stream<WorkflowAnalyticsEventEntry> stream = eventEntries.stream();
 
 		long companyId = ParamUtil.getLong(
-		    request, WorkflowConstants.CONTEXT_COMPANY_ID);
+			request, WorkflowConstants.CONTEXT_COMPANY_ID);
 
 		stream = stream.filter(
 			event -> event.getCompanyId() == companyId &&
 			(event.getEvent().equals(Event.KALEO_INSTANCE_TOKEN_CREATE) ||
 			event.getEvent().equals(Event.KALEO_INSTANCE_TOKEN_COMPLETE)));
-		
+
 		stream = stream.sorted();
 
-		Map<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>> map = stream.collect(
-			Collectors.groupingBy(
-				WorkflowAnalyticsEventEntry::getKaleoDefinitionId, 
-				    Collectors.groupingBy(
-	                WorkflowAnalyticsEventEntry::getKaleoInstanceId)));
+		Map<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>> map =
+			stream.collect(
+				Collectors.groupingBy(
+					WorkflowAnalyticsEventEntry::getKaleoDefinitionId,
+					Collectors.groupingBy(
+						WorkflowAnalyticsEventEntry::getKaleoInstanceId)));
 
-		Set<Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>>> entrySet =
-			map.entrySet();
+		Set<Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>>>
+			entrySet = map.entrySet();
 
-		Stream<Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>>> entrySetStream =
-			entrySet.stream();
+		Stream<Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>>>
+			entrySetStream = entrySet.stream();
 
 		List<Map<Long, Integer>> timeSpentPerProcess = entrySetStream.map(
 			this::map
@@ -93,8 +94,8 @@ public class WorkflowAnalyticsThroughput implements WorkflowAnalytics {
 					Collectors.averagingInt(Map.Entry::getValue))
 			);
 
-		for (Map.Entry<Object, Double> entry : 
-		        timeSpentPerProcessMap.entrySet()) {
+		for (Map.Entry<Object, Double> entry :
+				timeSpentPerProcessMap.entrySet()) {
 
 			jsonObject.put(
 				entry.getKey().toString(), entry.getValue().intValue());
@@ -107,39 +108,38 @@ public class WorkflowAnalyticsThroughput implements WorkflowAnalytics {
 		Map.Entry<Long, Map<Long, List<WorkflowAnalyticsEventEntry>>> entry) {
 
 		Map<Long, Integer> processDurationMap = new HashMap<>();
-		
-		Map<Long, List<WorkflowAnalyticsEventEntry>> value = entry.getValue();
-		
-		for (Map.Entry<Long, List<WorkflowAnalyticsEventEntry>> valueEntry :
-            value.entrySet()) {
-		    
-        		List<WorkflowAnalyticsEventEntry> events = valueEntry.getValue();
-        
-        		int total = 0;
-        
-        		for (int i = 0; i < events.size(); i++) {
-        			int createdIndex = i;
-        			int closedIndex = i + 1 < events.size() ? i + 1 : i;
-        
-        			if (closedIndex != createdIndex) {
-        				WorkflowAnalyticsEventEntry createdEvent = events.get(
-        					createdIndex);
-        				WorkflowAnalyticsEventEntry closedEvent = events.get(
-        					closedIndex);
-        
-        				Duration duration = Duration.between(
-        					createdEvent.getDate().toInstant(),
-        					closedEvent.getDate().toInstant());
-        
-        				total += duration.getSeconds();
-        
-        				i++;
-        			}
-        		}
-        		
-        		processDurationMap.put(entry.getKey(), total);
-		}
 
+		Map<Long, List<WorkflowAnalyticsEventEntry>> value = entry.getValue();
+
+		for (Map.Entry<Long, List<WorkflowAnalyticsEventEntry>> valueEntry :
+				value.entrySet()) {
+
+			List<WorkflowAnalyticsEventEntry> events = valueEntry.getValue();
+
+			int total = 0;
+
+			for (int i = 0; i < events.size(); i++) {
+				int createdIndex = i;
+				int closedIndex = i + 1 < events.size() ? i + 1 : i;
+
+				if (closedIndex != createdIndex) {
+					WorkflowAnalyticsEventEntry createdEvent = events.get(
+						createdIndex);
+					WorkflowAnalyticsEventEntry closedEvent = events.get(
+						closedIndex);
+
+					Duration duration = Duration.between(
+						createdEvent.getDate().toInstant(),
+						closedEvent.getDate().toInstant());
+
+					total += duration.getSeconds();
+
+					i++;
+				}
+			}
+
+			processDurationMap.put(entry.getKey(), total);
+		}
 
 		return processDurationMap;
 	}

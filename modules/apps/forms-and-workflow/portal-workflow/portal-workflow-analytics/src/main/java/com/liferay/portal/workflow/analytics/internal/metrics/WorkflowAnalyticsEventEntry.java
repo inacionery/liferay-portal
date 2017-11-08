@@ -58,9 +58,9 @@ public class WorkflowAnalyticsEventEntry
 	public long getKaleoDefinitionId() {
 		return _attributes.getLong("kaleoDefinitionId");
 	}
-	
+
 	public long getKaleoInstanceId() {
-	    return _attributes.getLong("kaleoInstanceId");
+		return _attributes.getLong("kaleoInstanceId");
 	}
 
 	public long getUserId() {
