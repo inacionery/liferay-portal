@@ -15,20 +15,19 @@
 package com.liferay.portal.workflow.analytics.internal.model.listener;
 
 import com.liferay.portal.kernel.exception.ModelListenerException;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.workflow.analytics.internal.metrics.Event;
-import com.liferay.portal.workflow.analytics.internal.metrics.WorkflowAnalyticsEventEntry;
-import com.liferay.portal.workflow.analytics.internal.servlet.WorkflowAnalyticsServlet;
-import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
+import com.liferay.portal.workflow.analytics.internal.util.WorkflowAnalyticsUtil;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstance;
 
+import java.time.Duration;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Inácio Nery
@@ -38,22 +37,38 @@ public class KaleoTaskAssignmentInstanceModelListener
 	extends BaseModelListener<KaleoTaskAssignmentInstance> {
 
 	@Override
-	public void onAfterCreate(KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance)
+	public void onAfterCreate(
+			KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance)
 		throws ModelListenerException {
 
 		try {
-			JSONObject attributes = _jsonFactory.createJSONObject();
+			Map<String, String> properties = new HashMap<>();
 
-			attributes.put("kaleoTaskAssignmentInstanceId", kaleoTaskAssignmentInstance.getKaleoTaskAssignmentInstanceId());
-			attributes.put("kaleoTaskId", kaleoTaskAssignmentInstance.getKaleoTaskId());
-			attributes.put("assigneeClassName", kaleoTaskAssignmentInstance.getAssigneeClassName());
-			attributes.put("assigneeClassPK", kaleoTaskAssignmentInstance.getAssigneeClassPK());
+			properties.put(
+				"assigneeClassName",
+				kaleoTaskAssignmentInstance.getAssigneeClassName());
+			properties.put(
+				"assigneeClassPK",
+				String.valueOf(
+					kaleoTaskAssignmentInstance.getAssigneeClassPK()));
+			properties.put(
+				"date",
+				String.valueOf(kaleoTaskAssignmentInstance.getCreateDate()));
+			properties.put(
+				"kaleoTaskAssignmentInstanceId",
+				String.valueOf(
+					kaleoTaskAssignmentInstance.
+						getKaleoTaskAssignmentInstanceId()));
+			properties.put(
+				"kaleoTaskId",
+				String.valueOf(kaleoTaskAssignmentInstance.getKaleoTaskId()));
+			properties.put(
+				"userId",
+				String.valueOf(kaleoTaskAssignmentInstance.getUserId()));
 
-			WorkflowAnalyticsServlet.add(
-				new WorkflowAnalyticsEventEntry(
-				    kaleoTaskAssignmentInstance.getUserId(), attributes,
-					Event.KALEO_DEFINITION_CREATE,
-					kaleoTaskAssignmentInstance.getCreateDate()));
+			WorkflowAnalyticsUtil.sendMessage(
+				String.valueOf(kaleoTaskAssignmentInstance.getUserId()),
+				Event.KALEO_TASK_ASSIGNMENT_INSTANCE_CREATE.name(), properties);
 		}
 		catch (Exception e) {
 			throw new ModelListenerException(e);
@@ -61,26 +76,46 @@ public class KaleoTaskAssignmentInstanceModelListener
 	}
 
 	@Override
-	public void onAfterRemove(KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance)
+	public void onAfterRemove(
+			KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance)
 		throws ModelListenerException {
 
 		try {
-			JSONObject attributes = _jsonFactory.createJSONObject();
+			Map<String, String> properties = new HashMap<>();
 
-			attributes.put("kaleoTaskAssignmentInstanceId", kaleoTaskAssignmentInstance.getKaleoTaskAssignmentInstanceId());
+			properties.put(
+				"assigneeClassName",
+				kaleoTaskAssignmentInstance.getAssigneeClassName());
+			properties.put(
+				"assigneeClassPK",
+				String.valueOf(
+					kaleoTaskAssignmentInstance.getAssigneeClassPK()));
+			properties.put("date", String.valueOf(new Date()));
+			properties.put(
+				"kaleoTaskAssignmentInstanceId",
+				String.valueOf(
+					kaleoTaskAssignmentInstance.
+						getKaleoTaskAssignmentInstanceId()));
+			properties.put(
+				"kaleoTaskId",
+				String.valueOf(kaleoTaskAssignmentInstance.getKaleoTaskId()));
+			properties.put(
+				"userId",
+				String.valueOf(kaleoTaskAssignmentInstance.getUserId()));
 
-			WorkflowAnalyticsServlet.add(
-				new WorkflowAnalyticsEventEntry(
-				    kaleoTaskAssignmentInstance.getUserId(), attributes,
-					Event.KALEO_DEFINITION_UPDATE,
-					new Date()));
+			Duration duration = Duration.between(
+				kaleoTaskAssignmentInstance.getCreateDate().toInstant(),
+				new Date().toInstant());
+
+			properties.put("duration", String.valueOf(duration.getSeconds()));
+
+			WorkflowAnalyticsUtil.sendMessage(
+				String.valueOf(kaleoTaskAssignmentInstance.getUserId()),
+				Event.KALEO_TASK_ASSIGNMENT_INSTANCE_DELETE.name(), properties);
 		}
 		catch (Exception e) {
 			throw new ModelListenerException(e);
 		}
 	}
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 }

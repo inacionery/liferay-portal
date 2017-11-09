@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.workflow.analytics.internal.metrics.Event;
 import com.liferay.portal.workflow.analytics.internal.util.WorkflowAnalyticsUtil;
-import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
+import com.liferay.portal.workflow.kaleo.model.KaleoTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,31 +30,24 @@ import org.osgi.service.component.annotations.Component;
  * @author Inácio Nery
  */
 @Component(immediate = true, service = ModelListener.class)
-public class KaleoDefinitionVersionModelListener
-	extends BaseModelListener<KaleoDefinitionVersion> {
+public class KaleoTaskModelListener extends BaseModelListener<KaleoTask> {
 
 	@Override
-	public void onAfterCreate(KaleoDefinitionVersion kaleoDefinitionVersion)
+	public void onAfterCreate(KaleoTask kaleoTask)
 		throws ModelListenerException {
 
 		try {
 			Map<String, String> properties = new HashMap<>();
 
+			properties.put("date", String.valueOf(kaleoTask.getCreateDate()));
 			properties.put(
-				"date", String.valueOf(kaleoDefinitionVersion.getCreateDate()));
-			properties.put(
-				"kaleoDefinitionVersionId",
-				String.valueOf(
-					kaleoDefinitionVersion.getKaleoDefinitionVersionId()));
-			properties.put("name", kaleoDefinitionVersion.getName());
-			properties.put(
-				"userId", String.valueOf(kaleoDefinitionVersion.getUserId()));
-			properties.put(
-				"version", String.valueOf(kaleoDefinitionVersion.getVersion()));
+				"kaleoTaskId", String.valueOf(kaleoTask.getKaleoTaskId()));
+			properties.put("name", kaleoTask.getName());
+			properties.put("userId", String.valueOf(kaleoTask.getUserId()));
 
 			WorkflowAnalyticsUtil.sendMessage(
-				String.valueOf(kaleoDefinitionVersion.getUserId()),
-				Event.KALEO_DEFINITION_VERSION_CREATE.name(), properties);
+				String.valueOf(kaleoTask.getUserId()),
+				Event.KALEO_TASK_CREATE.name(), properties);
 		}
 		catch (Exception e) {
 			throw new ModelListenerException(e);

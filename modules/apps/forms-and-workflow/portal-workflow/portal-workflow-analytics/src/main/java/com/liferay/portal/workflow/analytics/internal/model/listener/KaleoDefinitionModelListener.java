@@ -15,17 +15,16 @@
 package com.liferay.portal.workflow.analytics.internal.model.listener;
 
 import com.liferay.portal.kernel.exception.ModelListenerException;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.workflow.analytics.internal.metrics.Event;
-import com.liferay.portal.workflow.analytics.internal.metrics.WorkflowAnalyticsEventEntry;
-import com.liferay.portal.workflow.analytics.internal.servlet.WorkflowAnalyticsServlet;
+import com.liferay.portal.workflow.analytics.internal.util.WorkflowAnalyticsUtil;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Inácio Nery
@@ -39,18 +38,22 @@ public class KaleoDefinitionModelListener
 		throws ModelListenerException {
 
 		try {
-			JSONObject attributes = _jsonFactory.createJSONObject();
+			Map<String, String> properties = new HashMap<>();
 
-			attributes.put(
-				"kaleoDefinitionId", kaleoDefinition.getKaleoDefinitionId());
-			attributes.put("name", kaleoDefinition.getName());
-			attributes.put("version", kaleoDefinition.getVersion());
+			properties.put(
+				"date", String.valueOf(kaleoDefinition.getCreateDate()));
+			properties.put(
+				"kaleoDefinitionId",
+				String.valueOf(kaleoDefinition.getKaleoDefinitionId()));
+			properties.put("name", kaleoDefinition.getName());
+			properties.put(
+				"userId", String.valueOf(kaleoDefinition.getUserId()));
+			properties.put(
+				"version", String.valueOf(kaleoDefinition.getVersion()));
 
-			WorkflowAnalyticsServlet.add(
-				new WorkflowAnalyticsEventEntry(
-					kaleoDefinition.getUserId(), attributes,
-					Event.KALEO_DEFINITION_CREATE,
-					kaleoDefinition.getCreateDate()));
+			WorkflowAnalyticsUtil.sendMessage(
+				String.valueOf(kaleoDefinition.getUserId()),
+				Event.KALEO_DEFINITION_CREATE.name(), properties);
 		}
 		catch (Exception e) {
 			throw new ModelListenerException(e);
@@ -62,25 +65,26 @@ public class KaleoDefinitionModelListener
 		throws ModelListenerException {
 
 		try {
-			JSONObject attributes = _jsonFactory.createJSONObject();
+			Map<String, String> properties = new HashMap<>();
 
-			attributes.put(
-				"kaleoDefinitionId", kaleoDefinition.getKaleoDefinitionId());
-			attributes.put("name", kaleoDefinition.getName());
-			attributes.put("version", kaleoDefinition.getVersion());
+			properties.put(
+				"date", String.valueOf(kaleoDefinition.getCreateDate()));
+			properties.put(
+				"kaleoDefinitionId",
+				String.valueOf(kaleoDefinition.getKaleoDefinitionId()));
+			properties.put("name", kaleoDefinition.getName());
+			properties.put(
+				"userId", String.valueOf(kaleoDefinition.getUserId()));
+			properties.put(
+				"version", String.valueOf(kaleoDefinition.getVersion()));
 
-			WorkflowAnalyticsServlet.add(
-				new WorkflowAnalyticsEventEntry(
-					kaleoDefinition.getUserId(), attributes,
-					Event.KALEO_DEFINITION_UPDATE,
-					kaleoDefinition.getModifiedDate()));
+			WorkflowAnalyticsUtil.sendMessage(
+				String.valueOf(kaleoDefinition.getUserId()),
+				Event.KALEO_DEFINITION_UPDATE.name(), properties);
 		}
 		catch (Exception e) {
 			throw new ModelListenerException(e);
 		}
 	}
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 }
