@@ -48,13 +48,13 @@ public class AnalyticsClientImplTest {
 
 		analyticsEventsMessageBuilder.protocolVersion("1.0");
 
-		Response response = _analyticsClientImpl.sendAnalytics(
+		Response response = _analyticsClient.sendAnalytics(
 			analyticsEventsMessageBuilder.build());
 
 		Assert.assertEquals(HttpStatus.SC_OK, response.getStatus());
 	}
 
-	private final AnalyticsClientImpl _analyticsClientImpl =
+	private final AnalyticsClientImpl _analyticsClient =
 		new AnalyticsClientImpl();
 
 }

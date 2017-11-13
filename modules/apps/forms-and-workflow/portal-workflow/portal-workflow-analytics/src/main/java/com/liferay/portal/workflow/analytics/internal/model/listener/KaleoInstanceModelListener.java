@@ -45,8 +45,8 @@ public class KaleoInstanceModelListener
 			properties.put(
 				"date", String.valueOf(kaleoInstance.getCreateDate()));
 			properties.put(
-				"kaleoDefinitionId",
-				String.valueOf(kaleoInstance.getKaleoDefinitionId()));
+				"kaleoDefinitionVersionId",
+				String.valueOf(kaleoInstance.getKaleoDefinitionVersionId()));
 			properties.put(
 				"kaleoInstanceId",
 				String.valueOf(kaleoInstance.getKaleoInstanceId()));
@@ -71,8 +71,8 @@ public class KaleoInstanceModelListener
 			properties.put(
 				"date", String.valueOf(kaleoInstance.getModifiedDate()));
 			properties.put(
-				"kaleoDefinitionId",
-				String.valueOf(kaleoInstance.getKaleoDefinitionId()));
+				"kaleoDefinitionVersionId",
+				String.valueOf(kaleoInstance.getKaleoDefinitionVersionId()));
 			properties.put(
 				"kaleoInstanceId",
 				String.valueOf(kaleoInstance.getKaleoInstanceId()));

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.analytics.java.client.internal;
+package com.liferay.portal.workflow.analytics.internal.util;
 
 import com.liferay.analytics.client.AnalyticsClient;
 import com.liferay.analytics.model.AnalyticsEventsMessage;
@@ -25,9 +25,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * @author Eduardo Garcia
+ * @author Inácio Nery
  */
-public class AnalyticsClientImpl implements AnalyticsClient {
+public class WorkflowClientImpl implements AnalyticsClient {
 
 	public Response sendAnalytics(
 		AnalyticsEventsMessage analyticsEventsMessage) {
@@ -39,8 +39,7 @@ public class AnalyticsClientImpl implements AnalyticsClient {
 	}
 
 	private static final String _ANALYTICS_GATEWAY_URL = System.getProperty(
-		"analytics.gateway.url",
-		"http://54.235.215.13:8095/api/analyticsgateway/send-analytics-events");
+		"analytics.gateway.url", "http://192.168.108.90:8081/");
 
 	private final Client _client = ClientBuilder.newClient();
 

@@ -17,8 +17,6 @@ package com.liferay.portal.workflow.analytics.internal.util;
 import com.liferay.analytics.model.AnalyticsEventsMessage;
 import com.liferay.analytics.model.AnalyticsEventsMessage.Builder;
 import com.liferay.analytics.model.AnalyticsEventsMessage.Event;
-import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.messaging.MessageBusUtil;
 
 import java.io.IOException;
 
@@ -45,17 +43,13 @@ public class WorkflowAnalyticsUtil extends HttpServlet {
 		Builder builder = AnalyticsEventsMessage.builder(
 			_analyticsKey, userId).event(build);
 
-		AnalyticsEventsMessage eventsMessage = builder.build();
-
-		Message message = new Message();
-
-		message.put("eventsMessage", eventsMessage);
-
-		MessageBusUtil.sendMessage("liferay/analytics", message);
+		_workflowClientImpl.sendAnalytics(builder.build());
 	}
 
 	private static final String _analyticsKey = "";
 	private static final String _applicationId =
 		"com.liferay.portal.workflow.analytics1.0.0";
+	private static final WorkflowClientImpl _workflowClientImpl =
+		new WorkflowClientImpl();
 
 }
