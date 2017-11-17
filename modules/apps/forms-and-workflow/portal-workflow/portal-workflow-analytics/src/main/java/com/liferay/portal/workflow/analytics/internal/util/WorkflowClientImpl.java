@@ -14,33 +14,27 @@
 
 package com.liferay.portal.workflow.analytics.internal.util;
 
-import com.liferay.analytics.client.AnalyticsClient;
 import com.liferay.analytics.model.AnalyticsEventsMessage;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jodd.http.HttpRequest;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Inácio Nery
  */
-public class WorkflowClientImpl implements AnalyticsClient {
+@Component(immediate = true)
+public class WorkflowClientImpl {
 
-	public Response sendAnalytics(
-		AnalyticsEventsMessage analyticsEventsMessage) {
+	public void sendAnalytics(AnalyticsEventsMessage analyticsEventsMessage)
+		throws Exception {
 
-		WebTarget webTarget = _client.target(_ANALYTICS_GATEWAY_URL);
-
-		return webTarget.request(MediaType.APPLICATION_JSON).post(
-			Entity.entity(analyticsEventsMessage, MediaType.APPLICATION_JSON));
+		String map = _jsonObjectMapper.map(analyticsEventsMessage);
+		
+		HttpRequest.post("http://192.168.108.90:8081/").body(map).send();
 	}
 
-	private static final String _ANALYTICS_GATEWAY_URL = System.getProperty(
-		"analytics.gateway.url", "http://192.168.108.90:8081/");
-
-	private final Client _client = ClientBuilder.newClient();
+	private final AnalyticsEventsMessageJSONObjectMapper _jsonObjectMapper =
+		new AnalyticsEventsMessageJSONObjectMapper();
 
 }

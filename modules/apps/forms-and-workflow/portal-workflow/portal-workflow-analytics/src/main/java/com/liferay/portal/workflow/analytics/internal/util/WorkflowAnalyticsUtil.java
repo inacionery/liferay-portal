@@ -18,20 +18,16 @@ import com.liferay.analytics.model.AnalyticsEventsMessage;
 import com.liferay.analytics.model.AnalyticsEventsMessage.Builder;
 import com.liferay.analytics.model.AnalyticsEventsMessage.Event;
 
-import java.io.IOException;
-
 import java.util.Map;
-
-import javax.servlet.http.HttpServlet;
 
 /**
  * @author Inácio Nery
  */
-public class WorkflowAnalyticsUtil extends HttpServlet {
+public class WorkflowAnalyticsUtil {
 
 	public static void sendMessage(
 			String userId, String eventId, Map<String, String> properties)
-		throws IOException {
+		throws Exception {
 
 		AnalyticsEventsMessage.Event.Builder eventBuilder =
 			AnalyticsEventsMessage.Event.builder(_applicationId, eventId);

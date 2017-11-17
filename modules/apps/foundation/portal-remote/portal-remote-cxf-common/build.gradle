@@ -2,6 +2,7 @@ dependencies {
 	compileInclude group: "org.apache.cxf", name: "cxf-core", version: "3.1.9"
 	compileInclude group: "org.apache.cxf", name: "cxf-rt-bindings-soap", version: "3.1.9"
 	compileInclude group: "org.apache.cxf", name: "cxf-rt-databinding-jaxb", version: "3.1.9"
+	compileInclude group: "org.apache.cxf", name: "cxf-rt-rs-client", version: "3.1.9"
 	compileInclude group: "org.apache.cxf", name: "cxf-rt-transports-http", version: "3.1.9"
 	compileInclude group: "org.apache.cxf", name: "cxf-rt-wsdl", version: "3.1.9"
 	compileInclude group: "org.apache.cxf", name: "cxf-tools-common", version: "3.1.9"
