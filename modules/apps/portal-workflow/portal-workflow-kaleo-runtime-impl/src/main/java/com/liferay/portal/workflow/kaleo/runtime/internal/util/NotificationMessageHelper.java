@@ -19,8 +19,14 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionConfig;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.workflow.constants.MyWorkflowTasksConstants;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
@@ -28,6 +34,7 @@ import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
 import java.io.Serializable;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -91,6 +98,30 @@ public class NotificationMessageHelper {
 		return jsonObject;
 	}
 
+	public synchronized Boolean isDeliver(long userId, int deliveryType)
+		throws PortalException {
+
+		Callable<Boolean> callable = new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() throws Exception {
+				return UserNotificationManagerUtil.isDeliver(
+					userId, PortletKeys.MY_WORKFLOW_TASK, 0,
+					MyWorkflowTasksConstants.
+						NOTIFICATION_TYPE_MY_WORKFLOW_TASKS,
+					deliveryType);
+			}
+
+		};
+
+		try {
+			return TransactionInvokerUtil.invoke(_transactionConfig, callable);
+		}
+		catch (Throwable t) {
+			throw new PortalException(t);
+		}
+	}
+
 	protected long getUserId(
 		ExecutionContext executionContext,
 		KaleoInstanceToken kaleoInstanceToken) {
@@ -118,5 +149,9 @@ public class NotificationMessageHelper {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		NotificationMessageHelper.class);
+
+	private static final TransactionConfig _transactionConfig =
+		TransactionConfig.Factory.create(
+			Propagation.REQUIRES_NEW, new Class<?>[] {Exception.class});
 
 }

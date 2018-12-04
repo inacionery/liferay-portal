@@ -17,15 +17,13 @@ package com.liferay.portal.workflow.kaleo.runtime.internal.notification;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
-import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.workflow.constants.MyWorkflowTasksConstants;
 import com.liferay.portal.workflow.kaleo.definition.NotificationReceptionType;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
 import com.liferay.portal.workflow.kaleo.runtime.internal.settings.WorkflowGroupServiceSettings;
+import com.liferay.portal.workflow.kaleo.runtime.internal.util.NotificationMessageHelper;
 import com.liferay.portal.workflow.kaleo.runtime.notification.BaseNotificationSender;
 import com.liferay.portal.workflow.kaleo.runtime.notification.NotificationRecipient;
 import com.liferay.portal.workflow.kaleo.runtime.notification.NotificationSender;
@@ -133,11 +131,8 @@ public class EmailNotificationSender
 			notificationRecipientsCollection.iterator();
 
 		for (NotificationRecipient notificationRecipient : iterator.next()) {
-			if (UserNotificationManagerUtil.isDeliver(
+			if (_notificationMessageHelper.isDeliver(
 					notificationRecipient.getUserId(),
-					PortletKeys.MY_WORKFLOW_TASK, 0,
-					MyWorkflowTasksConstants.
-						NOTIFICATION_TYPE_MY_WORKFLOW_TASKS,
 					UserNotificationDeliveryConstants.TYPE_EMAIL)) {
 
 				internetAddresses.add(
@@ -178,5 +173,8 @@ public class EmailNotificationSender
 
 	@Reference
 	private MailService _mailService;
+
+	@Reference
+	private NotificationMessageHelper _notificationMessageHelper;
 
 }
