@@ -1,0 +1,141 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.portal.search.engine.adapter.search2;
+
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.search.aggregation.Aggregation;
+import com.liferay.portal.search.query.Query;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author Michael C. Han
+ */
+@ProviderType
+public abstract class BaseSearchRequest {
+
+	public Map<String, Aggregation> getAggregations() {
+		return Collections.unmodifiableMap(_aggregations);
+	}
+
+	public String[] getIndexNames() {
+		return _indexNames;
+	}
+
+	public float getMinimumScore() {
+		return _minimumScore;
+	}
+
+	public Query getPostFilterQuery() {
+		return _postFilterQuery;
+	}
+
+	public Query getQuery() {
+		return _query;
+	}
+
+	public Query getRescoreQuery() {
+		return _rescoreQuery;
+	}
+
+	public long getTimeoutInMilliseconds() {
+		return _timeoutInMilliseconds;
+	}
+
+	public boolean isBasicFacetSelection() {
+		return _basicFacetSelection;
+	}
+
+	public boolean isExplain() {
+		return _explain;
+	}
+
+	public boolean isIncludeResponseString() {
+		return _includeResponseString;
+	}
+
+	public boolean isRequestCache() {
+		return _requestCache;
+	}
+
+	public boolean isTrackTotalHits() {
+		return _trackTotalHits;
+	}
+
+	public void putAggregation(Aggregation aggregation) {
+		_aggregations.put(aggregation.getAggregationName(), aggregation);
+	}
+
+	public void setBasicFacetSelection(boolean basicFacetSelection) {
+		_basicFacetSelection = basicFacetSelection;
+	}
+
+	public void setExplain(boolean explain) {
+		_explain = explain;
+	}
+
+	public void setIncludeResponseString(boolean includeResponseString) {
+		_includeResponseString = includeResponseString;
+	}
+
+	public void setIndexNames(String[] indexNames) {
+		_indexNames = indexNames;
+	}
+
+	public void setMinimumScore(float minimumScore) {
+		_minimumScore = minimumScore;
+	}
+
+	public void setPostFilterQuery(Query postFilterQuery) {
+		_postFilterQuery = postFilterQuery;
+	}
+
+	public void setQuery(Query query) {
+		_query = query;
+	}
+
+	public void setRequestCache(boolean requestCache) {
+		_requestCache = requestCache;
+	}
+
+	public void setRescoreQuery(Query rescoreQuery) {
+		_rescoreQuery = rescoreQuery;
+	}
+
+	public void setTimeoutInMilliseconds(long timeoutInMilliseconds) {
+		_timeoutInMilliseconds = timeoutInMilliseconds;
+	}
+
+	public void setTrackTotalHits(boolean trackTotalHits) {
+		_trackTotalHits = trackTotalHits;
+	}
+
+	private boolean _basicFacetSelection;
+	private boolean _explain;
+	private final Map<String, Aggregation> _aggregations = new HashMap<>();
+	private boolean _includeResponseString;
+	private String[] _indexNames;
+	private float _minimumScore;
+	private Query _postFilterQuery;
+	private Query _query;
+	private boolean _requestCache;
+	private Query _rescoreQuery;
+	private long _timeoutInMilliseconds;
+	private boolean _trackTotalHits = true;
+
+}
