@@ -26,6 +26,7 @@ Export-Package:\
 	com.liferay.portal.search.localization,\
 	com.liferay.portal.search.permission,\
 	com.liferay.portal.search.query,\
+	com.liferay.portal.search.query.field,\
 	com.liferay.portal.search.searcher,\
 	com.liferay.portal.search.sort,\
 	com.liferay.portal.search.suggest,\
