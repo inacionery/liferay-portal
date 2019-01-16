@@ -16,6 +16,7 @@ package com.liferay.portal.search.aggregation;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 import com.liferay.portal.search.aggregation.metrics.AvgAggregation;
 import com.liferay.portal.search.aggregation.metrics.CardinalityAggregation;
 import com.liferay.portal.search.aggregation.metrics.ExtendedStatsAggregation;
@@ -60,6 +61,8 @@ public interface AggregationVisitor<T> {
 	public T visit(StatsAggregation statsAggregation);
 
 	public T visit(SumAggregation sumAggregation);
+
+	public T visit(TermsAggregation termsAggregation);
 
 	public T visit(ValueCountAggregation valueCountAggregation);
 

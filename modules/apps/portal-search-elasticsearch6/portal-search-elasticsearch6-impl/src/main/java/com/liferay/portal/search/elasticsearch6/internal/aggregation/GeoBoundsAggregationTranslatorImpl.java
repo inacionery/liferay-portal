@@ -47,11 +47,9 @@ public class GeoBoundsAggregationTranslatorImpl
 				geoBoundsAggregation.getWrapLongitude());
 		}
 
-		for (Aggregation childAggregation :
-				geoBoundsAggregation.getChildAggregations()) {
-
+		for (Aggregation aggregation : geoBoundsAggregation.getAggregations()) {
 			geoBoundsAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+				aggregationTranslator.translate(aggregation));
 		}
 
 		return geoBoundsAggregationBuilder;

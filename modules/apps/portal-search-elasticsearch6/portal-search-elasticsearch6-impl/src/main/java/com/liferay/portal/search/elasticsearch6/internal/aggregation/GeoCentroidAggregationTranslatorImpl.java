@@ -42,11 +42,11 @@ public class GeoCentroidAggregationTranslatorImpl
 
 		geoCentroidAggregationBuilder.field(geoCentroidAggregation.getField());
 
-		for (Aggregation childAggregation :
-				geoCentroidAggregation.getChildAggregations()) {
+		for (Aggregation aggregation :
+				geoCentroidAggregation.getAggregations()) {
 
 			geoCentroidAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+				aggregationTranslator.translate(aggregation));
 		}
 
 		return geoCentroidAggregationBuilder;

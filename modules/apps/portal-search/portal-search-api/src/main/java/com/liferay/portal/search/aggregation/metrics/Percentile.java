@@ -12,26 +12,27 @@
  * details.
  */
 
-package com.liferay.portal.search.aggregation;
-
-import aQute.bnd.annotation.ProviderType;
-
-import java.util.Collection;
+package com.liferay.portal.search.aggregation.metrics;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-@ProviderType
-public interface Aggregation {
+public class Percentile {
 
-	public <T> T accept(AggregationVisitor<T> aggregationVisitor);
+	public Percentile(double percent, double value) {
+		_percent = percent;
+		_value = value;
+	}
 
-	public void addAggregation(Aggregation aggregation);
+	public double getPercent() {
+		return _percent;
+	}
 
-	public void addAggregations(Aggregation... aggregation);
+	public double getValue() {
+		return _value;
+	}
 
-	public String getAggregationName();
-
-	public Collection<Aggregation> getAggregations();
+	private final double _percent;
+	private final double _value;
 
 }

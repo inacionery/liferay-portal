@@ -17,6 +17,7 @@ package com.liferay.portal.search.elasticsearch6.internal.aggregation;
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.AggregationVisitor;
+import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 import com.liferay.portal.search.aggregation.metrics.AvgAggregation;
 import com.liferay.portal.search.aggregation.metrics.CardinalityAggregation;
 import com.liferay.portal.search.aggregation.metrics.ExtendedStatsAggregation;
@@ -46,7 +47,10 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Michael C. Han
  */
-@Component(service = {AggregationTranslator.class, AggregationVisitor.class})
+@Component(
+	immediate = true, property = "search.engine.impl=Elasticsearch",
+	service = {AggregationTranslator.class, AggregationVisitor.class}
+)
 public class ElasticsearchAggregationVisitor
 	implements AggregationTranslator<AggregationBuilder>,
 			   AggregationVisitor<AggregationBuilder> {
@@ -243,6 +247,15 @@ public class ElasticsearchAggregationVisitor
 	}
 
 	@Override
+	public AggregationBuilder visit(TermsAggregation termsAggregation) {
+		return _baseBucketAggregationTranslator.translate(
+			baseMetricsAggregation ->
+				AggregationBuilders.terms(
+					baseMetricsAggregation.getAggregationName()),
+			termsAggregation, this);
+	}
+
+	@Override
 	public AggregationBuilder visit(
 		ValueCountAggregation valueCountAggregation) {
 
@@ -257,9 +270,13 @@ public class ElasticsearchAggregationVisitor
 	public AggregationBuilder visit(
 		WeightedAvgAggregation weightedAvgAggregation) {
 
-		return null;
+		return _weightedAvgAggregationTranslator.translate(
+			weightedAvgAggregation, this);
 	}
 
+	private final BaseBucketAggregationTranslator
+		_baseBucketAggregationTranslator =
+			new BaseBucketAggregationTranslator();
 	private final BaseMetricsAggregationTranslator
 		_baseMetricsAggregationTranslator =
 			new BaseMetricsAggregationTranslator();
@@ -273,5 +290,8 @@ public class ElasticsearchAggregationVisitor
 	@Reference
 	private ScriptedMetricAggregationTranslator
 		_scriptedMetricAggregationTranslator;
+
+	@Reference
+	private WeightedAvgAggregationTranslator _weightedAvgAggregationTranslator;
 
 }

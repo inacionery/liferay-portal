@@ -12,26 +12,21 @@
  * details.
  */
 
-package com.liferay.portal.search.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.search.aggregation.AggregationTranslator;
+import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 
-import java.util.Collection;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.weighted_avg.WeightedAvgAggregationBuilder;
 
 /**
  * @author Michael C. Han
  */
-@ProviderType
-public interface Aggregation {
+public interface WeightedAvgAggregationTranslator {
 
-	public <T> T accept(AggregationVisitor<T> aggregationVisitor);
-
-	public void addAggregation(Aggregation aggregation);
-
-	public void addAggregations(Aggregation... aggregation);
-
-	public String getAggregationName();
-
-	public Collection<Aggregation> getAggregations();
+	public WeightedAvgAggregationBuilder translate(
+		WeightedAvgAggregation weightedAvgAggregation,
+		AggregationTranslator<AggregationBuilder> aggregationTranslator);
 
 }

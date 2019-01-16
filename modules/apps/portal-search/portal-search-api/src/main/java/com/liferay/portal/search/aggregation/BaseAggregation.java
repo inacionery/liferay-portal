@@ -33,13 +33,13 @@ public abstract class BaseAggregation implements Aggregation {
 	}
 
 	@Override
-	public void addChildAggregation(Aggregation aggregation) {
-		_childAggregation.add(aggregation);
+	public void addAggregation(Aggregation aggregation) {
+		_aggregation.add(aggregation);
 	}
 
 	@Override
-	public void addChildAggregations(Aggregation... aggregations) {
-		Collections.addAll(_childAggregation, aggregations);
+	public void addAggregations(Aggregation... aggregations) {
+		Collections.addAll(_aggregation, aggregations);
 	}
 
 	@Override
@@ -64,8 +64,8 @@ public abstract class BaseAggregation implements Aggregation {
 	}
 
 	@Override
-	public Collection<Aggregation> getChildAggregations() {
-		return Collections.unmodifiableCollection(_childAggregation);
+	public Collection<Aggregation> getAggregations() {
+		return Collections.unmodifiableCollection(_aggregation);
 	}
 
 	@Override
@@ -73,12 +73,7 @@ public abstract class BaseAggregation implements Aggregation {
 		return Objects.hash(_aggregationName);
 	}
 
-	@Override
-	public void removeChildAggregation(Aggregation aggregation) {
-		_childAggregation.remove(aggregation);
-	}
-
+	private Set<Aggregation> _aggregation = new LinkedHashSet<>();
 	private final String _aggregationName;
-	private Set<Aggregation> _childAggregation = new LinkedHashSet<>();
 
 }

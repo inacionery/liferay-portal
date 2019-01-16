@@ -16,44 +16,29 @@ package com.liferay.portal.search.elasticsearch6.internal.aggregation;
 
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
-import com.liferay.portal.search.aggregation.metrics.BaseMetricsAggregation;
-import com.liferay.portal.search.elasticsearch6.internal.script.ScriptTranslator;
+import com.liferay.portal.search.aggregation.bucket.BaseBucketAggregation;
 
-import org.elasticsearch.script.Script;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.support.ValuesSourceAggregationBuilder;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-public class BaseMetricsAggregationTranslator {
+public class BaseBucketAggregationTranslator {
 
 	public ValuesSourceAggregationBuilder translate(
 		ValuesSourceAggregationBuilderFactory
 			valuesSourceAggregationBuilderFactory,
-		BaseMetricsAggregation baseMetricsAggregation,
+		BaseBucketAggregation baseBucketAggregation,
 		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
 
 		ValuesSourceAggregationBuilder valuesSourceAggregationBuilder =
-			valuesSourceAggregationBuilderFactory.create(
-				baseMetricsAggregation);
+			valuesSourceAggregationBuilderFactory.create(baseBucketAggregation);
 
-		valuesSourceAggregationBuilder.field(baseMetricsAggregation.getField());
-
-		if (baseMetricsAggregation.getMissing() != null) {
-			valuesSourceAggregationBuilder.missing(
-				baseMetricsAggregation.getMissing());
-		}
-
-		if (baseMetricsAggregation.getScript() != null) {
-			Script elasticsearchScript = _scriptTranslator.translate(
-				baseMetricsAggregation.getScript());
-
-			valuesSourceAggregationBuilder.script(elasticsearchScript);
-		}
+		valuesSourceAggregationBuilder.field(baseBucketAggregation.getField());
 
 		for (Aggregation aggregation :
-				baseMetricsAggregation.getAggregations()) {
+				baseBucketAggregation.getAggregations()) {
 
 			valuesSourceAggregationBuilder.subAggregation(
 				aggregationTranslator.translate(aggregation));
@@ -65,10 +50,8 @@ public class BaseMetricsAggregationTranslator {
 	public interface ValuesSourceAggregationBuilderFactory {
 
 		public ValuesSourceAggregationBuilder create(
-			BaseMetricsAggregation baseMetricsAggregation);
+			BaseBucketAggregation baseBucketAggregation);
 
 	}
-
-	private final ScriptTranslator _scriptTranslator = new ScriptTranslator();
 
 }

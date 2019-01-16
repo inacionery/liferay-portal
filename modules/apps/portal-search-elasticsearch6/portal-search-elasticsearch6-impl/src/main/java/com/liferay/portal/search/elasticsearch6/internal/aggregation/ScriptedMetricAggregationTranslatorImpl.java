@@ -76,11 +76,11 @@ public class ScriptedMetricAggregationTranslatorImpl
 		scriptedMetricAggregationBuilder.params(
 			scriptedMetricAggregation.getParameters());
 
-		for (Aggregation childAggregation :
-				scriptedMetricAggregation.getChildAggregations()) {
+		for (Aggregation aggregation :
+				scriptedMetricAggregation.getAggregations()) {
 
 			scriptedMetricAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+				aggregationTranslator.translate(aggregation));
 		}
 
 		return scriptedMetricAggregationBuilder;
