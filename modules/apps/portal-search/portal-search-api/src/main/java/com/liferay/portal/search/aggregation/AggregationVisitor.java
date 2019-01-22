@@ -34,6 +34,7 @@ import com.liferay.portal.search.aggregation.metrics.PercentilesAggregation;
 import com.liferay.portal.search.aggregation.metrics.ScriptedMetricAggregation;
 import com.liferay.portal.search.aggregation.metrics.StatsAggregation;
 import com.liferay.portal.search.aggregation.metrics.SumAggregation;
+import com.liferay.portal.search.aggregation.metrics.TopHitsAggregation;
 import com.liferay.portal.search.aggregation.metrics.ValueCountAggregation;
 import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 import com.liferay.portal.search.aggregation.pipeline.BucketSortAggregation;
@@ -81,6 +82,8 @@ public interface AggregationVisitor<T> {
 	public T visit(SumAggregation sumAggregation);
 
 	public T visit(TermsAggregation termsAggregation);
+
+	public T visit(TopHitsAggregation topHitsAggregation);
 
 	public T visit(ValueCountAggregation valueCountAggregation);
 

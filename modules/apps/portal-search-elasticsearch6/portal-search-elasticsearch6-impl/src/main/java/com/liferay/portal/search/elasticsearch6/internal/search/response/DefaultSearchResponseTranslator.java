@@ -285,8 +285,8 @@ public class DefaultSearchResponseTranslator
 		}
 	}
 
-	@Reference
-	protected SearchHitDocumentTranslator searchHitDocumentTranslator;
+	protected SearchHitDocumentTranslator searchHitDocumentTranslator =
+		new SearchHitDocumentTranslator();
 
 	@Reference
 	protected StatsTranslator statsTranslator;

@@ -39,6 +39,7 @@ import com.liferay.portal.search.aggregation.metrics.PercentilesMethod;
 import com.liferay.portal.search.aggregation.metrics.ScriptedMetricAggregation;
 import com.liferay.portal.search.aggregation.metrics.StatsAggregation;
 import com.liferay.portal.search.aggregation.metrics.SumAggregation;
+import com.liferay.portal.search.aggregation.metrics.TopHitsAggregation;
 import com.liferay.portal.search.aggregation.metrics.ValueCountAggregation;
 import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 import com.liferay.portal.search.aggregation.pipeline.BucketSortAggregation;
@@ -50,6 +51,7 @@ import com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics.Bas
 import com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics.GeoBoundsAggregationTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics.GeoCentroidAggregationTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics.ScriptedMetricAggregationTranslator;
+import com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics.TopHitsAggregationTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics.WeightedAvgAggregationTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.aggregation.pipeline.BucketSortAggregationTranslator;
 
@@ -426,6 +428,12 @@ public class ElasticsearchAggregationVisitor
 	}
 
 	@Override
+	public BaseAggregationBuilder visit(TopHitsAggregation topHitsAggregation) {
+		return _topHitsAggregationTranslator.translate(
+			topHitsAggregation, this);
+	}
+
+	@Override
 	public BaseAggregationBuilder visit(
 		ValueCountAggregation valueCountAggregation) {
 
@@ -472,6 +480,9 @@ public class ElasticsearchAggregationVisitor
 	@Reference
 	private ScriptedMetricAggregationTranslator
 		_scriptedMetricAggregationTranslator;
+
+	@Reference
+	private TopHitsAggregationTranslator _topHitsAggregationTranslator;
 
 	@Reference
 	private WeightedAvgAggregationTranslator _weightedAvgAggregationTranslator;

@@ -14,8 +14,50 @@
 
 package com.liferay.portal.search.aggregation.metrics;
 
+import com.liferay.portal.search.aggregation.AggregationVisitor;
+import com.liferay.portal.search.aggregation.BaseAggregation;
+import com.liferay.portal.search.sort.Sort;
+
 /**
- * @author Michael C. Han
+ * @author Rafael Praxedes
  */
-public class TopHitsAggregation {
+public class TopHitsAggregation extends BaseAggregation {
+
+	public TopHitsAggregation(String aggregationName) {
+		super(aggregationName);
+	}
+
+	@Override
+	public <T> T accept(AggregationVisitor<T> aggregationVisitor) {
+		return aggregationVisitor.visit(this);
+	}
+
+	public int getFrom() {
+		return _from;
+	}
+
+	public int getSize() {
+		return _size;
+	}
+
+	public Sort[] getSorts() {
+		return _sorts;
+	}
+
+	public void setFrom(int from) {
+		_from = from;
+	}
+
+	public void setSize(int size) {
+		_size = size;
+	}
+
+	public void setSorts(Sort[] sorts) {
+		_sorts = sorts;
+	}
+
+	private int _from;
+	private int _size;
+	private Sort[] _sorts = {};
+
 }
