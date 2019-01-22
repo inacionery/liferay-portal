@@ -27,6 +27,13 @@ import com.liferay.portal.search.aggregation.metrics.MaxAggregationResult;
 import com.liferay.portal.search.aggregation.metrics.MinAggregationResult;
 import com.liferay.portal.search.aggregation.metrics.Percentile;
 import com.liferay.portal.search.aggregation.metrics.PercentileRanksAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.PercentilesAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.ScriptedAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.StatsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.SumAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.TopHitsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.ValueCountAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregationResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +52,14 @@ import org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroid;
 import org.elasticsearch.search.aggregations.metrics.max.Max;
 import org.elasticsearch.search.aggregations.metrics.min.Min;
 import org.elasticsearch.search.aggregations.metrics.percentiles.PercentileRanks;
+import org.elasticsearch.search.aggregations.metrics.percentiles.Percentiles;
+import org.elasticsearch.search.aggregations.metrics.scripted.ScriptedMetric;
+import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 import org.elasticsearch.search.aggregations.metrics.stats.extended.ExtendedStats;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.elasticsearch.search.aggregations.metrics.weighted_avg.WeightedAvg;
 
 /**
  * @author Inácio Nery
@@ -183,12 +197,97 @@ public class ElasticsearchAggregationResult implements AggregationResults {
 	}
 
 	@Override
+	public PercentilesAggregationResult getPercentilesAggregationResult(
+		String aggregationName) {
+
+		Percentiles percentiles = _aggregations.get(aggregationName);
+
+		if (percentiles == null) {
+			return new PercentilesAggregationResult(Collections.emptyList());
+		}
+
+		List<Percentile> percentileList = new ArrayList<>();
+
+		percentiles.forEach(
+			percentile -> percentileList.add(
+				new Percentile(
+					percentile.getPercent(), percentile.getValue())));
+
+		return new PercentilesAggregationResult(percentileList);
+	}
+
+	public ScriptedAggregationResult getScriptedAggregationResult(
+		String aggregationName) {
+
+		ScriptedMetric scriptedMetric = _aggregations.get(aggregationName);
+
+		return new ScriptedAggregationResult(scriptedMetric.aggregation());
+	}
+
+	public StatsAggregationResult getStatsAggregationResult(
+		String aggregationName) {
+
+		Stats stats = _aggregations.get(aggregationName);
+
+		return new StatsAggregationResult(
+			stats.getAvg(), stats.getCount(), stats.getMax(), stats.getMin(),
+			stats.getCount());
+	}
+
+	public SumAggregationResult getSumAggregationResult(
+		String aggregationName) {
+
+		Sum sum = _aggregations.get(aggregationName);
+
+		if (sum == null) {
+			return new SumAggregationResult(0);
+		}
+
+		return new SumAggregationResult(sum.getValue());
+	}
+
+	@Override
 	public TermsAggregationResult getTermsAggregationResult(
 		String aggregationName) {
 
 		Terms terms = _aggregations.get(aggregationName);
 
 		return new TermsAggregationResult(getBuckets(terms));
+	}
+
+	@Override
+	public TopHitsAggregationResult getTopHitsAggregationResult(
+		String aggregationName) {
+
+		TopHits topHits = _aggregations.get(aggregationName);
+
+		return _topHitsAggregationResultTranslator.translate(topHits);
+	}
+
+	@Override
+	public ValueCountAggregationResult getValueCountAggregationResult(
+		String aggregationName) {
+
+		ValueCount valueCount = _aggregations.get(aggregationName);
+
+		if (valueCount == null) {
+			return new ValueCountAggregationResult(0);
+		}
+
+		return new ValueCountAggregationResult(valueCount.getValue());
+	}
+
+	@Override
+	public WeightedAvgAggregationResult getWeightedAvgAggregationResult(
+		String aggregationName) {
+
+		WeightedAvg weightedAvg = _aggregations.get(aggregationName);
+
+		if (weightedAvg == null) {
+			return new WeightedAvgAggregationResult(0);
+		}
+
+		return new WeightedAvgAggregationResult(weightedAvg.getValue());
 	}
 
 	protected List<Bucket> getBuckets(Terms terms) {
@@ -210,5 +309,8 @@ public class ElasticsearchAggregationResult implements AggregationResults {
 	}
 
 	private final Aggregations _aggregations;
+	private TopHitsAggregationResultTranslator
+		_topHitsAggregationResultTranslator =
+			new TopHitsAggregationResultTranslator();
 
 }

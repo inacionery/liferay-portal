@@ -31,6 +31,7 @@ import com.liferay.portal.search.aggregation.metrics.PercentilesMethod;
 import com.liferay.portal.search.aggregation.metrics.ScriptedMetricAggregation;
 import com.liferay.portal.search.aggregation.metrics.StatsAggregation;
 import com.liferay.portal.search.aggregation.metrics.SumAggregation;
+import com.liferay.portal.search.aggregation.metrics.TopHitsAggregation;
 import com.liferay.portal.search.aggregation.metrics.ValueCountAggregation;
 import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 
@@ -256,6 +257,12 @@ public class ElasticsearchAggregationVisitor
 	}
 
 	@Override
+	public AggregationBuilder visit(TopHitsAggregation topHitsAggregation) {
+		return _topHitsAggregationTranslator.translate(
+			topHitsAggregation, this);
+	}
+
+	@Override
 	public AggregationBuilder visit(
 		ValueCountAggregation valueCountAggregation) {
 
@@ -290,6 +297,9 @@ public class ElasticsearchAggregationVisitor
 	@Reference
 	private ScriptedMetricAggregationTranslator
 		_scriptedMetricAggregationTranslator;
+
+	@Reference
+	private TopHitsAggregationTranslator _topHitsAggregationTranslator;
 
 	@Reference
 	private WeightedAvgAggregationTranslator _weightedAvgAggregationTranslator;
