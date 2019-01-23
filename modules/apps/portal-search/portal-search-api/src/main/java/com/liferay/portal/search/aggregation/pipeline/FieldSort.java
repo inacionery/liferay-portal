@@ -12,26 +12,27 @@
  * details.
  */
 
-package com.liferay.portal.search.aggregation;
-
-import aQute.bnd.annotation.ProviderType;
-
-import java.util.Collection;
+package com.liferay.portal.search.aggregation.pipeline;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-@ProviderType
-public interface Aggregation {
+public class FieldSort {
 
-	public <T> T accept(AggregationVisitor<T> aggregationVisitor);
+	public FieldSort(boolean asc, String name) {
+		_asc = asc;
+		_name = name;
+	}
 
-	public void addAggregation(Aggregation aggregation);
+	public String getName() {
+		return _name;
+	}
 
-	public void addAggregations(Aggregation... aggregation);
+	public boolean isAsc() {
+		return _asc;
+	}
 
-	public String getAggregationName();
-
-	public Collection<Aggregation> getAggregations();
+	private final boolean _asc;
+	private final String _name;
 
 }

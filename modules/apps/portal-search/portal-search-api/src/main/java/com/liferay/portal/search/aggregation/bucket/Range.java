@@ -12,26 +12,33 @@
  * details.
  */
 
-package com.liferay.portal.search.aggregation;
-
-import aQute.bnd.annotation.ProviderType;
-
-import java.util.Collection;
+package com.liferay.portal.search.aggregation.bucket;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-@ProviderType
-public interface Aggregation {
+public class Range {
 
-	public <T> T accept(AggregationVisitor<T> aggregationVisitor);
+	public Range(String from, String key, String to) {
+		_from = from;
+		_key = key;
+		_to = to;
+	}
 
-	public void addAggregation(Aggregation aggregation);
+	public String getFrom() {
+		return _from;
+	}
 
-	public void addAggregations(Aggregation... aggregation);
+	public String getKey() {
+		return _key;
+	}
 
-	public String getAggregationName();
+	public String getTo() {
+		return _to;
+	}
 
-	public Collection<Aggregation> getAggregations();
+	private final String _from;
+	private final String _key;
+	private final String _to;
 
 }

@@ -12,26 +12,34 @@
  * details.
  */
 
-package com.liferay.portal.search.aggregation;
+package com.liferay.portal.search.aggregation.bucket;
 
 import aQute.bnd.annotation.ProviderType;
 
-import java.util.Collection;
+import com.liferay.portal.kernel.search.Query;
+import com.liferay.portal.search.aggregation.AggregationVisitor;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
 @ProviderType
-public interface Aggregation {
+public class FilterAggregation extends BaseBucketAggregation {
 
-	public <T> T accept(AggregationVisitor<T> aggregationVisitor);
+	public FilterAggregation(String aggregationName, Query query) {
+		super(aggregationName);
 
-	public void addAggregation(Aggregation aggregation);
+		_query = query;
+	}
 
-	public void addAggregations(Aggregation... aggregation);
+	@Override
+	public <T> T accept(AggregationVisitor<T> aggregationVisitor) {
+		return aggregationVisitor.visit(this);
+	}
 
-	public String getAggregationName();
+	public Query getQuery() {
+		return _query;
+	}
 
-	public Collection<Aggregation> getAggregations();
+	private final Query _query;
 
 }
