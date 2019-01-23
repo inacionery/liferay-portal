@@ -12,21 +12,21 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.AggregationTranslator;
-import com.liferay.portal.search.aggregation.metrics.ScriptedMetricAggregation;
+import com.liferay.portal.search.aggregation.bucket.NestedAggregation;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.scripted.ScriptedMetricAggregationBuilder;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-public interface ScriptedMetricAggregationTranslator {
+public interface NestedAggregationTranslator {
 
-	public ScriptedMetricAggregationBuilder translate(
-		ScriptedMetricAggregation scriptedMetricAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+	public NestedAggregationBuilder translate(
+		NestedAggregation nestedAggregation,
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator);
 
 }

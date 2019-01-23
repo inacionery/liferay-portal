@@ -12,21 +12,21 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics;
 
 import com.liferay.portal.search.aggregation.AggregationTranslator;
-import com.liferay.portal.search.aggregation.metrics.GeoCentroidAggregation;
+import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroidAggregationBuilder;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.weighted_avg.WeightedAvgAggregationBuilder;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-public interface GeoCentroidAggregationTranslator {
+public interface WeightedAvgAggregationTranslator {
 
-	public GeoCentroidAggregationBuilder translate(
-		GeoCentroidAggregation geoCentroidAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+	public WeightedAvgAggregationBuilder translate(
+		WeightedAvgAggregation weightedAvgAggregation,
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator);
 
 }

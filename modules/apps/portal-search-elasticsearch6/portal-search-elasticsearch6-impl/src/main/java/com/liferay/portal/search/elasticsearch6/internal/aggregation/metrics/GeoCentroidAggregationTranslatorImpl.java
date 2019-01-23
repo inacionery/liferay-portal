@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics;
 
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
@@ -20,6 +20,8 @@ import com.liferay.portal.search.aggregation.metrics.GeoCentroidAggregation;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroidAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
@@ -34,7 +36,7 @@ public class GeoCentroidAggregationTranslatorImpl
 	@Override
 	public GeoCentroidAggregationBuilder translate(
 		GeoCentroidAggregation geoCentroidAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator) {
 
 		GeoCentroidAggregationBuilder geoCentroidAggregationBuilder =
 			AggregationBuilders.geoCentroid(
@@ -42,11 +44,20 @@ public class GeoCentroidAggregationTranslatorImpl
 
 		geoCentroidAggregationBuilder.field(geoCentroidAggregation.getField());
 
-		for (Aggregation childAggregation :
-				geoCentroidAggregation.getChildAggregations()) {
+		for (Aggregation aggregation :
+				geoCentroidAggregation.getAggregations()) {
 
-			geoCentroidAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+			BaseAggregationBuilder baseAggregationBuilder =
+				aggregationTranslator.translate(aggregation);
+
+			if (baseAggregationBuilder instanceof BaseAggregationBuilder) {
+				geoCentroidAggregationBuilder.subAggregation(
+					(AggregationBuilder)baseAggregationBuilder);
+			}
+			else {
+				geoCentroidAggregationBuilder.subAggregation(
+					(PipelineAggregationBuilder)baseAggregationBuilder);
+			}
 		}
 
 		return geoCentroidAggregationBuilder;

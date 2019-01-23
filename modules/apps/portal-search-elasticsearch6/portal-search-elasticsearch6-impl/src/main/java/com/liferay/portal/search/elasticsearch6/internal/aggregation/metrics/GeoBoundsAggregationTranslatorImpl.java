@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics;
 
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
@@ -20,6 +20,8 @@ import com.liferay.portal.search.aggregation.metrics.GeoBoundsAggregation;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.geobounds.GeoBoundsAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
@@ -34,7 +36,7 @@ public class GeoBoundsAggregationTranslatorImpl
 	@Override
 	public GeoBoundsAggregationBuilder translate(
 		GeoBoundsAggregation geoBoundsAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator) {
 
 		GeoBoundsAggregationBuilder geoBoundsAggregationBuilder =
 			AggregationBuilders.geoBounds(
@@ -47,11 +49,18 @@ public class GeoBoundsAggregationTranslatorImpl
 				geoBoundsAggregation.getWrapLongitude());
 		}
 
-		for (Aggregation childAggregation :
-				geoBoundsAggregation.getChildAggregations()) {
+		for (Aggregation aggregation : geoBoundsAggregation.getAggregations()) {
+			BaseAggregationBuilder baseAggregationBuilder =
+				aggregationTranslator.translate(aggregation);
 
-			geoBoundsAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+			if (baseAggregationBuilder instanceof BaseAggregationBuilder) {
+				geoBoundsAggregationBuilder.subAggregation(
+					(AggregationBuilder)baseAggregationBuilder);
+			}
+			else {
+				geoBoundsAggregationBuilder.subAggregation(
+					(PipelineAggregationBuilder)baseAggregationBuilder);
+			}
 		}
 
 		return geoBoundsAggregationBuilder;

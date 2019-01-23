@@ -12,51 +12,61 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
-import com.liferay.portal.search.aggregation.metrics.BaseMetricsAggregation;
+import com.liferay.portal.search.aggregation.bucket.BaseBucketAggregation;
 import com.liferay.portal.search.elasticsearch6.internal.script.ScriptTranslator;
 
 import org.elasticsearch.script.Script;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 import org.elasticsearch.search.aggregations.support.ValuesSourceAggregationBuilder;
 
 /**
- * @author Michael C. Han
+ * @author Inácio Nery
  */
-public class BaseMetricsAggregationTranslator {
+public class BaseBucketAggregationTranslator {
 
 	public ValuesSourceAggregationBuilder translate(
 		ValuesSourceAggregationBuilderFactory
 			valuesSourceAggregationBuilderFactory,
-		BaseMetricsAggregation baseMetricsAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+		BaseBucketAggregation baseBucketAggregation,
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator) {
 
 		ValuesSourceAggregationBuilder valuesSourceAggregationBuilder =
-			valuesSourceAggregationBuilderFactory.create(
-				baseMetricsAggregation);
+			valuesSourceAggregationBuilderFactory.create(baseBucketAggregation);
 
-		valuesSourceAggregationBuilder.field(baseMetricsAggregation.getField());
+		valuesSourceAggregationBuilder.field(baseBucketAggregation.getField());
 
-		if (baseMetricsAggregation.getMissing() != null) {
+		if (baseBucketAggregation.getMissing() != null) {
 			valuesSourceAggregationBuilder.missing(
-				baseMetricsAggregation.getMissing());
+				baseBucketAggregation.getMissing());
 		}
 
-		if (baseMetricsAggregation.getScript() != null) {
+		if (baseBucketAggregation.getScript() != null) {
 			Script elasticsearchScript = _scriptTranslator.translate(
-				baseMetricsAggregation.getScript());
+				baseBucketAggregation.getScript());
 
 			valuesSourceAggregationBuilder.script(elasticsearchScript);
 		}
 
-		for (Aggregation childAggregation :
-				baseMetricsAggregation.getChildAggregations()) {
+		for (Aggregation aggregation :
+				baseBucketAggregation.getAggregations()) {
 
-			valuesSourceAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+			BaseAggregationBuilder baseAggregationBuilder =
+				aggregationTranslator.translate(aggregation);
+
+			if (baseAggregationBuilder instanceof BaseAggregationBuilder) {
+				valuesSourceAggregationBuilder.subAggregation(
+					(AggregationBuilder)baseAggregationBuilder);
+			}
+			else {
+				valuesSourceAggregationBuilder.subAggregation(
+					(PipelineAggregationBuilder)baseAggregationBuilder);
+			}
 		}
 
 		return valuesSourceAggregationBuilder;
@@ -65,7 +75,7 @@ public class BaseMetricsAggregationTranslator {
 	public interface ValuesSourceAggregationBuilderFactory {
 
 		public ValuesSourceAggregationBuilder create(
-			BaseMetricsAggregation baseMetricsAggregation);
+			BaseBucketAggregation baseBucketAggregation);
 
 	}
 

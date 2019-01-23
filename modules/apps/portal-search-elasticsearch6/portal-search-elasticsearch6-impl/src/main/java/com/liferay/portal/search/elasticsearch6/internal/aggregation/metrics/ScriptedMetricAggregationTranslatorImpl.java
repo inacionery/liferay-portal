@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics;
 
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
@@ -22,6 +22,8 @@ import com.liferay.portal.search.elasticsearch6.internal.script.ScriptTranslator
 import org.elasticsearch.script.Script;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.scripted.ScriptedMetricAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
@@ -36,7 +38,7 @@ public class ScriptedMetricAggregationTranslatorImpl
 	@Override
 	public ScriptedMetricAggregationBuilder translate(
 		ScriptedMetricAggregation scriptedMetricAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator) {
 
 		ScriptedMetricAggregationBuilder scriptedMetricAggregationBuilder =
 			AggregationBuilders.scriptedMetric(
@@ -76,11 +78,20 @@ public class ScriptedMetricAggregationTranslatorImpl
 		scriptedMetricAggregationBuilder.params(
 			scriptedMetricAggregation.getParameters());
 
-		for (Aggregation childAggregation :
-				scriptedMetricAggregation.getChildAggregations()) {
+		for (Aggregation aggregation :
+				scriptedMetricAggregation.getAggregations()) {
 
-			scriptedMetricAggregationBuilder.subAggregation(
-				aggregationTranslator.translate(childAggregation));
+			BaseAggregationBuilder baseAggregationBuilder =
+				aggregationTranslator.translate(aggregation);
+
+			if (baseAggregationBuilder instanceof BaseAggregationBuilder) {
+				scriptedMetricAggregationBuilder.subAggregation(
+					(AggregationBuilder)baseAggregationBuilder);
+			}
+			else {
+				scriptedMetricAggregationBuilder.subAggregation(
+					(PipelineAggregationBuilder)baseAggregationBuilder);
+			}
 		}
 
 		return scriptedMetricAggregationBuilder;

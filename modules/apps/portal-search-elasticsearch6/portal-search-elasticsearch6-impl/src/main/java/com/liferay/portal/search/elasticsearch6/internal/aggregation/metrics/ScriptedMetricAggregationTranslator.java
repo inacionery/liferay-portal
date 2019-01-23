@@ -12,21 +12,21 @@
  * details.
  */
 
-package com.liferay.portal.search.elasticsearch6.internal.aggregation;
+package com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics;
 
 import com.liferay.portal.search.aggregation.AggregationTranslator;
-import com.liferay.portal.search.aggregation.metrics.GeoBoundsAggregation;
+import com.liferay.portal.search.aggregation.metrics.ScriptedMetricAggregation;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.geobounds.GeoBoundsAggregationBuilder;
+import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.scripted.ScriptedMetricAggregationBuilder;
 
 /**
  * @author Michael C. Han
  */
-public interface GeoBoundsAggregationTranslator {
+public interface ScriptedMetricAggregationTranslator {
 
-	public GeoBoundsAggregationBuilder translate(
-		GeoBoundsAggregation geoBoundsAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+	public ScriptedMetricAggregationBuilder translate(
+		ScriptedMetricAggregation scriptedMetricAggregation,
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator);
 
 }
