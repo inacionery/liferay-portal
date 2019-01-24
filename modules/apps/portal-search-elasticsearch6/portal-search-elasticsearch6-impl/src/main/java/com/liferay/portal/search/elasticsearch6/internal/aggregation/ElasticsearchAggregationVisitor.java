@@ -43,7 +43,6 @@ import org.elasticsearch.search.aggregations.metrics.percentiles.PercentilesAggr
 import org.elasticsearch.search.aggregations.metrics.stats.extended.ExtendedStatsAggregationBuilder;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
@@ -287,21 +286,17 @@ public class ElasticsearchAggregationVisitor
 	private final BaseMetricsAggregationTranslator
 		_baseMetricsAggregationTranslator =
 			new BaseMetricsAggregationTranslator();
-
-	@Reference
-	private GeoBoundsAggregationTranslator _geoBoundsAggregationTranslator;
-
-	@Reference
-	private GeoCentroidAggregationTranslator _geoCentroidAggregationTranslator;
-
-	@Reference
-	private ScriptedMetricAggregationTranslator
-		_scriptedMetricAggregationTranslator;
-
-	@Reference
-	private TopHitsAggregationTranslator _topHitsAggregationTranslator;
-
-	@Reference
-	private WeightedAvgAggregationTranslator _weightedAvgAggregationTranslator;
+	private final GeoBoundsAggregationTranslator
+		_geoBoundsAggregationTranslator = new GeoBoundsAggregationTranslator();
+	private final GeoCentroidAggregationTranslator
+		_geoCentroidAggregationTranslator =
+			new GeoCentroidAggregationTranslator();
+	private final ScriptedMetricAggregationTranslator
+		_scriptedMetricAggregationTranslator =
+			new ScriptedMetricAggregationTranslator();
+	private final TopHitsAggregationTranslator _topHitsAggregationTranslator =
+		new TopHitsAggregationTranslator();
+	private final WeightedAvgAggregationTranslator _weightedAvgAggregationTranslator =
+		new WeightedAvgAggregationTranslator();
 
 }

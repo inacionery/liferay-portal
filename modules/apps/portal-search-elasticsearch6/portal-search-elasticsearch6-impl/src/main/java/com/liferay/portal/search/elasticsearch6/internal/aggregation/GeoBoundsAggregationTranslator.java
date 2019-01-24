@@ -14,19 +14,40 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.aggregation;
 
+import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.metrics.GeoBoundsAggregation;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.geobounds.GeoBoundsAggregationBuilder;
 
 /**
  * @author Michael C. Han
  */
-public interface GeoBoundsAggregationTranslator {
+public class GeoBoundsAggregationTranslator {
 
 	public GeoBoundsAggregationBuilder translate(
 		GeoBoundsAggregation geoBoundsAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+
+		GeoBoundsAggregationBuilder geoBoundsAggregationBuilder =
+			AggregationBuilders.geoBounds(
+				geoBoundsAggregation.getAggregationName());
+
+		geoBoundsAggregationBuilder.field(geoBoundsAggregation.getField());
+
+		if (geoBoundsAggregation.getWrapLongitude() != null) {
+			geoBoundsAggregationBuilder.wrapLongitude(
+				geoBoundsAggregation.getWrapLongitude());
+		}
+
+		for (Aggregation aggregation : geoBoundsAggregation.getAggregations()) {
+			geoBoundsAggregationBuilder.subAggregation(
+				aggregationTranslator.translate(aggregation));
+		}
+
+		return geoBoundsAggregationBuilder;
+	}
 
 }

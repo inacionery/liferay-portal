@@ -14,19 +14,80 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.aggregation;
 
+import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregation;
+import com.liferay.portal.search.elasticsearch6.internal.script.ScriptTranslator;
 
+import org.elasticsearch.script.Script;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.weighted_avg.WeightedAvgAggregationBuilder;
+import org.elasticsearch.search.aggregations.support.MultiValuesSourceFieldConfig;
 
 /**
  * @author Michael C. Han
  */
-public interface WeightedAvgAggregationTranslator {
+public class WeightedAvgAggregationTranslator {
 
 	public WeightedAvgAggregationBuilder translate(
 		WeightedAvgAggregation weightedAvgAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+
+		WeightedAvgAggregationBuilder weightedAvgAggregationBuilder =
+			AggregationBuilders.weightedAvg(
+				weightedAvgAggregation.getAggregationName());
+
+		MultiValuesSourceFieldConfig.Builder valueBuilder =
+			new MultiValuesSourceFieldConfig.Builder();
+
+		if (weightedAvgAggregation.getValueField() != null) {
+			valueBuilder.setFieldName(weightedAvgAggregation.getValueField());
+		}
+
+		if (weightedAvgAggregation.getValueMissing() != null) {
+			valueBuilder.setMissing(weightedAvgAggregation.getValueMissing());
+		}
+
+		if (weightedAvgAggregation.getValueScript() != null) {
+			Script elasticsearchgetValueScript = _scriptTranslator.translate(
+				weightedAvgAggregation.getValueScript());
+
+			valueBuilder.setScript(elasticsearchgetValueScript);
+		}
+
+		weightedAvgAggregationBuilder.value(valueBuilder.build());
+
+		MultiValuesSourceFieldConfig.Builder weightBuilder =
+			new MultiValuesSourceFieldConfig.Builder();
+
+		if (weightedAvgAggregation.getWeightField() != null) {
+			weightBuilder.setFieldName(weightedAvgAggregation.getWeightField());
+		}
+
+		if (weightedAvgAggregation.getWeightMissing() != null) {
+			weightBuilder.setMissing(weightedAvgAggregation.getWeightMissing());
+		}
+
+		if (weightedAvgAggregation.getWeightScript() != null) {
+			Script elasticsearchgetWeightScript = _scriptTranslator.translate(
+				weightedAvgAggregation.getWeightScript());
+
+			weightBuilder.setScript(elasticsearchgetWeightScript);
+		}
+
+		weightedAvgAggregationBuilder.weight(weightBuilder.build());
+
+		for (Aggregation aggregation :
+				weightedAvgAggregation.getAggregations()) {
+
+			weightedAvgAggregationBuilder.subAggregation(
+				aggregationTranslator.translate(aggregation));
+		}
+
+		return weightedAvgAggregationBuilder;
+	}
+
+	private final ScriptTranslator _scriptTranslator = new ScriptTranslator();
 
 }

@@ -14,19 +14,37 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.aggregation;
 
+import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.metrics.GeoCentroidAggregation;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroidAggregationBuilder;
 
 /**
  * @author Michael C. Han
  */
-public interface GeoCentroidAggregationTranslator {
+public class GeoCentroidAggregationTranslator {
 
 	public GeoCentroidAggregationBuilder translate(
 		GeoCentroidAggregation geoCentroidAggregation,
-		AggregationTranslator<AggregationBuilder> aggregationTranslator);
+		AggregationTranslator<AggregationBuilder> aggregationTranslator) {
+
+		GeoCentroidAggregationBuilder geoCentroidAggregationBuilder =
+			AggregationBuilders.geoCentroid(
+				geoCentroidAggregation.getAggregationName());
+
+		geoCentroidAggregationBuilder.field(geoCentroidAggregation.getField());
+
+		for (Aggregation aggregation :
+				geoCentroidAggregation.getAggregations()) {
+
+			geoCentroidAggregationBuilder.subAggregation(
+				aggregationTranslator.translate(aggregation));
+		}
+
+		return geoCentroidAggregationBuilder;
+	}
 
 }
