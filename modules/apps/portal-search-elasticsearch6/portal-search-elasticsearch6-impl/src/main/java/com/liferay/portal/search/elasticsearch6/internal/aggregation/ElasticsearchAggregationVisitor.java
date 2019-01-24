@@ -19,7 +19,6 @@ import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.AggregationVisitor;
 import com.liferay.portal.search.aggregation.bucket.BucketOrder;
 import com.liferay.portal.search.aggregation.bucket.DateHistogramAggregation;
-import com.liferay.portal.search.aggregation.bucket.ExtendedBounds;
 import com.liferay.portal.search.aggregation.bucket.FilterAggregation;
 import com.liferay.portal.search.aggregation.bucket.FiltersAggregation;
 import com.liferay.portal.search.aggregation.bucket.NestedAggregation;
@@ -148,21 +147,6 @@ public class ElasticsearchAggregationVisitor
 			dateHistogramAggregationBuilder.dateHistogramInterval(
 				new DateHistogramInterval(
 					dateHistogramAggregation.getDateHistogramInterval()));
-		}
-
-		if (dateHistogramAggregation.getExtendedBounds() != null) {
-			ExtendedBounds extendedBounds =
-				dateHistogramAggregation.getExtendedBounds();
-
-			dateHistogramAggregationBuilder.extendedBounds(
-				new org.elasticsearch.search.aggregations.bucket.histogram.
-					ExtendedBounds(
-						extendedBounds.getMin(), extendedBounds.getMax()));
-		}
-
-		if (dateHistogramAggregation.getInterval() != null) {
-			dateHistogramAggregationBuilder.interval(
-				dateHistogramAggregation.getInterval());
 		}
 
 		if (dateHistogramAggregation.getMinDocCount() != null) {

@@ -37,14 +37,6 @@ public class DateHistogramAggregation extends BaseBucketAggregation {
 		return _dateHistogramInterval;
 	}
 
-	public ExtendedBounds getExtendedBounds() {
-		return _extendedBounds;
-	}
-
-	public Long getInterval() {
-		return _interval;
-	}
-
 	public Boolean getKeyed() {
 		return _keyed;
 	}
@@ -61,10 +53,6 @@ public class DateHistogramAggregation extends BaseBucketAggregation {
 		_dateHistogramInterval = dateHistogramInterval;
 	}
 
-	public void setInterval(Long interval) {
-		_interval = interval;
-	}
-
 	public void setKeyed(Boolean keyed) {
 		_keyed = keyed;
 	}
@@ -73,17 +61,11 @@ public class DateHistogramAggregation extends BaseBucketAggregation {
 		_minDocCount = minDocCount;
 	}
 
-	public void setMinExtendedBounds(ExtendedBounds extendedBounds) {
-		_extendedBounds = extendedBounds;
-	}
-
 	public void setOffset(Long offset) {
 		_offset = offset;
 	}
 
 	private String _dateHistogramInterval;
-	private ExtendedBounds _extendedBounds;
-	private Long _interval;
 	private Boolean _keyed;
 	private Long _minDocCount;
 	private Long _offset;

@@ -16,6 +16,8 @@ package com.liferay.portal.search.aggregation.bucket;
 
 import com.liferay.portal.search.aggregation.AggregationResults;
 
+import java.util.Objects;
+
 /**
  * @author Inácio Nery
  */
@@ -29,6 +31,25 @@ public class Bucket {
 		_key = key;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (obj == null) {
+			return false;
+		}
+
+		if (!(obj instanceof Bucket)) {
+			return false;
+		}
+
+		Bucket other = (Bucket)obj;
+
+		return Objects.equals(_key, other._key);
+	}
+
 	public AggregationResults getAggregationResults() {
 		return _aggregationResults;
 	}
@@ -39,6 +60,16 @@ public class Bucket {
 
 	public String getKey() {
 		return _key;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_key);
+	}
+
+	@Override
+	public String toString() {
+		return "Bucket [count=" + _count + ", key=" + _key + "]";
 	}
 
 	private final AggregationResults _aggregationResults;
