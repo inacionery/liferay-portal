@@ -14,19 +14,45 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.aggregation.bucket;
 
+import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.bucket.NestedAggregation;
 
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 
 /**
  * @author Inácio Nery
  */
-public interface NestedAggregationTranslator {
+public class NestedAggregationTranslator {
 
 	public NestedAggregationBuilder translate(
 		NestedAggregation nestedAggregation,
-		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator);
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator) {
+
+		NestedAggregationBuilder nestedAggregationBuilder =
+			AggregationBuilders.nested(
+				nestedAggregation.getAggregationName(),
+				nestedAggregation.getPath());
+
+		for (Aggregation aggregation : nestedAggregation.getAggregations()) {
+			BaseAggregationBuilder baseAggregationBuilder =
+				aggregationTranslator.translate(aggregation);
+
+			if (baseAggregationBuilder instanceof BaseAggregationBuilder) {
+				nestedAggregationBuilder.subAggregation(
+					(AggregationBuilder)baseAggregationBuilder);
+			}
+			else {
+				nestedAggregationBuilder.subAggregation(
+					(PipelineAggregationBuilder)baseAggregationBuilder);
+			}
+		}
+
+		return nestedAggregationBuilder;
+	}
 
 }

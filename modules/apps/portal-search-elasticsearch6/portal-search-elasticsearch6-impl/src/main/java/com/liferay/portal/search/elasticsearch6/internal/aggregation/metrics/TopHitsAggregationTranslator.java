@@ -16,17 +16,46 @@ package com.liferay.portal.search.elasticsearch6.internal.aggregation.metrics;
 
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.metrics.TopHitsAggregation;
+import com.liferay.portal.search.sort.Sort;
 
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsAggregationBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 
 /**
  * @author Rafael Praxedes
  */
-public interface TopHitsAggregationTranslator {
+public class TopHitsAggregationTranslator {
 
 	public TopHitsAggregationBuilder translate(
 		TopHitsAggregation topHitsAggregation,
-		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator);
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslaton) {
+
+		TopHitsAggregationBuilder topHitsAggregationBuilder =
+			AggregationBuilders.topHits(
+				topHitsAggregation.getAggregationName());
+
+		topHitsAggregationBuilder.from(topHitsAggregation.getFrom());
+
+		if (topHitsAggregation.getSize() > 0) {
+			topHitsAggregationBuilder.size(topHitsAggregation.getSize());
+		}
+
+		for (Sort sort : topHitsAggregation.getSorts()) {
+			topHitsAggregationBuilder.sort(
+				sort.getFieldName(), getSortOrder(sort.isAsc()));
+		}
+
+		return topHitsAggregationBuilder;
+	}
+
+	protected SortOrder getSortOrder(boolean asc) {
+		if (asc) {
+			return SortOrder.ASC;
+		}
+
+		return SortOrder.DESC;
+	}
 
 }

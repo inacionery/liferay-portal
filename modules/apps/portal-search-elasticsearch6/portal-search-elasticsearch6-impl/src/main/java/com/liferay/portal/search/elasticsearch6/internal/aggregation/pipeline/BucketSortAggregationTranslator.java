@@ -16,17 +16,61 @@ package com.liferay.portal.search.elasticsearch6.internal.aggregation.pipeline;
 
 import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.pipeline.BucketSortAggregation;
+import com.liferay.portal.search.aggregation.pipeline.FieldSort;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.elasticsearch.search.aggregations.BaseAggregationBuilder;
+import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorBuilders;
 import org.elasticsearch.search.aggregations.pipeline.bucketsort.BucketSortPipelineAggregationBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 
 /**
  * @author Inácio Nery
  */
-public interface BucketSortAggregationTranslator {
+public class BucketSortAggregationTranslator {
 
 	public BucketSortPipelineAggregationBuilder translate(
 		BucketSortAggregation bucketSortAggregation,
-		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator);
+		AggregationTranslator<BaseAggregationBuilder> aggregationTranslator) {
+
+		List<FieldSortBuilder> fieldSortBuilders = new ArrayList<>();
+
+		for (FieldSort fieldSort : bucketSortAggregation.getFieldSorts()) {
+			FieldSortBuilder fieldSortBuilder = SortBuilders.fieldSort(
+				fieldSort.getName());
+
+			SortOrder sortOrder = SortOrder.DESC;
+
+			if (fieldSort.isAsc()) {
+				sortOrder = SortOrder.ASC;
+			}
+
+			fieldSortBuilder.order(sortOrder);
+
+			fieldSortBuilders.add(fieldSortBuilder);
+		}
+
+		BucketSortPipelineAggregationBuilder
+			bucketSortPipelineAggregationBuilder =
+				PipelineAggregatorBuilders.bucketSort(
+					bucketSortAggregation.getAggregationName(),
+					fieldSortBuilders);
+
+		if (bucketSortAggregation.getFrom() != null) {
+			bucketSortPipelineAggregationBuilder.from(
+				bucketSortAggregation.getFrom());
+		}
+
+		if (bucketSortAggregation.getSize() != null) {
+			bucketSortPipelineAggregationBuilder.size(
+				bucketSortAggregation.getSize());
+		}
+
+		return bucketSortPipelineAggregationBuilder;
+	}
 
 }

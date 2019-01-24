@@ -458,9 +458,9 @@ public class ElasticsearchAggregationVisitor
 	private final BaseMetricsAggregationTranslator
 		_baseMetricsAggregationTranslator =
 			new BaseMetricsAggregationTranslator();
-
-	@Reference
-	private BucketSortAggregationTranslator _bucketSortAggregationTranslator;
+	private final BucketSortAggregationTranslator
+		_bucketSortAggregationTranslator =
+			new BucketSortAggregationTranslator();
 
 	@Reference
 	private FilterAggregationTranslator _filterAggregationTranslator;
@@ -468,23 +468,20 @@ public class ElasticsearchAggregationVisitor
 	@Reference
 	private FiltersAggregationTranslator _filtersAggregationTranslator;
 
-	@Reference
-	private GeoBoundsAggregationTranslator _geoBoundsAggregationTranslator;
-
-	@Reference
-	private GeoCentroidAggregationTranslator _geoCentroidAggregationTranslator;
-
-	@Reference
-	private NestedAggregationTranslator _nestedAggregationTranslator;
-
-	@Reference
-	private ScriptedMetricAggregationTranslator
-		_scriptedMetricAggregationTranslator;
-
-	@Reference
-	private TopHitsAggregationTranslator _topHitsAggregationTranslator;
-
-	@Reference
-	private WeightedAvgAggregationTranslator _weightedAvgAggregationTranslator;
+	private final GeoBoundsAggregationTranslator
+		_geoBoundsAggregationTranslator = new GeoBoundsAggregationTranslator();
+	private final GeoCentroidAggregationTranslator
+		_geoCentroidAggregationTranslator =
+			new GeoCentroidAggregationTranslator();
+	private final NestedAggregationTranslator _nestedAggregationTranslator =
+		new NestedAggregationTranslator();
+	private final ScriptedMetricAggregationTranslator
+		_scriptedMetricAggregationTranslator =
+			new ScriptedMetricAggregationTranslator();
+	private final TopHitsAggregationTranslator _topHitsAggregationTranslator =
+		new TopHitsAggregationTranslator();
+	private final WeightedAvgAggregationTranslator
+		_weightedAvgAggregationTranslator =
+			new WeightedAvgAggregationTranslator();
 
 }
