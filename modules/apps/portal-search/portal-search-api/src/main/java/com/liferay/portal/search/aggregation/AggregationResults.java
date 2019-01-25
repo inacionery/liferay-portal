@@ -1,0 +1,87 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.portal.search.aggregation;
+
+import com.liferay.portal.search.aggregation.bucket.TermsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.AvgAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.CardinalityAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.ExtendedStatsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.GeoBoundsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.GeoCentroidAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.MaxAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.MinAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.PercentileRanksAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.PercentilesAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.ScriptedAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.StatsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.SumAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.TopHitsAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.ValueCountAggregationResult;
+import com.liferay.portal.search.aggregation.metrics.WeightedAvgAggregationResult;
+
+import aQute.bnd.annotation.ProviderType;
+
+/**
+ * @author Inácio Nery
+ */
+@ProviderType
+public interface AggregationResults {
+
+	public AvgAggregationResult getAvgAggregationResult(String aggregationName);
+
+	public CardinalityAggregationResult getCardinalityAggregationResult(
+		String aggregationName);
+
+	public ExtendedStatsAggregationResult getExtendedStatsAggregationResult(
+		String aggregationName);
+
+	public GeoBoundsAggregationResult getGeoBoundsAggregationResult(
+		String aggregationName);
+
+	public GeoCentroidAggregationResult getGeoCentroidAggregationResult(
+		String aggregationName);
+
+	public MaxAggregationResult getMaxAggregationResult(String aggregationName);
+
+	public MinAggregationResult getMinAggregationResult(String aggregationName);
+
+	public PercentilesAggregationResult getPercentilesAggregationResult(
+		String aggregationName);
+
+	public PercentileRanksAggregationResult getPercentileRanksAggregationResult(
+		String aggregationName);
+
+	public ScriptedAggregationResult getScriptedAggregationResult(
+		String aggregationName);
+
+	public StatsAggregationResult getStatsAggregationResult(
+		String aggregationName);
+
+	public SumAggregationResult getSumAggregationResult(String aggregationName);
+
+	public TopHitsAggregationResult getTopHitsAggregationResult(
+		String aggregationName);
+
+	public ValueCountAggregationResult getValueCountAggregationResult(
+		String aggregationName);
+
+	public TermsAggregationResult getTermsAggregationResult(
+		String aggregationName);
+
+	public WeightedAvgAggregationResult getWeightedAvgAggregationResult(
+		String aggregationName);
+
+
+}

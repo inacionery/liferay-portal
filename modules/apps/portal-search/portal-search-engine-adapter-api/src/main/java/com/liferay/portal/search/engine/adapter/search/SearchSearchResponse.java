@@ -17,6 +17,7 @@ package com.liferay.portal.search.engine.adapter.search;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.search.aggregation.AggregationResults;
 
 /**
  * @author Michael C. Han
@@ -24,14 +25,23 @@ import com.liferay.portal.kernel.search.Hits;
 @ProviderType
 public class SearchSearchResponse extends BaseSearchResponse {
 
+	public AggregationResults getAggregationResults() {
+		return _aggregationResults;
+	}
+
 	public Hits getHits() {
 		return _hits;
+	}
+
+	public void setAggregationResults(AggregationResults aggregationResults) {
+		_aggregationResults = aggregationResults;
 	}
 
 	public void setHits(Hits hits) {
 		_hits = hits;
 	}
 
+	private AggregationResults _aggregationResults;
 	private Hits _hits;
 
 }

@@ -15,14 +15,88 @@
 package com.liferay.portal.search.elasticsearch6.internal;
 
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
+import java.util.Collection;
+import java.util.Map;
+
+import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
 
 /**
- * @author Michael C. Han
+ * @author André de Oliveira
  */
-public interface SearchHitDocumentTranslator {
+public class SearchHitDocumentTranslator {
 
-	public Document translate(SearchHit searchHit);
+	public Document translate(SearchHit searchHit) {
+		Document document = new DocumentImpl();
+
+		Map<String, DocumentField> documentFields = searchHit.getFields();
+
+		for (String documentFieldName : documentFields.keySet()) {
+			addField(document, documentFieldName, documentFields);
+		}
+
+		return document;
+	}
+
+	protected void addField(
+		Document document, String fieldName,
+		Map<String, DocumentField> documentFields) {
+
+		Field field = getField(fieldName, documentFields);
+
+		if (field != null) {
+			document.add(field);
+		}
+	}
+
+	protected Field getField(
+		String fieldName, Map<String, DocumentField> documentFields) {
+
+		String geopointIndicatorSuffix = ".geopoint";
+
+		if (fieldName.endsWith(geopointIndicatorSuffix)) {
+			return null;
+		}
+
+		DocumentField documentField = documentFields.get(fieldName);
+
+		if (documentFields.containsKey(
+				fieldName.concat(geopointIndicatorSuffix))) {
+
+			return translateGeoPoint(documentField);
+		}
+
+		return translate(documentField);
+	}
+
+	protected Field translate(DocumentField documentField) {
+		String name = documentField.getName();
+
+		Collection<Object> values = documentField.getValues();
+
+		Field field = new Field(
+			name,
+			ArrayUtil.toStringArray(values.toArray(new Object[values.size()])));
+
+		return field;
+	}
+
+	protected Field translateGeoPoint(DocumentField documentField) {
+		Field field = new Field(documentField.getName());
+
+		String[] values = StringUtil.split(documentField.getValue());
+
+		field.setGeoLocationPoint(
+			new GeoLocationPoint(
+				Double.valueOf(values[0]), Double.valueOf(values[1])));
+
+		return field;
+	}
 
 }

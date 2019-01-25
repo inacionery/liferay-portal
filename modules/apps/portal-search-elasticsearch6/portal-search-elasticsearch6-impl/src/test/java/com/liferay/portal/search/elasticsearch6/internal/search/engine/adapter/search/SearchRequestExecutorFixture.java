@@ -14,7 +14,8 @@
 
 package com.liferay.portal.search.elasticsearch6.internal.search.engine.adapter.search;
 
-import com.liferay.portal.search.elasticsearch6.internal.SearchHitDocumentTranslatorImpl;
+import com.liferay.portal.search.elasticsearch6.internal.SearchHitDocumentTranslator;
+import com.liferay.portal.search.elasticsearch6.internal.aggregation.ElasticsearchAggregationVisitor;
 import com.liferay.portal.search.elasticsearch6.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch6.internal.facet.DefaultFacetProcessor;
 import com.liferay.portal.search.elasticsearch6.internal.facet.DefaultFacetTranslator;
@@ -51,6 +52,8 @@ public class SearchRequestExecutorFixture {
 
 		return new CommonSearchRequestBuilderAssemblerImpl() {
 			{
+				aggregationTranslator = new ElasticsearchAggregationVisitor();
+
 				facetTranslator = createFacetTranslator(facetProcessor1);
 
 				ElasticsearchFilterTranslatorFixture
@@ -181,7 +184,7 @@ public class SearchRequestExecutorFixture {
 					new DefaultSearchResponseTranslator() {
 						{
 							searchHitDocumentTranslator =
-								new SearchHitDocumentTranslatorImpl();
+								new SearchHitDocumentTranslator();
 							statsTranslator = new DefaultStatsTranslator();
 						}
 					};
