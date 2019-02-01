@@ -14,6 +14,9 @@
 
 package com.liferay.headless.workflow.dto;
 
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLName;
+
 import javax.annotation.Generated;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
+@GraphQLName("WorkflowTask")
 @XmlRootElement(name = "WorkflowTask")
 public class WorkflowTask {
 
@@ -122,17 +126,40 @@ public class WorkflowTask {
 		_transitions = transitions;
 	}
 
+	@GraphQLField
 	private Boolean _completed;
+
+	@GraphQLField
 	private String _dateCompleted;
+
+	@GraphQLField
 	private String _dateCreated;
+
+	@GraphQLField
 	private String _definitionName;
+
+	@GraphQLField
 	private String _description;
+
+	@GraphQLField
 	private String _dueDate;
+
+	@GraphQLField
 	private Integer _id;
+
+	@GraphQLField
 	private WorkflowLog _logs;
+
+	@GraphQLField
 	private String _name;
+
+	@GraphQLField
 	private Object _object;
+
+	@GraphQLField
 	private String _self;
+
+	@GraphQLField
 	private String[] _transitions;
 
 }

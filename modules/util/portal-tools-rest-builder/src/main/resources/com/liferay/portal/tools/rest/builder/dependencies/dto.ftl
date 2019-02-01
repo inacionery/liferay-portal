@@ -6,6 +6,9 @@ package ${configYAML.apiPackagePath}.dto;
 	</#list>
 </#compress>
 
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLName;
+
 import javax.annotation.Generated;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
+@GraphQLName("${schemaName}")
 @XmlRootElement(name = "${schemaName}")
 public class ${schemaName} {
 
@@ -58,6 +62,7 @@ public class ${schemaName} {
 				_${propertyName} = ${propertyName};
 			}
 
+			@GraphQLField
 			private ${parameterType} _${propertyName};
 		</#assign>
 

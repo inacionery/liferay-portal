@@ -71,6 +71,11 @@ public class RESTBuilder {
 		context.put("validator", Validator_IW.getInstance());
 
 		_createApplicationFile(context);
+		_createBaseQueryImplFile(context);
+		_createBaseMutationImplFile(context);
+		_createMutationFile(context);
+		_createQueryFile(context);
+		_createServletFile(context);
 
 		Components components = _openAPIYAML.getComponents();
 
@@ -124,6 +129,50 @@ public class RESTBuilder {
 		FileUtil.write(content, file);
 	}
 
+	private void _createBaseMutationImplFile(Map<String, Object> context)
+		throws Exception {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_configYAML.getImplDir());
+		sb.append("/");
+
+		String apiPackagePath = _configYAML.getApiPackagePath();
+
+		sb.append(apiPackagePath.replace('.', '/'));
+
+		sb.append("/internal/mutation/BaseMutationImpl.java");
+
+		File file = new File(sb.toString());
+
+		String content = FreeMarkerUtil.processTemplate(
+			_copyrightFileName, "base_mutation_impl", context);
+
+		FileUtil.write(content, file);
+	}
+
+	private void _createBaseQueryImplFile(Map<String, Object> context)
+		throws Exception {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_configYAML.getImplDir());
+		sb.append("/");
+
+		String apiPackagePath = _configYAML.getApiPackagePath();
+
+		sb.append(apiPackagePath.replace('.', '/'));
+
+		sb.append("/internal/query/BaseQueryImpl.java");
+
+		File file = new File(sb.toString());
+
+		String content = FreeMarkerUtil.processTemplate(
+			_copyrightFileName, "base_query_impl", context);
+
+		FileUtil.write(content, file);
+	}
+
 	private void _createBaseResourceImplFile(
 			Map<String, Object> context, String schemaName)
 		throws Exception {
@@ -173,6 +222,29 @@ public class RESTBuilder {
 		FileUtil.write(content, file);
 	}
 
+	private void _createMutationFile(Map<String, Object> context)
+		throws Exception {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_configYAML.getApiDir());
+		sb.append("/");
+
+		String apiPackagePath = _configYAML.getApiPackagePath();
+
+		sb.append(apiPackagePath.replace('.', '/'));
+
+		sb.append("/mutation/");
+		sb.append("Mutation.java");
+
+		File file = new File(sb.toString());
+
+		String content = FreeMarkerUtil.processTemplate(
+			_copyrightFileName, "mutation", context);
+
+		FileUtil.write(content, file);
+	}
+
 	private void _createPropertiesFile(
 			Map<String, Object> context, String schemaName)
 		throws Exception {
@@ -188,6 +260,29 @@ public class RESTBuilder {
 
 		String content = FreeMarkerUtil.processTemplate(
 			null, "properties", context);
+
+		FileUtil.write(content, file);
+	}
+
+	private void _createQueryFile(Map<String, Object> context)
+		throws Exception {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_configYAML.getApiDir());
+		sb.append("/");
+
+		String apiPackagePath = _configYAML.getApiPackagePath();
+
+		sb.append(apiPackagePath.replace('.', '/'));
+
+		sb.append("/query/");
+		sb.append("Query.java");
+
+		File file = new File(sb.toString());
+
+		String content = FreeMarkerUtil.processTemplate(
+			_copyrightFileName, "query", context);
 
 		FileUtil.write(content, file);
 	}
@@ -242,6 +337,28 @@ public class RESTBuilder {
 
 		String content = FreeMarkerUtil.processTemplate(
 			_copyrightFileName, "resource_impl", context);
+
+		FileUtil.write(content, file);
+	}
+
+	private void _createServletFile(Map<String, Object> context)
+		throws Exception {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_configYAML.getImplDir());
+		sb.append("/");
+
+		String apiPackagePath = _configYAML.getApiPackagePath();
+
+		sb.append(apiPackagePath.replace('.', '/'));
+
+		sb.append("/internal/servlet/GraphQLServlet.java");
+
+		File file = new File(sb.toString());
+
+		String content = FreeMarkerUtil.processTemplate(
+			_copyrightFileName, "servlet", context);
 
 		FileUtil.write(content, file);
 	}
