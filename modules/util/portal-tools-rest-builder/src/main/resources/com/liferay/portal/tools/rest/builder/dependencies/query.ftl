@@ -18,6 +18,10 @@ import graphql.annotations.processor.GraphQLAnnotations;
 
 import graphql.schema.DataFetchingEnvironment;
 
+import ${configYAML.apiPackagePath}.resource.*;
+
+import org.osgi.service.component.annotations.Component;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +32,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
+@Component
 public class Query {
 
 	<#list openAPIYAML.pathItems?keys as path>
@@ -216,7 +221,7 @@ public class Query {
 					${annotationHTTPMethod}
 					@GraphQLInvokeDetached
 					public ${methodReturnValue} ${name}(${methodParameters}) throws Exception {
-						return new ${methodReturnType}();
+						return _${schemaName}Resource.${name}(${methodParameters});
 					}
 				</#assign>
 			</#if>
@@ -229,4 +234,6 @@ ${line?replace("^\t\t\t\t", "", "r")}
 		</#list>
 	</#list>
 
+	@Reference
+	private ${schemaName}Resource _${schemaName}Resource;
 }
