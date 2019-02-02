@@ -1,7 +1,8 @@
 package ${configYAML.apiPackagePath}.internal.servlet;
 
-import ${configYAML.apiPackagePath}.query.Query;
-import ${configYAML.apiPackagePath}.mutation.Mutation;
+import ${configYAML.apiPackagePath}.internal.mutation.Mutation;
+import ${configYAML.apiPackagePath}.internal.query.Query;
+
 import com.liferay.portal.events.EventsProcessorUtil;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.log.Log;

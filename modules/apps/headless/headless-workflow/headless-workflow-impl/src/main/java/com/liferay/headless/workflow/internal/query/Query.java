@@ -16,9 +16,9 @@ package com.liferay.headless.workflow.internal.query;
 
 import com.liferay.headless.workflow.dto.WorkflowLog;
 import com.liferay.headless.workflow.dto.WorkflowTask;
-import com.liferay.headless.workflow.query.Query;
-import com.liferay.portal.vulcan.context.Pagination;
 
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLInvokeDetached;
 import graphql.annotations.annotationTypes.GraphQLName;
 
 import graphql.schema.DataFetchingEnvironment;
@@ -33,19 +33,20 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public abstract class BaseQueryImpl implements Query {
+public class Query {
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public List<WorkflowTask> getRolesWorkflowTasksList(
 			final DataFetchingEnvironment env,
-			@GraphQLName("parent-id") String parentId,
-			@GraphQLName("Pagination") Pagination pagination)
+			@GraphQLName("parent-id") String parentId)
 		throws Exception {
 
 		return Collections.emptyList();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public WorkflowLog getWorkflowLog(
 			final DataFetchingEnvironment env, @GraphQLName("id") Integer id)
 		throws Exception {
@@ -53,7 +54,8 @@ public abstract class BaseQueryImpl implements Query {
 		return new WorkflowLog();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public WorkflowTask getWorkflowTask(
 			final DataFetchingEnvironment env, @GraphQLName("id") Integer id)
 		throws Exception {
@@ -61,21 +63,20 @@ public abstract class BaseQueryImpl implements Query {
 		return new WorkflowTask();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public List<WorkflowTask> getWorkflowTasksList(
-			final DataFetchingEnvironment env,
-			@GraphQLName("genericparentid") Object genericparentid,
-			@GraphQLName("Pagination") Pagination pagination)
+			final DataFetchingEnvironment env)
 		throws Exception {
 
 		return Collections.emptyList();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public List<WorkflowLog> getWorkflowTasksWorkflowLogsList(
 			final DataFetchingEnvironment env,
-			@GraphQLName("parent-id") Integer parentId,
-			@GraphQLName("Pagination") Pagination pagination)
+			@GraphQLName("parent-id") Integer parentId)
 		throws Exception {
 
 		return Collections.emptyList();

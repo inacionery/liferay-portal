@@ -55,15 +55,15 @@ public class ${schemaName} {
 
 		<#assign template>
 			public ${parameterType} get${propertyName?cap_first}() {
-				return _${propertyName};
+				return ${propertyName};
 			}
 
 			public void set${propertyName?cap_first}(${parameterType} ${propertyName}) {
-				_${propertyName} = ${propertyName};
+				this.${propertyName} = ${propertyName};
 			}
 
 			@GraphQLField
-			private ${parameterType} _${propertyName};
+			private ${parameterType} ${propertyName};
 		</#assign>
 
 		<#list template?split("\n") as line>

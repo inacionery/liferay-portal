@@ -1,4 +1,4 @@
-package ${configYAML.apiPackagePath}.query;
+package ${configYAML.apiPackagePath}.internal.query;
 
 <#compress>
 	<#list openAPIYAML.components.schemas?keys as schemaName>
@@ -6,8 +6,8 @@ package ${configYAML.apiPackagePath}.query;
 	</#list>
 </#compress>
 
-import com.liferay.oauth2.provider.scope.RequiresScope;
-import com.liferay.portal.vulcan.context.AcceptLanguage;
+import ${configYAML.apiPackagePath}.query.Query;
+
 import com.liferay.portal.vulcan.context.Pagination;
 import com.liferay.portal.vulcan.dto.Page;
 
@@ -18,20 +18,17 @@ import graphql.annotations.processor.GraphQLAnnotations;
 
 import graphql.schema.DataFetchingEnvironment;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Generated;
 
 /**
- * To access this resource, run:
- *
- *     curl -u your@email.com:yourpassword -D - http://localhost:8080/o${configYAML.application.baseURI}-graphql
- *
  * @author ${configYAML.author}
  * @generated
  */
 @Generated("")
-public interface Query {
+public class Query {
 
 	<#list openAPIYAML.pathItems?keys as path>
 		<#assign
@@ -118,9 +115,11 @@ public interface Query {
 					</@compress>
 				</#assign>
 
+<#--
 				<#if pageParameter && perPageParameter>
 					<#assign methodParameters = "${methodParameters} @GraphQLName(\"Pagination\") Pagination pagination," />
 				</#if>
+-->
 
 				<#assign methodParameters = "final DataFetchingEnvironment env, ${methodParameters}" />
 
@@ -194,15 +193,37 @@ public interface Query {
 				<#assign name = "${name[0..(name?length - 2)]}" />
 			</#if>
 
-			<#assign template>
-				${annotationHTTPMethod}
-				@GraphQLInvokeDetached
-				public ${methodReturnValue} ${name}(${methodParameters}) throws Exception;
-			</#assign>
+			<#if stringUtil.equals(methodReturnType, "Response")>
+				<#assign template>
+					${annotationHTTPMethod}
+					@GraphQLInvokeDetached
+					public ${methodReturnValue} ${name}(${methodParameters}) throws Exception {
+						Response.ResponseBuilder responseBuilder = Response.ok();
+
+						return responseBuilder.build();
+					}
+				</#assign>
+			<#elseif methodReturnValue?contains("List<")>
+				<#assign template>
+					${annotationHTTPMethod}
+					@GraphQLInvokeDetached
+					public ${methodReturnValue} ${name}(${methodParameters}) throws Exception {
+						return Collections.emptyList();
+					}
+				</#assign>
+			<#else>
+				<#assign template>
+					${annotationHTTPMethod}
+					@GraphQLInvokeDetached
+					public ${methodReturnValue} ${name}(${methodParameters}) throws Exception {
+						return new ${methodReturnType}();
+					}
+				</#assign>
+			</#if>
 
 			<#list template?split("\n") as line>
 				<#if line?trim?has_content>
-${line?replace("^\t\t\t", "", "r")}
+${line?replace("^\t\t\t\t", "", "r")}
 				</#if>
 			</#list>
 		</#list>

@@ -15,8 +15,9 @@
 package com.liferay.headless.workflow.internal.mutation;
 
 import com.liferay.headless.workflow.dto.WorkflowTask;
-import com.liferay.headless.workflow.mutation.Mutation;
 
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLInvokeDetached;
 import graphql.annotations.annotationTypes.GraphQLName;
 
 import graphql.schema.DataFetchingEnvironment;
@@ -28,9 +29,10 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public abstract class BaseMutationImpl implements Mutation {
+public class Mutation {
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public WorkflowTask postWorkflowTasksAssignToMe(
 			final DataFetchingEnvironment env, @GraphQLName("id") Integer id)
 		throws Exception {
@@ -38,7 +40,8 @@ public abstract class BaseMutationImpl implements Mutation {
 		return new WorkflowTask();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public WorkflowTask postWorkflowTasksAssignToUser(
 			final DataFetchingEnvironment env, @GraphQLName("id") Integer id)
 		throws Exception {
@@ -46,7 +49,8 @@ public abstract class BaseMutationImpl implements Mutation {
 		return new WorkflowTask();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public WorkflowTask postWorkflowTasksChangeTransition(
 			final DataFetchingEnvironment env, @GraphQLName("id") Integer id)
 		throws Exception {
@@ -54,7 +58,8 @@ public abstract class BaseMutationImpl implements Mutation {
 		return new WorkflowTask();
 	}
 
-	@Override
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public WorkflowTask postWorkflowTasksUpdateDueDate(
 			final DataFetchingEnvironment env, @GraphQLName("id") Integer id)
 		throws Exception {

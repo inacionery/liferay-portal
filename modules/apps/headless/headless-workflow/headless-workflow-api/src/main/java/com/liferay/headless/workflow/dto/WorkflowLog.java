@@ -31,124 +31,124 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class WorkflowLog {
 
 	public String getAuditPerson() {
-		return _auditPerson;
+		return auditPerson;
 	}
 
 	public String getCommentLog() {
-		return _commentLog;
+		return commentLog;
 	}
 
 	public String getDateCreated() {
-		return _dateCreated;
+		return dateCreated;
 	}
 
 	public Integer getId() {
-		return _id;
+		return id;
 	}
 
 	public String getPerson() {
-		return _person;
+		return person;
 	}
 
 	public String getPreviousPerson() {
-		return _previousPerson;
+		return previousPerson;
 	}
 
 	public String getPreviousState() {
-		return _previousState;
+		return previousState;
 	}
 
 	public String getSelf() {
-		return _self;
+		return self;
 	}
 
 	public String getState() {
-		return _state;
+		return state;
 	}
 
 	public WorkflowTask getTask() {
-		return _task;
+		return task;
 	}
 
 	public String getType() {
-		return _type;
+		return type;
 	}
 
 	public void setAuditPerson(String auditPerson) {
-		_auditPerson = auditPerson;
+		this.auditPerson = auditPerson;
 	}
 
 	public void setCommentLog(String commentLog) {
-		_commentLog = commentLog;
+		this.commentLog = commentLog;
 	}
 
 	public void setDateCreated(String dateCreated) {
-		_dateCreated = dateCreated;
+		this.dateCreated = dateCreated;
 	}
 
 	public void setId(Integer id) {
-		_id = id;
+		this.id = id;
 	}
 
 	public void setPerson(String person) {
-		_person = person;
+		this.person = person;
 	}
 
 	public void setPreviousPerson(String previousPerson) {
-		_previousPerson = previousPerson;
+		this.previousPerson = previousPerson;
 	}
 
 	public void setPreviousState(String previousState) {
-		_previousState = previousState;
+		this.previousState = previousState;
 	}
 
 	public void setSelf(String self) {
-		_self = self;
+		this.self = self;
 	}
 
 	public void setState(String state) {
-		_state = state;
+		this.state = state;
 	}
 
 	public void setTask(WorkflowTask task) {
-		_task = task;
+		this.task = task;
 	}
 
 	public void setType(String type) {
-		_type = type;
+		this.type = type;
 	}
 
 	@GraphQLField
-	private String _auditPerson;
+	private String auditPerson;
 
 	@GraphQLField
-	private String _commentLog;
+	private String commentLog;
 
 	@GraphQLField
-	private String _dateCreated;
+	private String dateCreated;
 
 	@GraphQLField
-	private Integer _id;
+	private Integer id;
 
 	@GraphQLField
-	private String _person;
+	private String person;
 
 	@GraphQLField
-	private String _previousPerson;
+	private String previousPerson;
 
 	@GraphQLField
-	private String _previousState;
+	private String previousState;
 
 	@GraphQLField
-	private String _self;
+	private String self;
 
 	@GraphQLField
-	private String _state;
+	private String state;
 
 	@GraphQLField
-	private WorkflowTask _task;
+	private WorkflowTask task;
 
 	@GraphQLField
-	private String _type;
+	private String type;
 
 }

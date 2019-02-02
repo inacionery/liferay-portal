@@ -31,135 +31,124 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class WorkflowTask {
 
 	public Boolean getCompleted() {
-		return _completed;
+		return completed;
 	}
 
 	public String getDateCompleted() {
-		return _dateCompleted;
+		return dateCompleted;
 	}
 
 	public String getDateCreated() {
-		return _dateCreated;
+		return dateCreated;
 	}
 
 	public String getDefinitionName() {
-		return _definitionName;
+		return definitionName;
 	}
 
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 
 	public String getDueDate() {
-		return _dueDate;
+		return dueDate;
 	}
 
 	public Integer getId() {
-		return _id;
+		return id;
 	}
 
 	public WorkflowLog getLogs() {
-		return _logs;
+		return logs;
 	}
 
 	public String getName() {
-		return _name;
-	}
-
-	public Object getObject() {
-		return _object;
+		return name;
 	}
 
 	public String getSelf() {
-		return _self;
+		return self;
 	}
 
 	public String[] getTransitions() {
-		return _transitions;
+		return transitions;
 	}
 
 	public void setCompleted(Boolean completed) {
-		_completed = completed;
+		this.completed = completed;
 	}
 
 	public void setDateCompleted(String dateCompleted) {
-		_dateCompleted = dateCompleted;
+		this.dateCompleted = dateCompleted;
 	}
 
 	public void setDateCreated(String dateCreated) {
-		_dateCreated = dateCreated;
+		this.dateCreated = dateCreated;
 	}
 
 	public void setDefinitionName(String definitionName) {
-		_definitionName = definitionName;
+		this.definitionName = definitionName;
 	}
 
 	public void setDescription(String description) {
-		_description = description;
+		this.description = description;
 	}
 
 	public void setDueDate(String dueDate) {
-		_dueDate = dueDate;
+		this.dueDate = dueDate;
 	}
 
 	public void setId(Integer id) {
-		_id = id;
+		this.id = id;
 	}
 
 	public void setLogs(WorkflowLog logs) {
-		_logs = logs;
+		this.logs = logs;
 	}
 
 	public void setName(String name) {
-		_name = name;
-	}
-
-	public void setObject(Object object) {
-		_object = object;
+		this.name = name;
 	}
 
 	public void setSelf(String self) {
-		_self = self;
+		this.self = self;
 	}
 
 	public void setTransitions(String[] transitions) {
-		_transitions = transitions;
+		this.transitions = transitions;
 	}
 
 	@GraphQLField
-	private Boolean _completed;
+	private Boolean completed;
 
 	@GraphQLField
-	private String _dateCompleted;
+	private String dateCompleted;
 
 	@GraphQLField
-	private String _dateCreated;
+	private String dateCreated;
 
 	@GraphQLField
-	private String _definitionName;
+	private String definitionName;
 
 	@GraphQLField
-	private String _description;
+	private String description;
 
 	@GraphQLField
-	private String _dueDate;
+	private String dueDate;
 
 	@GraphQLField
-	private Integer _id;
+	private Integer id;
 
 	@GraphQLField
-	private WorkflowLog _logs;
+	private WorkflowLog logs;
 
 	@GraphQLField
-	private String _name;
+	private String name;
 
 	@GraphQLField
-	private Object _object;
+	private String self;
 
 	@GraphQLField
-	private String _self;
-
-	@GraphQLField
-	private String[] _transitions;
+	private String[] transitions;
 
 }
