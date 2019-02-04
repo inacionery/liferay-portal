@@ -14,10 +14,14 @@
 
 package com.liferay.portal.vulcan.pagination;
 
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLName;
+
 /**
  * @author Alejandro Hernández
  * @author Zoltán Takács
  */
+@GraphQLName("Pagination")
 public class Pagination {
 
 	public static Pagination of(int itemsPerPage, int pageNumber) {
@@ -25,27 +29,30 @@ public class Pagination {
 	}
 
 	public int getEndPosition() {
-		return _pageNumber * _itemsPerPage;
+		return pageNumber * itemsPerPage;
 	}
 
 	public int getItemsPerPage() {
-		return _itemsPerPage;
+		return itemsPerPage;
 	}
 
 	public int getPageNumber() {
-		return _pageNumber;
+		return pageNumber;
 	}
 
 	public int getStartPosition() {
-		return (_pageNumber - 1) * _itemsPerPage;
+		return (pageNumber - 1) * itemsPerPage;
 	}
+
+	@GraphQLField
+	protected final int itemsPerPage;
+
+	@GraphQLField
+	protected final int pageNumber;
 
 	private Pagination(int itemsPerPage, int pageNumber) {
-		_itemsPerPage = itemsPerPage;
-		_pageNumber = pageNumber;
+		this.itemsPerPage = itemsPerPage;
+		this.pageNumber = pageNumber;
 	}
-
-	private final int _itemsPerPage;
-	private final int _pageNumber;
 
 }
