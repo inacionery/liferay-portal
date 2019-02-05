@@ -32,6 +32,8 @@ import graphql.annotations.annotationTypes.GraphQLInvokeDetached;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.schema.DataFetchingEnvironment;
 
+import java.util.List;
+
 /**
  * @author Javier Gamarra
  * @generated
@@ -41,13 +43,16 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public Page<WorkflowTask> getRolesWorkflowTasksPage(
+	public List<WorkflowTask> getRolesWorkflowTasksPage(
 			final DataFetchingEnvironment env,
 			@GraphQLName("roles-id") Long rolesId,
 			@GraphQLName("Pagination") Pagination pagination)
 		throws Exception {
 
-		return _getWorkflowTaskResource().getRolesWorkflowTasksPage(rolesId, pagination);
+		Page<WorkflowTask> rolesWorkflowTasksPage = 
+			_getWorkflowTaskResource().getRolesWorkflowTasksPage(rolesId, pagination);
+
+		return (List<WorkflowTask>) rolesWorkflowTasksPage.getItems();
 	}
 
 	@GraphQLField
@@ -72,23 +77,29 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public Page<WorkflowTask> getWorkflowTasksPage(
+	public List<WorkflowTask> getWorkflowTasksPage(
 			final DataFetchingEnvironment env,
 			@GraphQLName("Pagination") Pagination pagination)
 		throws Exception {
 
-		return _getWorkflowTaskResource().getWorkflowTasksPage(pagination);
+		Page<WorkflowTask> workflowTasksPage = 
+			_getWorkflowTaskResource().getWorkflowTasksPage(pagination);
+	
+		return (List<WorkflowTask>) workflowTasksPage.getItems();
 	}
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public Page<WorkflowLog> getWorkflowTasksWorkflowLogsPage(
+	public List<WorkflowLog> getWorkflowTasksWorkflowLogsPage(
 			final DataFetchingEnvironment env,
 			@GraphQLName("workflow-tasks-id") Long workflowTasksId,
 			@GraphQLName("Pagination") Pagination pagination)
 		throws Exception {
 
-		return _getWorkflowLogResource().getWorkflowTasksWorkflowLogsPage(workflowTasksId, pagination);
+		Page<WorkflowLog> workflowTasksWorkflowLogsPage = 
+			_getWorkflowLogResource().getWorkflowTasksWorkflowLogsPage(workflowTasksId, pagination);
+	
+		return (List<WorkflowLog>) workflowTasksWorkflowLogsPage.getItems();
 	}
 
 	private static WorkflowLogResource _getWorkflowLogResource() {
