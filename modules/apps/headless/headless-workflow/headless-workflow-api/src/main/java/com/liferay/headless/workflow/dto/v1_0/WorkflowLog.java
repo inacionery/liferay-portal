@@ -17,8 +17,6 @@ package com.liferay.headless.workflow.dto.v1_0;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 
-import java.util.Date;
-
 import javax.annotation.Generated;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,7 +38,7 @@ public class WorkflowLog {
 		return commentLog;
 	}
 
-	public Date getDateCreated() {
+	public String getDateCreated() {
 		return dateCreated;
 	}
 
@@ -84,7 +82,7 @@ public class WorkflowLog {
 		this.commentLog = commentLog;
 	}
 
-	public void setDateCreated(Date dateCreated) {
+	public void setDateCreated(String dateCreated) {
 		this.dateCreated = dateCreated;
 	}
 
@@ -127,7 +125,7 @@ public class WorkflowLog {
 	protected String commentLog;
 
 	@GraphQLField
-	protected Date dateCreated;
+	protected String dateCreated;
 
 	@GraphQLField
 	protected Long id;

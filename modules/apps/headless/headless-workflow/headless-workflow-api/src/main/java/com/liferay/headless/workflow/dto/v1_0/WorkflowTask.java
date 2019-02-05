@@ -17,8 +17,6 @@ package com.liferay.headless.workflow.dto.v1_0;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 
-import java.util.Date;
-
 import javax.annotation.Generated;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,11 +34,11 @@ public class WorkflowTask {
 		return completed;
 	}
 
-	public Date getDateCompleted() {
+	public String getDateCompleted() {
 		return dateCompleted;
 	}
 
-	public Date getDateCreated() {
+	public String getDateCreated() {
 		return dateCreated;
 	}
 
@@ -52,7 +50,7 @@ public class WorkflowTask {
 		return description;
 	}
 
-	public Date getDueDate() {
+	public String getDueDate() {
 		return dueDate;
 	}
 
@@ -84,11 +82,11 @@ public class WorkflowTask {
 		this.completed = completed;
 	}
 
-	public void setDateCompleted(Date dateCompleted) {
+	public void setDateCompleted(String dateCompleted) {
 		this.dateCompleted = dateCompleted;
 	}
 
-	public void setDateCreated(Date dateCreated) {
+	public void setDateCreated(String dateCreated) {
 		this.dateCreated = dateCreated;
 	}
 
@@ -100,7 +98,7 @@ public class WorkflowTask {
 		this.description = description;
 	}
 
-	public void setDueDate(Date dueDate) {
+	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
 
@@ -132,10 +130,10 @@ public class WorkflowTask {
 	protected Boolean completed;
 
 	@GraphQLField
-	protected Date dateCompleted;
+	protected String dateCompleted;
 
 	@GraphQLField
-	protected Date dateCreated;
+	protected String dateCreated;
 
 	@GraphQLField
 	protected String definitionName;
@@ -144,7 +142,7 @@ public class WorkflowTask {
 	protected String description;
 
 	@GraphQLField
-	protected Date dueDate;
+	protected String dueDate;
 
 	@GraphQLField
 	protected Long id;
