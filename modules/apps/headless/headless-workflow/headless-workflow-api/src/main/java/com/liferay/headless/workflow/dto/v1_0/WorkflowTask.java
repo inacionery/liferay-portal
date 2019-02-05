@@ -14,6 +14,9 @@
 
 package com.liferay.headless.workflow.dto.v1_0;
 
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLName;
+
 import java.util.Date;
 
 import javax.annotation.Generated;
@@ -25,116 +28,140 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
+@GraphQLName("WorkflowTask")
 @XmlRootElement(name = "WorkflowTask")
 public class WorkflowTask {
 
 	public Boolean getCompleted() {
-		return _completed;
+		return completed;
 	}
 
 	public Date getDateCompleted() {
-		return _dateCompleted;
+		return dateCompleted;
 	}
 
 	public Date getDateCreated() {
-		return _dateCreated;
+		return dateCreated;
 	}
 
 	public String getDefinitionName() {
-		return _definitionName;
+		return definitionName;
 	}
 
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 
 	public Date getDueDate() {
-		return _dueDate;
+		return dueDate;
 	}
 
 	public Long getId() {
-		return _id;
+		return id;
 	}
 
 	public WorkflowLog[] getLogs() {
-		return _logs;
+		return logs;
 	}
 
 	public Long[] getLogsIds() {
-		return _logsIds;
+		return logsIds;
 	}
 
 	public String getName() {
-		return _name;
+		return name;
 	}
 
 	public ObjectReviewed getObjectReviewed() {
-		return _objectReviewed;
+		return objectReviewed;
 	}
 
 	public String[] getTransitions() {
-		return _transitions;
+		return transitions;
 	}
 
 	public void setCompleted(Boolean completed) {
-		_completed = completed;
+		this.completed = completed;
 	}
 
 	public void setDateCompleted(Date dateCompleted) {
-		_dateCompleted = dateCompleted;
+		this.dateCompleted = dateCompleted;
 	}
 
 	public void setDateCreated(Date dateCreated) {
-		_dateCreated = dateCreated;
+		this.dateCreated = dateCreated;
 	}
 
 	public void setDefinitionName(String definitionName) {
-		_definitionName = definitionName;
+		this.definitionName = definitionName;
 	}
 
 	public void setDescription(String description) {
-		_description = description;
+		this.description = description;
 	}
 
 	public void setDueDate(Date dueDate) {
-		_dueDate = dueDate;
+		this.dueDate = dueDate;
 	}
 
 	public void setId(Long id) {
-		_id = id;
+		this.id = id;
 	}
 
 	public void setLogs(WorkflowLog[] logs) {
-		_logs = logs;
+		this.logs = logs;
 	}
 
 	public void setLogsIds(Long[] logsIds) {
-		_logsIds = logsIds;
+		this.logsIds = logsIds;
 	}
 
 	public void setName(String name) {
-		_name = name;
+		this.name = name;
 	}
 
 	public void setObjectReviewed(ObjectReviewed objectReviewed) {
-		_objectReviewed = objectReviewed;
+		this.objectReviewed = objectReviewed;
 	}
 
 	public void setTransitions(String[] transitions) {
-		_transitions = transitions;
+		this.transitions = transitions;
 	}
 
-	private Boolean _completed;
-	private Date _dateCompleted;
-	private Date _dateCreated;
-	private String _definitionName;
-	private String _description;
-	private Date _dueDate;
-	private Long _id;
-	private WorkflowLog[] _logs;
-	private Long[] _logsIds;
-	private String _name;
-	private ObjectReviewed _objectReviewed;
-	private String[] _transitions;
+	@GraphQLField
+	protected Boolean completed;
+
+	@GraphQLField
+	protected Date dateCompleted;
+
+	@GraphQLField
+	protected Date dateCreated;
+
+	@GraphQLField
+	protected String definitionName;
+
+	@GraphQLField
+	protected String description;
+
+	@GraphQLField
+	protected Date dueDate;
+
+	@GraphQLField
+	protected Long id;
+
+	@GraphQLField
+	protected WorkflowLog[] logs;
+
+	@GraphQLField
+	protected Long[] logsIds;
+
+	@GraphQLField
+	protected String name;
+
+	@GraphQLField
+	protected ObjectReviewed objectReviewed;
+
+	@GraphQLField
+	protected String[] transitions;
 
 }

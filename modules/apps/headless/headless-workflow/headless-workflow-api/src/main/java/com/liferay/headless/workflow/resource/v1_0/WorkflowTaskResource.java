@@ -16,6 +16,7 @@ package com.liferay.headless.workflow.resource.v1_0;
 
 import com.liferay.headless.workflow.dto.v1_0.WorkflowLog;
 import com.liferay.headless.workflow.dto.v1_0.WorkflowTask;
+import com.liferay.headless.workflow.dto.v1_0.ObjectReviewed;
 import com.liferay.oauth2.provider.scope.RequiresScope;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
@@ -65,7 +66,7 @@ public interface WorkflowTaskResource {
 	@Path("/workflow-tasks")
 	@Produces("application/json")
 	@RequiresScope("everything.read")
-	public Page<WorkflowTask> getWorkflowTasksPage( @PathParam("generic-parent-id") Object genericParentId , @Context Pagination pagination ) throws Exception;
+	public Page<WorkflowTask> getWorkflowTasksPage( @Context Pagination pagination ) throws Exception;
 
 	@GET
 	@Path("/workflow-tasks/{workflow-tasks-id}")
