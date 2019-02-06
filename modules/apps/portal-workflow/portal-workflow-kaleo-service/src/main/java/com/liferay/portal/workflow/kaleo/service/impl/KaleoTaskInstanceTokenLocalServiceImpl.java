@@ -406,6 +406,7 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 		ServiceContext serviceContext) {
 
 		long userId = serviceContext.getUserId();
+
 		if (userId == 0) {
 			DynamicQuery dynamicQuery = buildDynamicQuery(
 				kaleoInstanceId, completed, serviceContext);
