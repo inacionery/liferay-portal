@@ -618,6 +618,14 @@ String backURL = PortalUtil.getCurrentURL(request);
 		);
 	};
 
+	var dayViewOnMiniCalendarSelect = <%= dayViewOnMiniCalendarSelect %>;
+
+	var view = null;
+
+	if (dayViewOnMiniCalendarSelect) {
+		view = <portlet:namespace />dayView;
+	}
+
 	window.<portlet:namespace />miniCalendar = new A.Calendar(
 		{
 			after: {
@@ -625,7 +633,7 @@ String backURL = PortalUtil.getCurrentURL(request);
 				dateClick: function(event) {
 					<portlet:namespace />scheduler.setAttrs(
 						{
-							activeView: <portlet:namespace />dayView,
+							activeView: view,
 							date: event.date
 						}
 					);
