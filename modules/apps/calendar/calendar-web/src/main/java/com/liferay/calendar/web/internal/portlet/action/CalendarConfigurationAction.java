@@ -123,6 +123,8 @@ public class CalendarConfigurationAction extends DefaultConfigurationAction {
 
 		int defaultDuration = ParamUtil.getInteger(
 			actionRequest, "defaultDuration");
+		boolean dayViewOnMiniCalendarSelect = ParamUtil.getBoolean(
+			actionRequest, "dayViewOnMiniCalendarSelect");
 		String defaultView = ParamUtil.getString(actionRequest, "defaultView");
 		String timeFormat = ParamUtil.getString(actionRequest, "timeFormat");
 		String timeZoneId = ParamUtil.getString(actionRequest, "timeZoneId");
@@ -132,6 +134,11 @@ public class CalendarConfigurationAction extends DefaultConfigurationAction {
 
 		portletPreferences.setValue(
 			"defaultDuration", String.valueOf(defaultDuration));
+
+		portletPreferences.setValue(
+			"dayViewOnMiniCalendarSelect", 
+			String.valueOf(dayViewOnMiniCalendarSelect));
+
 		portletPreferences.setValue("defaultView", defaultView);
 		portletPreferences.setValue("timeFormat", timeFormat);
 		portletPreferences.setValue("timeZoneId", timeZoneId);

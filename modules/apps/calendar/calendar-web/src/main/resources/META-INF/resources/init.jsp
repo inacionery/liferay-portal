@@ -140,6 +140,7 @@ page import="java.util.TimeZone" %>
 
 <%
 int defaultDuration = GetterUtil.getInteger(portletPreferences.getValue("defaultDuration", null), 60);
+boolean dayViewOnMiniCalendarSelect = GetterUtil.getBoolean(portletPreferences.getValue("dayViewOnMiniCalendarSelect", null), true);
 String defaultView = portletPreferences.getValue("defaultView", "week");
 String timeFormat = GetterUtil.getString(portletPreferences.getValue("timeFormat", "locale"));
 String timeZoneId = portletPreferences.getValue("timeZoneId", user.getTimeZoneId());

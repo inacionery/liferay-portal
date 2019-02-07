@@ -28,6 +28,8 @@
 		<aui:option label='<%= LanguageUtil.format(request, "x-minutes", "120", false) %>' value="120" />
 	</aui:select>
 
+	<aui:input label="day-view-on-mini-calendar-select" name="dayViewOnMiniCalendarSelect" type="checkbox" value="<%= dayViewOnMiniCalendarSelect %>" />
+
 	<aui:select label="default-view" name="defaultView" value="<%= defaultView %>">
 		<aui:option label="day" value="day" />
 		<aui:option label="month" value="month" />
