@@ -33,6 +33,7 @@ import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.schema.DataFetchingEnvironment;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Javier Gamarra
@@ -48,6 +49,14 @@ public class Query {
 			@GraphQLName("roles-id") Long rolesId,
 			@GraphQLName("Pagination") Pagination pagination)
 		throws Exception {
+
+		if (pagination == null) {
+			Map<String,	Integer> paginationMap = env.getArgument("Pagination");
+			
+			pagination = Pagination.of(
+				paginationMap.get("itemsPerPage"),
+				paginationMap.get("pageNumber"));
+		}
 
 		Page<WorkflowTask> rolesWorkflowTasksPage = 
 			_getWorkflowTaskResource().getRolesWorkflowTasksPage(rolesId, pagination);
