@@ -1337,12 +1337,11 @@ public class CalendarBookingLocalServiceTest {
 
 		Calendar invitedCalendar = CalendarTestUtil.addCalendar(_invitingUser);
 
-		Calendar invitingcalendar = CalendarTestUtil.getDefaultCalendar(_group);
+		Calendar invitingCalendar = CalendarTestUtil.getDefaultCalendar(_group);
 
 		CalendarBooking calendarBooking =
-			CalendarBookingTestUtil.addMasterCalendarBookingWithWorkflow(
-				invitingcalendar, invitedCalendar,
-				WorkflowConstants.ACTION_PUBLISH);
+			CalendarBookingTestUtil.addMasterCalendarBooking(
+				invitingCalendar, invitedCalendar);
 
 		String mailMessageSubject =
 			"Calendar: Event Notification for " + StringPool.QUOTE +
