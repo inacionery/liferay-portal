@@ -1167,7 +1167,7 @@ AUI.add(
 
 						var parsedValue = instance.getParsedValue(instance.getValue());
 
-						var titleNode = A.one('#' + instance.getInputName() + 'Title');
+						var titleNode = A.one('input[name=' + instance.getInputName() + 'Title]');
 
 						titleNode.val(parsedValue.title || '');
 
@@ -1372,7 +1372,7 @@ AUI.add(
 
 						var parsedValue = instance.getParsedValue(instance.getValue());
 
-						var titleNode = A.one('#' + instance.getInputName() + 'Title');
+						var titleNode = A.one('input[name=' + instance.getInputName() + 'Title]');
 
 						titleNode.val(parsedValue.title || '');
 
@@ -1634,7 +1634,7 @@ AUI.add(
 
 						var inputName = instance.getInputName();
 
-						var layoutNameNode = container.one('#' + inputName + 'LayoutName');
+						var layoutNameNode = container.one('input[name=' + inputName + 'LayoutName]');
 
 						var parsedValue = instance.getParsedValue(value);
 
@@ -2562,11 +2562,11 @@ AUI.add(
 
 						var notEmpty = instance.isNotEmpty(parsedValue);
 
-						var altNode = A.one('#' + instance.getInputName() + 'Alt');
+						var altNode = A.one('input[name=' + instance.getInputName() + 'Alt]');
 
 						altNode.attr('disabled', !notEmpty);
 
-						var titleNode = A.one('#' + instance.getInputName() + 'Title');
+						var titleNode = A.one('input[name=' + instance.getInputName() + 'Title]');
 
 						if (notEmpty) {
 							altNode.val(parsedValue.alt || '');
@@ -2645,7 +2645,7 @@ AUI.add(
 						var parsedValue = instance.getParsedValue(ImageField.superclass.getValue.apply(instance, arguments));
 
 						if (instance.isNotEmpty(parsedValue)) {
-							var altNode = A.one('#' + instance.getInputName() + 'Alt');
+							var altNode = A.one('input[name=' + instance.getInputName() + 'Alt]');
 
 							parsedValue.alt = altNode.val();
 
@@ -2676,7 +2676,7 @@ AUI.add(
 								parsedValue.name = parsedValue.title;
 							}
 
-							var altNode = A.one('#' + instance.getInputName() + 'Alt');
+							var altNode = A.one('input[name=' + instance.getInputName() + 'Alt]');
 
 							altNode.val(parsedValue.alt);
 
@@ -2790,7 +2790,7 @@ AUI.add(
 							)
 						);
 
-						var locationNode = A.one('#' + inputName + 'Location');
+						var locationNode = A.one('input[name=' + inputName + 'Location]');
 
 						locationNode.html(event.newVal.address);
 					}
