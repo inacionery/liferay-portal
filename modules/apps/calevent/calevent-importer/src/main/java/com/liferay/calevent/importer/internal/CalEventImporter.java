@@ -83,6 +83,7 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.search.index.IndexStatusManager;
 import com.liferay.ratings.kernel.model.RatingsEntry;
 import com.liferay.ratings.kernel.model.RatingsStats;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
@@ -126,8 +127,12 @@ public class CalEventImporter {
 			_log.info("Importing CalEvent records");
 		}
 
+		boolean tempIndexReadOnly = _indexStatusManager.isIndexReadOnly();
+
 		try (Connection con = DataAccess.getConnection()) {
 			connection = con;
+
+			_indexStatusManager.setIndexReadOnly(true);
 
 			DBInspector dbInspector = new DBInspector(connection);
 
@@ -135,6 +140,8 @@ public class CalEventImporter {
 		}
 		finally {
 			connection = null;
+
+			_indexStatusManager.setIndexReadOnly(tempIndexReadOnly);
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
@@ -1394,6 +1401,9 @@ public class CalEventImporter {
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private IndexStatusManager _indexStatusManager;
 
 	private JSONSerializer _jsonSerializer;
 
