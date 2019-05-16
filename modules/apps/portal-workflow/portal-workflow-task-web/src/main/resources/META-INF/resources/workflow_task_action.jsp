@@ -89,17 +89,19 @@ redirectURL.setParameter("mvcPath", "/view.jsp");
 		/>
 	</c:if>
 
-	<liferay-portlet:renderURL var="assignURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-		<portlet:param name="mvcPath" value="/workflow_task_assign.jsp" />
-		<portlet:param name="redirect" value="<%= redirectURL.toString() %>" />
-		<portlet:param name="workflowTaskId" value="<%= String.valueOf(workflowTask.getWorkflowTaskId()) %>" />
-	</liferay-portlet:renderURL>
+	<c:if test="<%= workflowTaskDisplayContext.hasOtherAssignees(workflowTask) %>">
+		<liferay-portlet:renderURL var="assignURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+			<portlet:param name="mvcPath" value="/workflow_task_assign.jsp" />
+			<portlet:param name="redirect" value="<%= redirectURL.toString() %>" />
+			<portlet:param name="workflowTaskId" value="<%= String.valueOf(workflowTask.getWorkflowTaskId()) %>" />
+		</liferay-portlet:renderURL>
 
-	<liferay-ui:icon
-		message="assign-to-..."
-		onClick='<%= "javascript:" + renderResponse.getNamespace() + "taskAssign('" + assignURL + "');" %>'
-		url="javascript:;"
-	/>
+		<liferay-ui:icon
+			message="assign-to-..."
+			onClick='<%= "javascript:" + renderResponse.getNamespace() + "taskAssign('" + assignURL + "');" %>'
+			url="javascript:;"
+		/>
+	</c:if>
 
 	<c:if test="<%= !workflowTask.isCompleted() %>">
 		<liferay-portlet:actionURL name="updateWorkflowTask" portletName="<%= PortletKeys.MY_WORKFLOW_TASK %>" var="updateDueDateURL">
