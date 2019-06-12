@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManager;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.task.web.internal.permission.WorkflowTaskPermissionChecker;
 
 import javax.portlet.ResourceRequest;
@@ -58,7 +59,8 @@ public class AssignTaskMVCResourceCommand extends BaseMVCResourceCommand {
 			themeDisplay.getSiteGroupId());
 
 		if (!_workflowTaskPermissionChecker.hasPermission(
-				groupId, workflowTask, themeDisplay.getPermissionChecker())) {
+				groupId, workflowTask, _workflowableTracker,
+				themeDisplay.getPermissionChecker())) {
 
 			throw new PrincipalException(
 				String.format(
@@ -93,6 +95,9 @@ public class AssignTaskMVCResourceCommand extends BaseMVCResourceCommand {
 
 	@Reference
 	protected WorkflowTaskManager workflowTaskManager;
+
+	@Reference
+	private WorkflowableTracker _workflowableTracker;
 
 	private final WorkflowTaskPermissionChecker _workflowTaskPermissionChecker =
 		new WorkflowTaskPermissionChecker();

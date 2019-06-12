@@ -27,10 +27,10 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowException;
-import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowInstance;
 import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
+import com.liferay.portal.workflow.Workflowable;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.web.internal.constants.WorkflowPortletKeys;
 
 import java.io.Serializable;
@@ -140,10 +140,10 @@ public class DeleteWorkflowInstanceMVCActionCommand
 		String className = GetterUtil.getString(
 			workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME));
 
-		WorkflowHandler<?> workflowHandler =
-			WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
+		Workflowable<?> workflowable = _workflowableTracker.getWorkflowable(
+			className);
 
-		workflowHandler.updateStatus(
+		workflowable.updateStatus(
 			WorkflowConstants.STATUS_DRAFT, workflowContext);
 	}
 
@@ -163,6 +163,9 @@ public class DeleteWorkflowInstanceMVCActionCommand
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private WorkflowableTracker _workflowableTracker;
 
 	@Reference
 	private WorkflowInstanceLinkLocalService _workflowInstanceLinkLocalService;

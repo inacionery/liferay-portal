@@ -14,7 +14,6 @@
 
 package com.liferay.portal.workflow.task.web.internal.permission;
 
-import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -28,10 +27,10 @@ import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskAssignee;
+import com.liferay.portal.workflow.Workflowable;
+import com.liferay.portal.workflow.WorkflowableTracker;
 
 import java.io.Serializable;
 
@@ -46,17 +45,20 @@ public class WorkflowTaskPermissionChecker {
 
 	public boolean hasPermission(
 		long groupId, WorkflowTask workflowTask,
+		WorkflowableTracker workflowableTracker,
 		PermissionChecker permissionChecker) {
 
 		if (permissionChecker.isOmniadmin() ||
 			permissionChecker.isCompanyAdmin() ||
 			(workflowTask.isCompleted() &&
-			 hasAssetViewPermission(workflowTask, permissionChecker))) {
+			 hasAssetViewPermission(
+				 workflowTask, permissionChecker, workflowableTracker))) {
 
 			return true;
 		}
 
-		if (!hasAssetViewPermission(workflowTask, permissionChecker) &&
+		if (!hasAssetViewPermission(
+				workflowTask, permissionChecker, workflowableTracker) &&
 			!permissionChecker.isContentReviewer(
 				permissionChecker.getCompanyId(), groupId)) {
 
@@ -144,7 +146,8 @@ public class WorkflowTaskPermissionChecker {
 	}
 
 	protected boolean hasAssetViewPermission(
-		WorkflowTask workflowTask, PermissionChecker permissionChecker) {
+		WorkflowTask workflowTask, PermissionChecker permissionChecker,
+		WorkflowableTracker workflowableTracker) {
 
 		Map<String, Serializable> optionalAttributes =
 			workflowTask.getOptionalAttributes();
@@ -152,27 +155,17 @@ public class WorkflowTaskPermissionChecker {
 		String className = MapUtil.getString(
 			optionalAttributes, WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME);
 
-		WorkflowHandler<?> workflowHandler =
-			WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
+		Workflowable<?> workflowable = workflowableTracker.getWorkflowable(
+			className);
 
-		if (workflowHandler == null) {
+		if (workflowable == null) {
 			return false;
 		}
 
 		long classPK = MapUtil.getLong(
 			optionalAttributes, WorkflowConstants.CONTEXT_ENTRY_CLASS_PK);
 
-		try {
-			AssetRenderer<?> assetRenderer = workflowHandler.getAssetRenderer(
-				classPK);
-
-			return assetRenderer.hasViewPermission(permissionChecker);
-		}
-		catch (PortalException pe) {
-			_log.error(pe, pe);
-		}
-
-		return false;
+		return workflowable.hasViewPermission(classPK, permissionChecker);
 	}
 
 	protected boolean isWorkflowTaskAssignableToRoles(

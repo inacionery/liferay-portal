@@ -14,9 +14,6 @@
 
 package com.liferay.portal.workflow.web.internal.display.context;
 
-import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.model.AssetRenderer;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -37,14 +34,14 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowException;
-import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowInstance;
 import com.liferay.portal.kernel.workflow.WorkflowLog;
 import com.liferay.portal.kernel.workflow.WorkflowLogManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
+import com.liferay.portal.workflow.Workflowable;
+import com.liferay.portal.workflow.WorkflowableTracker;
 
 import java.io.Serializable;
 
@@ -61,23 +58,11 @@ public class WorkflowInstanceEditDisplayContext
 
 	public WorkflowInstanceEditDisplayContext(
 		LiferayPortletRequest liferayPortletRequest,
-		LiferayPortletResponse liferayPortletResponse) {
+		LiferayPortletResponse liferayPortletResponse,
+		WorkflowableTracker workflowableTracker) {
 
-		super(liferayPortletRequest, liferayPortletResponse);
-	}
-
-	public AssetEntry getAssetEntry() throws PortalException {
-		AssetRenderer<?> assetRenderer = getAssetRenderer();
-
-		if (assetRenderer == null) {
-			return null;
-		}
-
-		AssetRendererFactory<?> assetRendererFactory =
-			getAssetRendererFactory();
-
-		return assetRendererFactory.getAssetEntry(
-			assetRendererFactory.getClassName(), assetRenderer.getClassPK());
+		super(
+			liferayPortletRequest, liferayPortletResponse, workflowableTracker);
 	}
 
 	public String getAssetEntryVersionId() {
@@ -88,19 +73,6 @@ public class WorkflowInstanceEditDisplayContext
 
 	public String getAssetName() throws PortalException {
 		return getWorkflowDefinitionName();
-	}
-
-	public AssetRenderer<?> getAssetRenderer() throws PortalException {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler();
-
-		return workflowHandler.getAssetRenderer(
-			getWorkflowContextEntryClassPK());
-	}
-
-	public AssetRendererFactory<?> getAssetRendererFactory() {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler();
-
-		return workflowHandler.getAssetRendererFactory();
 	}
 
 	public String getAssignedTheTaskMessageKey(WorkflowLog workflowLog)
@@ -134,9 +106,9 @@ public class WorkflowInstanceEditDisplayContext
 	}
 
 	public String getIconCssClass() {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler();
+		Workflowable<?> workflowable = getWorkflowable();
 
-		return workflowHandler.getIconCssClass();
+		return workflowable.getIconCssClass();
 	}
 
 	public String getPanelTitle() {
@@ -176,12 +148,12 @@ public class WorkflowInstanceEditDisplayContext
 	}
 
 	public String getTaskContentTitleMessage() {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler();
+		Workflowable<?> workflowable = getWorkflowable();
 
 		long classPK = getWorkflowContextEntryClassPK();
 
 		return HtmlUtil.escape(
-			workflowHandler.getTitle(
+			workflowable.getTitle(
 				classPK, workflowInstanceRequestHelper.getLocale()));
 	}
 
@@ -345,6 +317,12 @@ public class WorkflowInstanceEditDisplayContext
 		return user;
 	}
 
+	protected Workflowable<?> getWorkflowable() {
+		String className = getWorkflowContextEntryClassName();
+
+		return workflowableTracker.getWorkflowable(className);
+	}
+
 	protected Map<String, Serializable> getWorkflowContext() {
 		WorkflowInstance workflowInstance = getWorkflowInstance();
 
@@ -379,12 +357,6 @@ public class WorkflowInstanceEditDisplayContext
 			workflowDefinition.getTitle(
 				LanguageUtil.getLanguageId(
 					workflowInstanceRequestHelper.getRequest())));
-	}
-
-	protected WorkflowHandler<?> getWorkflowHandler() {
-		String className = getWorkflowContextEntryClassName();
-
-		return WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
 	}
 
 	protected WorkflowInstance getWorkflowInstance() {

@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.web.internal.display.context.util.WorkflowInstanceRequestHelper;
 
 import java.text.Format;
@@ -35,7 +36,8 @@ public abstract class BaseWorkflowInstanceDisplayContext {
 
 	public BaseWorkflowInstanceDisplayContext(
 		LiferayPortletRequest liferayPortletRequest,
-		LiferayPortletResponse liferayPortletResponse) {
+		LiferayPortletResponse liferayPortletResponse,
+		WorkflowableTracker workflowableTracker) {
 
 		this.liferayPortletRequest = liferayPortletRequest;
 		this.liferayPortletResponse = liferayPortletResponse;
@@ -54,6 +56,8 @@ public abstract class BaseWorkflowInstanceDisplayContext {
 
 		workflowInstanceRequestHelper = new WorkflowInstanceRequestHelper(
 			request);
+
+		this.workflowableTracker = workflowableTracker;
 	}
 
 	protected final Format dateFormatDateTime;
@@ -61,6 +65,7 @@ public abstract class BaseWorkflowInstanceDisplayContext {
 	protected final LiferayPortletResponse liferayPortletResponse;
 	protected final PortalPreferences portalPreferences;
 	protected final HttpServletRequest request;
+	protected final WorkflowableTracker workflowableTracker;
 	protected final WorkflowInstanceRequestHelper workflowInstanceRequestHelper;
 
 }

@@ -30,14 +30,12 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ProxyFactory;
-import com.liferay.portal.kernel.workflow.BaseWorkflowHandler;
 import com.liferay.portal.kernel.workflow.DefaultWorkflowTask;
-import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 import com.liferay.portal.util.HtmlImpl;
 import com.liferay.portal.workflow.WorkflowTaskManagerProxyBean;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.task.web.internal.permission.WorkflowTaskPermissionChecker;
 import com.liferay.registry.BasicRegistryImpl;
 import com.liferay.registry.RegistryUtil;
@@ -45,7 +43,6 @@ import com.liferay.registry.RegistryUtil;
 import java.io.Serializable;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -66,7 +63,6 @@ public class WorkflowTaskUserNotificationHandlerTest {
 		_setUpUserNotificationEventLocalService();
 		_setUpWorkflowTaskManagerUtil();
 		_setUpWorkflowTaskPermissionChecker();
-		_setUpWorkflowHandlerRegistryUtil();
 	}
 
 	@Test
@@ -181,44 +177,6 @@ public class WorkflowTaskUserNotificationHandlerTest {
 					UserNotificationEventLocalService.class));
 	}
 
-	private static void _setUpWorkflowHandlerRegistryUtil() throws Exception {
-		Map<String, WorkflowHandler<?>> workflowHandlerMap =
-			ReflectionTestUtil.getFieldValue(
-				WorkflowHandlerRegistryUtil.class, "_workflowHandlerMap");
-
-		workflowHandlerMap.put(
-			_VALID_ENTRY_CLASS_NAME,
-			new BaseWorkflowHandler<Object>() {
-
-				@Override
-				public String getClassName() {
-					return _VALID_ENTRY_CLASS_NAME;
-				}
-
-				@Override
-				public String getType(Locale locale) {
-					return null;
-				}
-
-				@Override
-				public String getURLEditWorkflowTask(
-					long workflowTaskId, ServiceContext serviceContext) {
-
-					if (_serviceContext == serviceContext) {
-						return _VALID_LINK;
-					}
-
-					return null;
-				}
-
-				@Override
-				public Object updateStatus(int status, Map workflowContext) {
-					return null;
-				}
-
-			});
-	}
-
 	private static void _setUpWorkflowTaskManagerUtil() throws PortalException {
 		WorkflowTaskManagerUtil workflowTaskManagerUtil =
 			new WorkflowTaskManagerUtil();
@@ -258,6 +216,7 @@ public class WorkflowTaskUserNotificationHandlerTest {
 				@Override
 				public boolean hasPermission(
 					long groupId, WorkflowTask workflowTask,
+					WorkflowableTracker workflowableTracker,
 					PermissionChecker permissionChecker) {
 
 					return true;

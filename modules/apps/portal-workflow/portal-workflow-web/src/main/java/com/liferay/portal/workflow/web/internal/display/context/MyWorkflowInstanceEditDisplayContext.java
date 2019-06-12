@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
+import com.liferay.portal.workflow.WorkflowableTracker;
 
 import java.util.List;
 
@@ -31,9 +32,11 @@ public class MyWorkflowInstanceEditDisplayContext
 
 	public MyWorkflowInstanceEditDisplayContext(
 		LiferayPortletRequest liferayPortletRequest,
-		LiferayPortletResponse liferayPortletResponse) {
+		LiferayPortletResponse liferayPortletResponse,
+		WorkflowableTracker workflowableTracker) {
 
-		super(liferayPortletRequest, liferayPortletResponse);
+		super(
+			liferayPortletRequest, liferayPortletResponse, workflowableTracker);
 	}
 
 	@Override

@@ -33,17 +33,24 @@ WorkflowTask workflowTask = workflowTaskDisplayContext.getWorkflowTask();
 
 long classPK = workflowTaskDisplayContext.getWorkflowContextEntryClassPK(workflowTask);
 
-WorkflowHandler<?> workflowHandler = workflowTaskDisplayContext.getWorkflowHandler(workflowTask);
-
 AssetRenderer<?> assetRenderer = workflowHandler.getAssetRenderer(classPK);
 
-AssetRendererFactory<?> assetRendererFactory = assetRenderer.getAssetRendererFactory();
+AssetEntry assetEntry = null;
+String type = null;
+String languageId = null;
+String[] availableLanguageIds = null;
 
-AssetEntry assetEntry = assetRendererFactory.getAssetEntry(workflowHandler.getClassName(), assetRenderer.getClassPK());
+if (assetRenderer != null) {
+	AssetRendererFactory<?> assetRendererFactory = assetRenderer.getAssetRendererFactory();
 
-String languageId = ParamUtil.getString(request, "languageId", assetRenderer.getDefaultLanguageId());
+	assetEntry = assetRendererFactory.getAssetEntry(workflowHandler.getClassName(), assetRenderer.getClassPK());
 
-String[] availableLanguageIds = assetRenderer.getAvailableLanguageIds();
+	type = assetRendererFactory.getType();
+
+	languageId = ParamUtil.getString(request, "languageId", assetRenderer.getDefaultLanguageId());
+
+	availableLanguageIds = assetRenderer.getAvailableLanguageIds();
+}
 
 String headerTitle = workflowTaskDisplayContext.getHeaderTitle(workflowTask);
 
@@ -163,7 +170,7 @@ renderResponse.setTitle(headerTitle);
 											<portlet:param name="assetEntryClassPK" value="<%= String.valueOf(assetEntry.getClassPK()) %>" />
 										</c:if>
 
-										<portlet:param name="type" value="<%= assetRendererFactory.getType() %>" />
+										<portlet:param name="type" value="<%= type %>" />
 										<portlet:param name="showEditURL" value="<%= String.valueOf(workflowTaskDisplayContext.isShowEditURL(workflowTask)) %>" />
 										<portlet:param name="workflowTaskId" value="<%= String.valueOf(workflowTask.getWorkflowTaskId()) %>" />
 									</portlet:renderURL>
@@ -225,10 +232,10 @@ renderResponse.setTitle(headerTitle);
 							/>
 						</h3>
 
-						<liferay-asset:asset-display
+						<%-- <liferay-asset:asset-display
 							assetRenderer="<%= assetRenderer %>"
 							template="<%= AssetRenderer.TEMPLATE_ABSTRACT %>"
-						/>
+						/> --%>
 					</liferay-ui:panel>
 
 					<liferay-ui:panel

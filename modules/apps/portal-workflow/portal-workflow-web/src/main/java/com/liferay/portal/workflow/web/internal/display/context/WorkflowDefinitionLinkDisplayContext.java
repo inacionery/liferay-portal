@@ -45,9 +45,9 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
-import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
+import com.liferay.portal.workflow.Workflowable;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.constants.WorkflowWebKeys;
 import com.liferay.portal.workflow.web.internal.constants.WorkflowDefinitionLinkResourcesConstants;
 import com.liferay.portal.workflow.web.internal.constants.WorkflowPortletKeys;
@@ -84,10 +84,12 @@ public class WorkflowDefinitionLinkDisplayContext {
 	public WorkflowDefinitionLinkDisplayContext(
 		RenderRequest renderRequest, RenderResponse renderResponse,
 		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService,
+		WorkflowableTracker workflowableTracker,
 		ResourceBundleLoader resourceBundleLoader) {
 
 		_workflowDefinitionLinkLocalService =
 			workflowDefinitionLinkLocalService;
+		_workflowableTracker = workflowableTracker;
 
 		_liferayPortletRequest = PortalUtil.getLiferayPortletRequest(
 			renderRequest);
@@ -553,18 +555,18 @@ public class WorkflowDefinitionLinkDisplayContext {
 
 	protected WorkflowDefinitionLinkSearchEntry
 			createWorkflowDefinitionLinkSearchEntry(
-				WorkflowHandler<?> workflowHandler)
+				Workflowable<?> workflowable)
 		throws PortalException {
 
 		String resource = ResourceActionsUtil.getModelResource(
 			_workflowDefinitionLinkRequestHelper.getLocale(),
-			workflowHandler.getClassName());
+			workflowable.getClassName());
 
 		String workflowDefinitionLabel = getWorkflowDefinitionLabel(
-			workflowHandler);
+			workflowable);
 
 		return new WorkflowDefinitionLinkSearchEntry(
-			workflowHandler.getClassName(), resource, workflowDefinitionLabel);
+			workflowable.getClassName(), resource, workflowDefinitionLabel);
 	}
 
 	protected List<WorkflowDefinitionLinkSearchEntry>
@@ -574,10 +576,10 @@ public class WorkflowDefinitionLinkDisplayContext {
 		List<WorkflowDefinitionLinkSearchEntry>
 			workflowDefinitionLinkSearchEntries = new ArrayList<>();
 
-		for (WorkflowHandler<?> workflowHandler : getWorkflowHandlers()) {
+		for (Workflowable<?> workflowable : getWorkflowables()) {
 			WorkflowDefinitionLinkSearchEntry
 				workflowDefinitionLinkSearchEntry =
-					createWorkflowDefinitionLinkSearchEntry(workflowHandler);
+					createWorkflowDefinitionLinkSearchEntry(workflowable);
 
 			workflowDefinitionLinkSearchEntries.add(
 				workflowDefinitionLinkSearchEntry);
@@ -615,22 +617,33 @@ public class WorkflowDefinitionLinkDisplayContext {
 		return portletDisplay.getPortletName();
 	}
 
-	protected String getWorkflowDefinitionLabel(
-			WorkflowHandler<?> workflowHandler)
+	protected List<Workflowable<?>> getWorkflowables() {
+		List<Workflowable<?>> workflowables = null;
+
+		if (isControlPanelPortlet()) {
+			workflowables = _workflowableTracker.getWorkflowables();
+		}
+		else {
+			workflowables = _workflowableTracker.getScopeableWorkflowables();
+		}
+
+		return ListUtil.filter(workflowables, Workflowable::isVisible);
+	}
+
+	protected String getWorkflowDefinitionLabel(Workflowable<?> workflowable)
 		throws PortalException {
 
 		List<WorkflowDefinition> workflowDefinitions = getWorkflowDefinitions();
 
 		for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
 			if (isWorkflowDefinitionSelected(
-					workflowDefinition, workflowHandler.getClassName())) {
+					workflowDefinition, workflowable.getClassName())) {
 
 				return getWorkflowDefinitionLabel(workflowDefinition);
 			}
 		}
 
-		return getDefaultWorkflowDefinitionLabel(
-			workflowHandler.getClassName());
+		return getDefaultWorkflowDefinitionLabel(workflowable.getClassName());
 	}
 
 	protected WorkflowDefinitionLink getWorkflowDefinitionLink(String className)
@@ -661,21 +674,6 @@ public class WorkflowDefinitionLinkDisplayContext {
 		}
 	}
 
-	protected List<WorkflowHandler<?>> getWorkflowHandlers() {
-		List<WorkflowHandler<?>> workflowHandlers = null;
-
-		if (isControlPanelPortlet()) {
-			workflowHandlers =
-				WorkflowHandlerRegistryUtil.getWorkflowHandlers();
-		}
-		else {
-			workflowHandlers =
-				WorkflowHandlerRegistryUtil.getScopeableWorkflowHandlers();
-		}
-
-		return ListUtil.filter(workflowHandlers, WorkflowHandler::isVisible);
-	}
-
 	private String _getCurrentOrder(HttpServletRequest httpServletRequest) {
 		return ParamUtil.getString(
 			httpServletRequest, "orderByCol", "resource");
@@ -704,6 +702,7 @@ public class WorkflowDefinitionLinkDisplayContext {
 	private String _orderByType;
 	private final PortalPreferences _portalPreferences;
 	private final ResourceBundleLoader _resourceBundleLoader;
+	private final WorkflowableTracker _workflowableTracker;
 	private final WorkflowDefinitionLinkLocalService
 		_workflowDefinitionLinkLocalService;
 	private final WorkflowDefinitionLinkRequestHelper

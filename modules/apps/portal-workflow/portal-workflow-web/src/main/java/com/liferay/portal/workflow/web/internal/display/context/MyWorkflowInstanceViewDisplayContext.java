@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowInstance;
 import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.web.internal.search.WorkflowInstanceSearch;
 
 import java.util.List;
@@ -33,11 +34,12 @@ public class MyWorkflowInstanceViewDisplayContext
 	extends WorkflowInstanceViewDisplayContext {
 
 	public MyWorkflowInstanceViewDisplayContext(
-			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse)
-		throws PortalException {
+		LiferayPortletRequest liferayPortletRequest,
+		LiferayPortletResponse liferayPortletResponse,
+		WorkflowableTracker workflowableTracker) {
 
-		super(liferayPortletRequest, liferayPortletResponse);
+		super(
+			liferayPortletRequest, liferayPortletResponse, workflowableTracker);
 	}
 
 	@Override

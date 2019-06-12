@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowException;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.task.web.configuration.WorkflowTaskWebConfiguration;
 import com.liferay.portal.workflow.task.web.internal.permission.WorkflowTaskPermissionChecker;
 
@@ -45,6 +46,7 @@ import javax.portlet.RenderResponse;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
@@ -129,7 +131,8 @@ public class MyWorkflowTaskPortlet extends MVCPortlet {
 			themeDisplay.getSiteGroupId());
 
 		if (!_workflowTaskPermissionChecker.hasPermission(
-				groupId, workflowTask, themeDisplay.getPermissionChecker())) {
+				groupId, workflowTask, _workflowableTracker,
+				themeDisplay.getPermissionChecker())) {
 
 			throw new PrincipalException(
 				String.format(
@@ -192,6 +195,9 @@ public class MyWorkflowTaskPortlet extends MVCPortlet {
 			WorkflowTaskWebConfiguration.class.getName(),
 			_workflowTaskWebConfiguration);
 	}
+
+	@Reference
+	private WorkflowableTracker _workflowableTracker;
 
 	private final WorkflowTaskPermissionChecker _workflowTaskPermissionChecker =
 		new WorkflowTaskPermissionChecker();

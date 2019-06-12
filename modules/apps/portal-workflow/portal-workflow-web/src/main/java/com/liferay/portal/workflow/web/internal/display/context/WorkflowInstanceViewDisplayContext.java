@@ -36,13 +36,13 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
-import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowInstance;
 import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowLog;
 import com.liferay.portal.kernel.workflow.WorkflowLogManagerUtil;
 import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
+import com.liferay.portal.workflow.Workflowable;
+import com.liferay.portal.workflow.WorkflowableTracker;
 import com.liferay.portal.workflow.constants.WorkflowWebKeys;
 import com.liferay.portal.workflow.web.internal.constants.WorkflowPortletKeys;
 import com.liferay.portal.workflow.web.internal.search.WorkflowInstanceSearch;
@@ -68,38 +68,29 @@ public class WorkflowInstanceViewDisplayContext
 	extends BaseWorkflowInstanceDisplayContext {
 
 	public WorkflowInstanceViewDisplayContext(
-			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse)
-		throws PortalException {
+		LiferayPortletRequest liferayPortletRequest,
+		LiferayPortletResponse liferayPortletResponse,
+		WorkflowableTracker workflowableTracker) {
 
-		super(liferayPortletRequest, liferayPortletResponse);
-	}
-
-	public String getAssetIconCssClass(WorkflowInstance workflowInstance) {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler(
-			workflowInstance);
-
-		return workflowHandler.getIconCssClass();
+		super(
+			liferayPortletRequest, liferayPortletResponse, workflowableTracker);
 	}
 
 	public String getAssetTitle(WorkflowInstance workflowInstance) {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler(
-			workflowInstance);
+		Workflowable<?> workflowable = getWorkflowable(workflowInstance);
 
 		long classPK = getWorkflowContextEntryClassPK(
 			workflowInstance.getWorkflowContext());
 
 		return HtmlUtil.escape(
-			workflowHandler.getTitle(
+			workflowable.getTitle(
 				classPK, workflowInstanceRequestHelper.getLocale()));
 	}
 
 	public String getAssetType(WorkflowInstance workflowInstance) {
-		WorkflowHandler<?> workflowHandler = getWorkflowHandler(
-			workflowInstance);
+		Workflowable<?> workflowable = getWorkflowable(workflowInstance);
 
-		return workflowHandler.getType(
-			workflowInstanceRequestHelper.getLocale());
+		return workflowable.getType(workflowInstanceRequestHelper.getLocale());
 	}
 
 	public String getClearResultsURL() {
@@ -276,20 +267,17 @@ public class WorkflowInstanceViewDisplayContext
 		return _orderByType;
 	}
 
-	public List<WorkflowHandler<?>> getSearchableAssetsWorkflowHandlers() {
-		List<WorkflowHandler<?>> searchableAssetsWorkflowHandlers =
-			new ArrayList<>();
+	public List<Workflowable<?>> getSearchableAssetsWorkflowables() {
+		List<Workflowable<?>> searchableAssetsWorkflowables = new ArrayList<>();
 
-		List<WorkflowHandler<?>> workflowHandlers =
-			WorkflowHandlerRegistryUtil.getWorkflowHandlers();
+		List<Workflowable<?>> workflowables =
+			workflowableTracker.getWorkflowables();
 
-		for (WorkflowHandler<?> workflowHandler : workflowHandlers) {
-			if (workflowHandler.isAssetTypeSearchable()) {
-				searchableAssetsWorkflowHandlers.add(workflowHandler);
-			}
+		for (Workflowable<?> workflowable : workflowables) {
+			searchableAssetsWorkflowables.add(workflowable);
 		}
 
-		return searchableAssetsWorkflowHandlers;
+		return searchableAssetsWorkflowables;
 	}
 
 	public WorkflowInstanceSearch getSearchContainer() throws PortalException {
@@ -425,14 +413,14 @@ public class WorkflowInstanceViewDisplayContext
 	}
 
 	protected String getAssetType(String keywords) {
-		for (WorkflowHandler<?> workflowHandler :
-				getSearchableAssetsWorkflowHandlers()) {
+		for (Workflowable<?> workflowable :
+				getSearchableAssetsWorkflowables()) {
 
-			String assetType = workflowHandler.getType(
+			String assetType = workflowable.getType(
 				workflowInstanceRequestHelper.getLocale());
 
 			if (StringUtil.equalsIgnoreCase(keywords, assetType)) {
-				return workflowHandler.getClassName();
+				return workflowable.getClassName();
 			}
 		}
 
@@ -485,6 +473,15 @@ public class WorkflowInstanceViewDisplayContext
 			getKeywords(), getCompleted());
 	}
 
+	protected Workflowable<?> getWorkflowable(
+		WorkflowInstance workflowInstance) {
+
+		String className = getWorkflowContextEntryClassName(
+			workflowInstance.getWorkflowContext());
+
+		return workflowableTracker.getWorkflowable(className);
+	}
+
 	protected String getWorkflowContextEntryClassName(
 		Map<String, Serializable> workflowContext) {
 
@@ -498,15 +495,6 @@ public class WorkflowInstanceViewDisplayContext
 		return GetterUtil.getLong(
 			(String)workflowContext.get(
 				WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
-	}
-
-	protected WorkflowHandler<?> getWorkflowHandler(
-		WorkflowInstance workflowInstance) {
-
-		String className = getWorkflowContextEntryClassName(
-			workflowInstance.getWorkflowContext());
-
-		return WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
 	}
 
 	protected void setSearchContainerEmptyResultsMessage(
