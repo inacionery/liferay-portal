@@ -62,9 +62,10 @@ public class WorkflowTaskUserNotificationHandler
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			userNotificationEvent.getPayload());
 
-		if (!isWorkflowTaskVisible(
-				jsonObject.getLong("workflowTaskId"), serviceContext)) {
+		WorkflowTask workflowTask = _getWorkflowTask(
+			jsonObject.getLong("workflowTaskId"), serviceContext);
 
+		if (workflowTask == null) {
 			_userNotificationEventLocalService.deleteUserNotificationEvent(
 				userNotificationEvent.getUserNotificationEventId());
 
@@ -83,14 +84,15 @@ public class WorkflowTaskUserNotificationHandler
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			userNotificationEvent.getPayload());
 
-		String entryClassName = jsonObject.getString("entryClassName");
-
 		WorkflowHandler<?> workflowHandler =
-			WorkflowHandlerRegistryUtil.getWorkflowHandler(entryClassName);
+			WorkflowHandlerRegistryUtil.getWorkflowHandler(
+				jsonObject.getString("entryClassName"));
 
 		long workflowTaskId = jsonObject.getLong("workflowTaskId");
 
-		if ((workflowHandler == null) || (workflowTaskId <= 0)) {
+		if ((workflowHandler == null) ||
+			!_hasPermission(workflowTaskId, serviceContext)) {
+
 			return StringPool.BLANK;
 		}
 
@@ -98,16 +100,31 @@ public class WorkflowTaskUserNotificationHandler
 			workflowTaskId, serviceContext);
 	}
 
-	protected boolean isWorkflowTaskVisible(
+	@Reference(unbind = "-")
+	protected void setUserNotificationEventLocalService(
+		UserNotificationEventLocalService userNotificationEventLocalService) {
+
+		_userNotificationEventLocalService = userNotificationEventLocalService;
+	}
+
+	private WorkflowTask _getWorkflowTask(
 			long workflowTaskId, ServiceContext serviceContext)
 		throws WorkflowException {
 
 		if (workflowTaskId <= 0) {
-			return true;
+			return null;
 		}
 
-		WorkflowTask workflowTask = WorkflowTaskManagerUtil.fetchWorkflowTask(
+		return WorkflowTaskManagerUtil.fetchWorkflowTask(
 			serviceContext.getCompanyId(), workflowTaskId);
+	}
+
+	private boolean _hasPermission(
+			long workflowTaskId, ServiceContext serviceContext)
+		throws WorkflowException {
+
+		WorkflowTask workflowTask = _getWorkflowTask(
+			workflowTaskId, serviceContext);
 
 		if (workflowTask == null) {
 			return false;
@@ -121,13 +138,6 @@ public class WorkflowTaskUserNotificationHandler
 
 		return _workflowTaskPermissionChecker.hasPermission(
 			groupId, workflowTask, themeDisplay.getPermissionChecker());
-	}
-
-	@Reference(unbind = "-")
-	protected void setUserNotificationEventLocalService(
-		UserNotificationEventLocalService userNotificationEventLocalService) {
-
-		_userNotificationEventLocalService = userNotificationEventLocalService;
 	}
 
 	private UserNotificationEventLocalService
