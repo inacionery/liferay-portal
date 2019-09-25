@@ -16,12 +16,14 @@ package com.liferay.portal.search.test.util;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -55,27 +57,73 @@ public class FieldValuesAssert {
 		Stream<Map.Entry<String, Field>> stream = entrySet.stream();
 
 		if (predicate != null) {
-			stream = stream.filter(entry -> predicate.test(entry.getKey()));
+			stream = stream.filter(
+				entry -> {
+					if (Objects.equals(entry.getKey(), "ddmFields")) {
+						Field fieldArray = entry.getValue();
+
+						for (Field nestedField : fieldArray.getFields()) {
+							for (Field field : nestedField.getFields()) {
+								return Objects.equals(
+									field.getName(), "ddmFieldName") &&
+									   predicate.test(field.getValue());
+							}
+						}
+					}
+
+					return false;
+				});
 		}
 
-		return stream.collect(
-			Collectors.toMap(
-				Map.Entry::getKey,
-				entry -> {
-					Field field = entry.getValue();
+		Map<String, String> fieldValues = new HashMap<>();
 
-					String[] values = field.getValues();
+		stream.map(
+			Map.Entry::getValue
+		).map(
+			Field::getFields
+		).forEach(
+			nestedFields -> {
+				for (Field nestedField : nestedFields) {
+					String name = null;
+					String value = null;
 
-					if (values == null) {
-						return null;
+					for (Field field : nestedField.getFields()) {
+						if (StringUtil.contains(
+								field.getName(), "ddmFieldName")) {
+
+							name = field.getValue();
+						}
 					}
 
-					if (values.length == 1) {
-						return values[0];
-					}
+					for (Field field : nestedField.getFields()) {
+						if (!StringUtil.contains(
+								field.getName(), "ddmFieldName")) {
 
-					return String.valueOf(Arrays.asList(values));
-				}));
+							String[] values = field.getValues();
+
+							if (values == null) {
+								continue;
+							}
+
+							if (values.length == 1) {
+								value = values[0];
+							}
+							else {
+								value = String.valueOf(Arrays.asList(values));
+							}
+
+							fieldValues.put(
+								name +
+									StringUtil.extractLast(
+										field.getName(), "ddmFieldValue"),
+								value);
+						}
+					}
+				}
+			}
+		);
+
+		return fieldValues;
 	}
 
 }
