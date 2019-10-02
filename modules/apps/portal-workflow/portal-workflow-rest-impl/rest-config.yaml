@@ -1,0 +1,9 @@
+apiDir: "../portal-workflow-rest-api/src/main/java"
+apiPackagePath: "com.liferay.portal.workflow.rest"
+application:
+    baseURI: "/portal-workflow"
+    className: "PortalWorkflowRESTApplication"
+    name: "Liferay.Portal.Workflow.REST"
+author: "Inácio Nery"
+clientDir: "../portal-workflow-rest-client/src/main/java"
+testDir: "../portal-workflow-rest-test/src/testIntegration/java"

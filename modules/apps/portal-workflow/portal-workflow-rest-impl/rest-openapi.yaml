@@ -1,0 +1,939 @@
+components:
+    schemas:
+        AssigneeUser:
+            description: https://schema.org/AssigneeUser
+            properties:
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
+            type: object
+        AuditUser:
+            description: https://schema.org/AuditUser
+            properties:
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
+            type: object
+        CreatorUser:
+            description: https://schema.org/CreatorUser
+            properties:
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
+            type: object
+        GenericError:
+            description: https://www.schema.org/GenericError
+            properties:
+                fieldName:
+                    type: string
+                message:
+                    type: string
+            type: object
+        Role:
+            description: https://schema.org/Role
+            properties:
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
+                roleType:
+                    type: string
+            type: object
+        WorkflowDefinition:
+            description: https://schema.org/WorkflowDefinition
+            properties:
+                active:
+                    type: boolean
+                content:
+                    type: string
+                creatorUser:
+                    $ref: "#/components/schemas/CreatorUser"
+                    readOnly: true
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                name:
+                    readOnly: true
+                    type: string
+                title:
+                    type: string
+                version:
+                    readOnly: true
+                    type: string
+            required:
+                - active
+                - content
+                - title
+            type: object
+        WorkflowInstance:
+            description: https://schema.org/WorkflowInstance
+            properties:
+                childrenWorkflowInstances:
+                    items:
+                        $ref: "#/components/schemas/WorkflowInstance"
+                    readOnly: true
+                    type: array
+                completed:
+                    readOnly: true
+                    type: boolean
+                dateCompletion:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                groupId:
+                    format: int64
+                    type: integer
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                parentWorkflowInstance:
+                    $ref: "#/components/schemas/WorkflowInstance"
+                    readOnly: true
+                state:
+                    readOnly: true
+                    type: string
+                workflowContext:
+                    additionalProperties:
+                        properties:
+                            key:
+                                type: string
+                            value:
+                                type: object
+                        type: object
+                    type: object
+                workflowDefinitionId:
+                    format: int64
+                    type: integer
+            type: object
+        WorkflowLog:
+            description: https://schema.org/WorkflowLog
+            properties:
+                auditUser:
+                    $ref: "#/components/schemas/AuditUser"
+                    readOnly: true
+                comment:
+                    readOnly: true
+                    type: string
+                creatorUser:
+                    $ref: "#/components/schemas/CreatorUser"
+                    readOnly: true
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                previousCreatorUser:
+                    $ref: "#/components/schemas/CreatorUser"
+                    readOnly: true
+                previousRole:
+                    $ref: "#/components/schemas/Role"
+                    readOnly: true
+                previousState:
+                    readOnly: true
+                    type: string
+                role:
+                    $ref: "#/components/schemas/Role"
+                    readOnly: true
+                state:
+                    readOnly: true
+                    type: string
+                type:
+                    readOnly: true
+                    type: string
+                workflowTaskId:
+                    format: int64
+                    readOnly: true
+                    type: integer
+            type: object
+        WorkflowTask:
+            description: https://schema.org/WorkflowTask
+            properties:
+                assigneeRoles:
+                    items:
+                        $ref: "#/components/schemas/Role"
+                    type: array
+                assigneeUser:
+                    $ref: "#/components/schemas/AssigneeUser"
+                completed:
+                    readOnly: true
+                    type: boolean
+                dateCompletion:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateDue:
+                    format: date-time
+                    type: string
+                dateModified:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                name:
+                    type: string
+                optionalAttributes:
+                    additionalProperties:
+                        properties:
+                            key:
+                                type: string
+                            value:
+                                type: object
+                        type: object
+                    type: object
+                workflowContext:
+                    additionalProperties:
+                        properties:
+                            key:
+                                type: string
+                            value:
+                                type: object
+                        type: object
+                    type: object
+                workflowDefinitionId:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                workflowInstanceId:
+                    format: int64
+                    readOnly: true
+                    type: integer
+            type: object
+info:
+    description: ""
+    license:
+        name: "Apache 2.0"
+        url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    title: ""
+    version: v1.0
+openapi: 3.0.1
+paths:
+    "/workflow-definitions":
+        get:
+            operationId: getWorkflowDefinitionsPage
+            parameters:
+                - in: query
+                  name: active
+                  schema:
+                      type: boolean
+                - in: query
+                  name: name
+                  schema:
+                      type: string
+                - in: query
+                  name: version
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WorkflowDefinition"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WorkflowDefinition"
+                                type: array
+                    description: ""
+            tags: ["WorkflowDefinition"]
+        post:
+            operationId: postWorkflowDefinition
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowDefinition"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowDefinition"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowDefinition"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowDefinition"
+                    description: ""
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                    description: ""
+            tags: ["WorkflowDefinition"]
+    "/workflow-definitions/validate":
+        post:
+            operationId: postWorkflowDefinitionValidate
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowDefinition"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowDefinition"
+            responses:
+                200:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+                    description: ""
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                    description: ""
+            tags: ["WorkflowDefinition"]
+    "/workflow-definitions/{workflowDefinitionId}":
+        delete:
+            operationId: deleteWorkflowDefinition
+            parameters:
+                - in: path
+                  name: workflowDefinitionId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                    description: ""
+            tags: ["WorkflowDefinition"]
+        get:
+            operationId: getWorkflowDefinition
+            parameters:
+                - in: path
+                  name: workflowDefinitionId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowDefinition"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowDefinition"
+                    description: ""
+            tags: ["WorkflowDefinition"]
+        put:
+            operationId: putWorkflowDefinition
+            parameters:
+                - in: path
+                  name: workflowDefinitionId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowDefinition"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowDefinition"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowDefinition"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowDefinition"
+                    description: ""
+            tags: ["WorkflowDefinition"]
+    "/workflow-instances":
+        get:
+            operationId: getWorkflowInstancesPage
+            parameters:
+                - in: query
+                  name: assetClassNames
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: assetClassPK
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: assetDescription
+                  schema:
+                      type: string
+                - in: query
+                  name: assetTitle
+                  schema:
+                      type: string
+                - in: query
+                  name: assetType
+                  schema:
+                      type: string
+                - in: query
+                  name: completed
+                  schema:
+                      type: boolean
+                - in: query
+                  name: nodeName
+                  schema:
+                      type: string
+                - in: query
+                  name: workflowDefinitionId
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WorkflowInstance"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WorkflowInstance"
+                                type: array
+                    description: ""
+            tags: ["WorkflowInstance"]
+        post:
+            operationId: postWorkflowInstance
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowInstance"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowInstance"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                    description: ""
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                    description: ""
+            tags: ["WorkflowInstance"]
+    "/workflow-instances/{workflowInstanceId}":
+        delete:
+            operationId: deleteWorkflowInstance
+            parameters:
+                - in: path
+                  name: workflowInstanceId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                    description: ""
+            tags: ["WorkflowInstance"]
+        get:
+            operationId: getWorkflowInstance
+            parameters:
+                - in: path
+                  name: workflowInstanceId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                    description: ""
+            tags: ["WorkflowInstance"]
+        patch:
+            operationId: patchWorkflowInstance
+            parameters:
+                - in: path
+                  name: workflowInstanceId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: transitionName
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowInstance"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowInstance"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                    description: ""
+            tags: ["WorkflowInstance"]
+        put:
+            operationId: putWorkflowInstance
+            parameters:
+                - in: path
+                  name: workflowInstanceId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowInstance"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowInstance"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowInstance"
+                    description: ""
+            tags: ["WorkflowInstance"]
+    "/workflow-instances/{workflowInstanceId}/next-transition-names":
+        get:
+            operationId: getWorkflowInstanceNextTransitionNamesPage
+            parameters:
+                - in: path
+                  name: workflowInstanceId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    type: string
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    type: string
+                                type: array
+                    description: ""
+            tags: ["WorkflowInstance"]
+    "/workflow-tasks":
+        get:
+            operationId: getWorkflowTasksPage
+            parameters:
+                - in: query
+                  name: andOperator
+                  schema:
+                      type: boolean
+                - in: query
+                  name: assetPrimaryKeys
+                  schema:
+                      items:
+                          format: int64
+                          type: integer
+                      type: array
+                - in: query
+                  name: assetTypes
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: assigneeUserId
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: completed
+                  schema:
+                      type: boolean
+                - in: query
+                  name: creatorUserId
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: dateDueEnd
+                  schema:
+                      format: date-time
+                      type: string
+                - in: query
+                  name: dateDueStart
+                  schema:
+                      format: date-time
+                      type: string
+                - in: query
+                  name: name
+                  schema:
+                      type: string
+                - in: query
+                  name: roleId
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: searchByUserRoles
+                  schema:
+                      type: boolean
+                - in: query
+                  name: workflowInstanceId
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WorkflowTask"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/WorkflowTask"
+                                type: array
+                    description: ""
+            tags: ["WorkflowTask"]
+        post:
+            operationId: postWorkflowTask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowTask"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowTask"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                    description: ""
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/GenericError"
+                    description: ""
+            tags: ["WorkflowTask"]
+    "/workflow-tasks/{workflowTaskId}":
+        get:
+            operationId: getWorkflowTask
+            parameters:
+                - in: path
+                  name: workflowTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                    description: ""
+            tags: ["WorkflowTask"]
+        patch:
+            operationId: patchWorkflowTask
+            parameters:
+                - in: path
+                  name: workflowTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: comment
+                  schema:
+                      type: string
+                - in: query
+                  name: transitionName
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowTask"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowTask"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                    description: ""
+            tags: ["WorkflowTask"]
+        put:
+            operationId: putWorkflowTask
+            parameters:
+                - in: path
+                  name: workflowTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowTask"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/WorkflowTask"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/WorkflowTask"
+                    description: ""
+            tags: ["WorkflowTask"]
+    "/workflow-tasks/{workflowTaskId}/has-other-assignee-users":
+        get:
+            operationId: getWorkflowTaskHasOtherAssigneeUser
+            parameters:
+                - in: path
+                  name: workflowTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        text/plain:
+                            schema:
+                                type: boolean
+                    description: ""
+            tags: ["WorkflowTask"]
+    "/workflow-tasks/{workflowTaskId}/next-transition-names":
+        get:
+            operationId: getWorkflowTaskNextTransitionNamesPage
+            parameters:
+                - in: path
+                  name: workflowTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    type: string
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    type: string
+                                type: array
+                    description: ""
+            tags: ["WorkflowTask"]
+    "/workflow-tasks/{workflowTaskId}/pooled-assignee-users":
+        get:
+            operationId: getWorkflowTaskPooledAssigneeUsersPage
+            parameters:
+                - in: path
+                  name: workflowTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/AssigneeUser"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/AssigneeUser"
+                                type: array
+                    description: ""
+            tags: ["AssigneeUser"]

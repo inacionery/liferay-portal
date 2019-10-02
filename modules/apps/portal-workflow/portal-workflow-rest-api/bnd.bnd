@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Portal Workflow REST API
+Bundle-SymbolicName: com.liferay.portal.workflow.rest.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.portal.workflow.rest.dto.v1_0,\
+	com.liferay.portal.workflow.rest.resource.v1_0
