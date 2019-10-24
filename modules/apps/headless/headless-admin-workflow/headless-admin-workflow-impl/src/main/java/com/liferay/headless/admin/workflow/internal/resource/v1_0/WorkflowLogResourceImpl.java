@@ -24,11 +24,16 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowLogManager;
+import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.workflow.kaleo.KaleoWorkflowModelConverter;
 import com.liferay.portal.workflow.kaleo.definition.util.KaleoLogUtil;
 import com.liferay.portal.workflow.kaleo.service.KaleoLogLocalService;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,6 +49,26 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class WorkflowLogResourceImpl extends BaseWorkflowLogResourceImpl {
 
 	@Override
+	public Page<WorkflowLog> getWorkflowInstanceWorkflowLogsPage(
+			Long workflowInstanceId, String[] types, Pagination pagination)
+		throws Exception {
+
+		return Page.of(
+			transform(
+				_workflowLogManager.getWorkflowLogsByWorkflowInstance(
+					contextCompany.getCompanyId(), workflowInstanceId,
+					_getLogTypes(types), pagination.getStartPosition(),
+					pagination.getEndPosition(),
+					WorkflowComparatorFactoryUtil.getLogCreateDateComparator(
+						false)),
+				this::_toWorkflowLog),
+			pagination,
+			_workflowLogManager.getWorkflowLogCountByWorkflowInstance(
+				contextCompany.getCompanyId(), workflowInstanceId,
+				_getLogTypes(types)));
+	}
+
+	@Override
 	public WorkflowLog getWorkflowLog(Long workflowLogId) throws Exception {
 		return _toWorkflowLog(
 			_kaleoWorkflowModelConverter.toWorkflowLog(
@@ -52,19 +77,35 @@ public class WorkflowLogResourceImpl extends BaseWorkflowLogResourceImpl {
 
 	@Override
 	public Page<WorkflowLog> getWorkflowTaskWorkflowLogsPage(
-			Long workflowTaskId, Pagination pagination)
+			Long workflowTaskId, String[] types, Pagination pagination)
 		throws Exception {
 
 		return Page.of(
 			transform(
 				_workflowLogManager.getWorkflowLogsByWorkflowTask(
-					contextCompany.getCompanyId(), workflowTaskId, null,
-					pagination.getStartPosition(), pagination.getEndPosition(),
-					null),
+					contextCompany.getCompanyId(), workflowTaskId,
+					_getLogTypes(types), pagination.getStartPosition(),
+					pagination.getEndPosition(),
+					WorkflowComparatorFactoryUtil.getLogCreateDateComparator(
+						false)),
 				this::_toWorkflowLog),
 			pagination,
 			_workflowLogManager.getWorkflowLogCountByWorkflowTask(
-				contextCompany.getCompanyId(), workflowTaskId, null));
+				contextCompany.getCompanyId(), workflowTaskId,
+				_getLogTypes(types)));
+	}
+
+	private List<Integer> _getLogTypes(String[] types) {
+		return Stream.of(
+			types
+		).map(
+			type -> WorkflowLog.Type.create(type)
+		).map(
+			type -> KaleoLogUtil.convert(type.name())
+		).distinct(
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	private Role _toRole(long roleId) throws PortalException {
@@ -117,7 +158,8 @@ public class WorkflowLogResourceImpl extends BaseWorkflowLogResourceImpl {
 				role = _toRole(workflowLog.getRoleId());
 				state = workflowLog.getState();
 				taskId = workflowLog.getWorkflowTaskId();
-				type = KaleoLogUtil.convert(workflowLog.getType());
+				type = WorkflowLog.Type.valueOf(
+					KaleoLogUtil.convert(workflowLog.getType()));
 			}
 		};
 	}
