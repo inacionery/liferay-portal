@@ -8,7 +8,6 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
-/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, {useContext, useMemo, useEffect} from 'react';
 
@@ -43,6 +42,7 @@ function PerformanceByStep({page, pageSize, processId, search, sort}) {
 			setTitle(`${data}: ${Liferay.Language.get('performance-by-step')}`);
 			return data;
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
@@ -82,6 +82,7 @@ const Body = ({page, pageSize, processId, sort, term}) => {
 
 	const params = [page, pageSize, processId, term, sort, timeRange];
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const promises = useMemo(() => [fetchData(...params)], [
 		page,
 		pageSize,
