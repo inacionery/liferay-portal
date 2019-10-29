@@ -30,7 +30,7 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 <aui:model-context bean="<%= selLayout %>" model="<%= Layout.class %>" />
 
 <c:if test="<%= !StringUtil.equals(selLayout.getType(), LayoutConstants.TYPE_ASSET_DISPLAY) %>">
-	<aui:input id="title" label="html-title" name="title" placeholder="<%= layoutsAdminDisplayContext.getFullPageTitle() %>" />
+	<aui:input id="title" label="html-title" name="title" placeholder="<%= layoutsAdminDisplayContext.getPageTitle() %>" />
 
 	<h4><liferay-ui:message key="meta-tags" /></h4>
 
@@ -76,7 +76,7 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 
 			<react:component
 				data="<%= data %>"
-				module="js/seo/index.es"
+				module="js/seo/PreviewSeo.es"
 			/>
 		</div>
 	</div>
@@ -171,11 +171,11 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 			<aui:model-context bean="<%= selLayoutSEOEntry %>" model="<%= LayoutSEOEntry.class %>" />
 
 			<div id="<portlet:namespace />openGraphSettings">
-				<aui:input checked="<%= selLayoutSEOEntry.isOpenGraphTitleEnabled() %>" helpMessage="use-custom-open-graph-title-help" label="use-custom-title" name="openGraphTitleEnabled" type="checkbox" wrapperCssClass="mb-1" />
+				<aui:input checked="<%= selLayoutSEOEntry.isOpenGraphTitleEnabled() %>" helpMessage="use-custom-open-graph-title-help" label="use-custom-open-graph-title" name="openGraphTitleEnabled" type="checkbox" wrapperCssClass="mb-1" />
 
 				<aui:input label="<%= StringPool.BLANK %>" name="openGraphTitle" placeholder="title" />
 
-				<aui:input checked="<%= selLayoutSEOEntry.isOpenGraphDescriptionEnabled() %>" helpMessage="use-custom-open-graph-description-help" label="use-custom-description" name="openGraphDescriptionEnabled" type="checkbox" wrapperCssClass="mb-1" />
+				<aui:input checked="<%= selLayoutSEOEntry.isOpenGraphDescriptionEnabled() %>" helpMessage="use-custom-open-graph-description-help" label="use-custom-open-graph-description" name="openGraphDescriptionEnabled" type="checkbox" wrapperCssClass="mb-1" />
 
 				<aui:input label="<%= StringPool.BLANK %>" name="openGraphDescription" placeholder="description" />
 
@@ -184,11 +184,11 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 		</c:when>
 		<c:otherwise>
 			<div id="<portlet:namespace />openGraphSettings">
-				<aui:input checked="<%= false %>" helpMessage="use-custom-open-graph-title-help" label="use-custom-title" name="openGraphTitleEnabled" type="checkbox" wrapperCssClass="mb-1" />
+				<aui:input checked="<%= false %>" helpMessage="use-custom-open-graph-title-help" label="use-custom-open-graph-title" name="openGraphTitleEnabled" type="checkbox" wrapperCssClass="mb-1" />
 
 				<aui:input label="<%= StringPool.BLANK %>" localized="<%= true %>" name="openGraphTitle" type="text" />
 
-				<aui:input checked="<%= false %>" helpMessage="use-custom-open-graph-description-help" label="use-custom-description" name="openGraphDescriptionEnabled" type="checkbox" wrapperCssClass="mb-1" />
+				<aui:input checked="<%= false %>" helpMessage="use-custom-open-graph-description-help" label="use-custom-open-graph-description" name="openGraphDescriptionEnabled" type="checkbox" wrapperCssClass="mb-1" />
 
 				<aui:input label="<%= StringPool.BLANK %>" localized="<%= true %>" name="openGraphDescription" type="textarea" />
 
@@ -204,7 +204,7 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 
 		<div class="input-group">
 			<div class="input-group-item">
-				<aui:input disabled="<%= true %>" label="<%= StringPool.BLANK %>" name="openGraphImageTitle" placeholder="image" type="text" value="<%= layoutsAdminDisplayContext.getItemSelectorURL() %>" wrapperCssClass="w-100" />
+				<aui:input disabled="<%= true %>" label="<%= StringPool.BLANK %>" name="openGraphImageURL" placeholder="image" type="text" value="<%= layoutsAdminDisplayContext.getOpenGraphImageURL() %>" wrapperCssClass="w-100" />
 			</div>
 
 			<div class="input-group-item input-group-item-shrink">
@@ -239,12 +239,12 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 											itemValue.fileEntryId;
 									}
 
-									var openGraphImageTitle = document.getElementById(
-										'<portlet:namespace />openGraphImageTitle'
+									var openGraphImageURL = document.getElementById(
+										'<portlet:namespace />openGraphImageURL'
 									);
 
-									if (openGraphImageTitle) {
-										openGraphImageTitle.value = itemValue.url;
+									if (openGraphImageURL) {
+										openGraphImageURL.value = itemValue.url;
 									}
 								}
 							}.bind(this)

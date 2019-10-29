@@ -32,8 +32,10 @@ import {
 	EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 	FRAGMENTS_EDITOR_ITEM_BORDERS,
 	FRAGMENTS_EDITOR_ITEM_TYPES,
-	FRAGMENTS_EDITOR_ROW_TYPES
+	FRAGMENTS_EDITOR_ROW_TYPES,
+	PAGE_TYPES
 } from '../utils/constants';
+import {isDropZone} from '../utils/isDropZone.es';
 
 /**
  * Adds a fragment at the corresponding container in the layout
@@ -225,6 +227,13 @@ function addFragmentEntryLinkReducer(state, action) {
 		let fragmentEntryLink = null;
 		let nextData = null;
 		let nextState = state;
+
+		if (
+			state.pageType === PAGE_TYPES.master &&
+			state.layoutData.hasDropZone
+		) {
+			resolve(nextState);
+		}
 
 		_addFragmentEntryLink(
 			nextState.addFragmentEntryLinkURL,
@@ -463,6 +472,20 @@ function removeFragmentEntryLinkReducer(state, action) {
 		)
 	);
 
+	const fragmentEntryLink = state.fragmentEntryLinks[fragmentEntryLinkId];
+
+	if (isDropZone(fragmentEntryLink)) {
+		nextState = updateIn(
+			nextState,
+			['layoutData'],
+			layoutData => ({
+				...layoutData,
+				hasDropZone: false
+			}),
+			{}
+		);
+	}
+
 	if (!action.fragmentEntryLinkIsUsedInOtherExperience) {
 		nextState = updateIn(
 			nextState,
@@ -670,18 +693,21 @@ function _addFragmentToColumn(
 	const columnIndex = row.columns.indexOf(column);
 	const rowIndex = structure.indexOf(row);
 
-	const newLayoutData = updateIn(
+	let newLayoutData = updateIn(
 		layoutData,
 		['structure', rowIndex, 'columns', columnIndex],
 		column => ({
 			...column,
 			config: {
-				isDropZone:
-					fragmentEntryLink.fragmentEntryKey &&
-					fragmentEntryLink.fragmentEntryKey.startsWith('drop-zone')
+				isDropZone: isDropZone(fragmentEntryLink)
 			}
 		})
 	);
+
+	newLayoutData = {
+		...newLayoutData,
+		hasDropZone: isDropZone(fragmentEntryLink)
+	};
 
 	return updateIn(
 		newLayoutData,

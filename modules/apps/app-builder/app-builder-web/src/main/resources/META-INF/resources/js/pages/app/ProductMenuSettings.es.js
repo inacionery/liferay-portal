@@ -12,9 +12,21 @@
  * details.
  */
 
-import React, {useContext} from 'react';
+import {ClayButtonWithIcon} from '@clayui/button';
+import ClayDropDown, {Align} from '@clayui/drop-down';
+import {ClayCheckbox, ClayInput} from '@clayui/form';
+import classNames from 'classnames';
+import React, {useContext, useEffect, useState} from 'react';
 
-import EditAppContext, {UPDATE_SETTINGS} from './EditAppContext.es';
+import {getItem} from '../../utils/client.es';
+import EditAppContext, {
+	PRODUCT_MENU,
+	SITE_ID_ALL,
+	TOGGLE_SETTINGS_SITE_ID,
+	UPDATE_SETTINGS_SCOPE
+} from './EditAppContext.es';
+
+const {Divider, Item, ItemList} = ClayDropDown;
 
 const SCOPES = [
 	{
@@ -39,21 +51,66 @@ export default () => {
 		}
 	} = useContext(EditAppContext);
 
+	const [sites, setSites] = useState([]);
+	const [active, setActive] = useState(false);
+	const [keywords, setKeywords] = useState('');
+
+	const filteredSites = sites.filter(item => {
+		if (!keywords) {
+			return true;
+		}
+
+		const regex = new RegExp(keywords, 'ig');
+		return regex.test(item.name);
+	});
+
+	useEffect(() => {
+		getItem('/o/headless-admin-user/v1.0/my-user-account/sites').then(
+			({items: sites = []}) => setSites(sites)
+		);
+	}, []);
+
+	const onFilterSites = event => {
+		setKeywords(event.target.value);
+	};
+
 	const onScopeChange = event => {
 		const scope = event.target.value;
 
 		dispatch({
-			deploymentType: 'productMenu',
-			settings: {scope: scope.split(',')},
-			type: UPDATE_SETTINGS
+			scope: scope.split(','),
+			type: UPDATE_SETTINGS_SCOPE
+		});
+	};
+
+	const onSiteIdsChange = siteId => {
+		dispatch({
+			siteId: parseInt(siteId, 10),
+			type: TOGGLE_SETTINGS_SITE_ID
 		});
 	};
 
 	const {
-		settings: {scope}
+		settings: {scope, siteIds = []}
 	} = appDeployments.find(
-		appDeployment => appDeployment.type === 'productMenu'
+		appDeployment => appDeployment.type === PRODUCT_MENU
 	);
+
+	const sitesNames = siteIds
+		.map(siteId => {
+			if (siteId === SITE_ID_ALL) {
+				return Liferay.Language.get('all-sites');
+			}
+
+			const site = sites.find(site => site.id === siteId);
+
+			if (site) {
+				return site.name;
+			} else {
+				return '';
+			}
+		})
+		.join(', ');
 
 	return (
 		<div className="autofit-row pl-4 pr-4">
@@ -83,16 +140,93 @@ export default () => {
 						<label htmlFor="site">
 							{Liferay.Language.get('site')}
 						</label>
-						<select
-							className="form-control"
-							disabled={true}
-							id="site"
-							value={1}
+
+						<ClayDropDown
+							active={active}
+							alignmentPosition={Align.BottomLeft}
+							onActiveChange={newVal => setActive(newVal)}
+							trigger={
+								<button
+									aria-label={Liferay.Language.get(
+										'choose-sites'
+									)}
+									className={classNames(
+										'form-control',
+										'form-control-select',
+										'select-site',
+										'text-truncate'
+									)}
+									id="site"
+								>
+									{sitesNames
+										? sitesNames
+										: `${Liferay.Language.get(
+												'choose-sites'
+										  )}...`}
+								</button>
+							}
 						>
-							<option value={1}>
-								{Liferay.Language.get('all-sites')}
-							</option>
-						</select>
+							<ItemList>
+								<Item key={'search'}>
+									<ClayInput.Group>
+										<ClayInput.GroupItem>
+											<ClayInput
+												aria-label={Liferay.Language.get(
+													'search'
+												)}
+												className="input-group-inset input-group-inset-after"
+												onChange={onFilterSites}
+												placeholder={`${Liferay.Language.get(
+													'search'
+												)}...`}
+												type="text"
+												value={keywords}
+											/>
+
+											<ClayInput.GroupInsetItem after>
+												<ClayButtonWithIcon
+													displayType="unstyled"
+													symbol="search"
+												/>
+											</ClayInput.GroupInsetItem>
+										</ClayInput.GroupItem>
+									</ClayInput.Group>
+								</Item>
+
+								<Item key={SITE_ID_ALL}>
+									<ClayCheckbox
+										checked={siteIds.includes(SITE_ID_ALL)}
+										label={Liferay.Language.get(
+											'all-sites'
+										)}
+										onChange={() =>
+											onSiteIdsChange(SITE_ID_ALL)
+										}
+									/>
+								</Item>
+
+								<Divider />
+
+								{filteredSites.map(({id, name}) => (
+									<Item
+										disabled={siteIds.includes(SITE_ID_ALL)}
+										key={id}
+									>
+										<ClayCheckbox
+											checked={
+												siteIds.includes(id) ||
+												siteIds.includes(SITE_ID_ALL)
+											}
+											disabled={siteIds.includes(
+												SITE_ID_ALL
+											)}
+											label={name}
+											onChange={() => onSiteIdsChange(id)}
+										/>
+									</Item>
+								))}
+							</ItemList>
+						</ClayDropDown>
 					</div>
 				</div>
 			)}

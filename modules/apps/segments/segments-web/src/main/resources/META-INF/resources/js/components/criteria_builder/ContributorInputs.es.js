@@ -23,7 +23,7 @@ function ContributorInputs({contributors}) {
 		.filter(criteria => criteria.query)
 		.map((criteria, i) => {
 			/**
-			 * First criteria has to be preceded by a `AND` conjuntion
+			 * First criteria has to be preceded by a `AND` conjunction
 			 */
 			const conjunction =
 				i === 0 ? CONJUNCTIONS.AND : criteria.conjunctionId;

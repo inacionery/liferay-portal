@@ -17,7 +17,7 @@ import ClayDropdown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import getCN from 'classnames';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {conjunctionShape} from '../../utils/types.es';
 
@@ -38,10 +38,19 @@ function Conjunction({
 		className
 	);
 
-	function _handleItemClick(conjuntionName) {
+	const [activeLabel, setActiveLabel] = useState(null);
+	useEffect(() => {
+		const selectedConjunction = supportedConjunctions.find(
+			c => c.name === conjunctionName
+		);
+
+		setActiveLabel(selectedConjunction.label);
+	}, [conjunctionName, supportedConjunctions]);
+
+	function _handleItemClick(conjunctionName) {
 		setActive(false);
 
-		onSelect(conjuntionName);
+		onSelect(conjunctionName);
 	}
 
 	return editing ? (
@@ -55,27 +64,27 @@ function Conjunction({
 					displayType="secondary"
 					small
 				>
-					{conjunctionName}
+					{activeLabel}
 					<ClayIcon className="ml-2" symbol="caret-bottom" />
 				</ClayButton>
 			}
 		>
 			<ClayDropdown.ItemList>
-				{supportedConjunctions.map(conjuntion => {
+				{supportedConjunctions.map(conjunction => {
 					return (
 						<ClayDropdown.Item
 							className="text-capitalize"
-							key={conjuntion.name}
-							onClick={() => _handleItemClick(conjuntion.name)}
+							key={conjunction.name}
+							onClick={() => _handleItemClick(conjunction.name)}
 						>
-							{conjuntion.label}
+							{conjunction.label}
 						</ClayDropdown.Item>
 					);
 				})}
 			</ClayDropdown.ItemList>
 		</ClayDropdown>
 	) : (
-		<div className={classnames}>{conjunctionName}</div>
+		<div className={classnames}>{activeLabel}</div>
 	);
 }
 

@@ -18,6 +18,7 @@ import {
 	enableSavingChangesStatusAction,
 	updateLastSaveDateAction
 } from '../actions/saveChanges.es';
+import {isDropZone} from '../utils/isDropZone.es';
 import {
 	getTargetBorder,
 	getWidget,
@@ -88,19 +89,15 @@ function addRow(
 			? DEFAULT_SECTION_ROW_CONFIG
 			: DEFAULT_COMPONENT_ROW_CONFIG;
 
+	const dropZonePresent = fragmentEntryLinks.some(isDropZone);
+
 	const nextStructure = add(
 		layoutData.structure,
 		{
 			columns,
 			config: {
 				...defaultConfig,
-				isDropZone: fragmentEntryLinks.some(
-					fragmentEntryLink =>
-						fragmentEntryLink.fragmentEntryKey &&
-						fragmentEntryLink.fragmentEntryKey.startsWith(
-							'drop-zone'
-						)
-				)
+				isDropZone: dropZonePresent
 			},
 			rowId: `${nextRowId}`,
 			type
@@ -112,6 +109,11 @@ function addRow(
 
 	nextData = setIn(nextData, ['structure'], nextStructure);
 	nextData = setIn(nextData, ['nextRowId'], nextRowId + 1);
+
+	nextData = {
+		...nextData,
+		hasDropZone: dropZonePresent
+	};
 
 	return nextData;
 }

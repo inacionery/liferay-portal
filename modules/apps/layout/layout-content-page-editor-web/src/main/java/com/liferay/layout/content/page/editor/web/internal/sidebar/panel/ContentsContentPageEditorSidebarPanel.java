@@ -83,7 +83,7 @@ public class ContentsContentPageEditorSidebarPanel
 					permissionChecker, plid,
 					ActionKeys.UPDATE_LAYOUT_CONTENT)) {
 
-				return false;
+				return true;
 			}
 		}
 		catch (Exception e) {
@@ -92,7 +92,7 @@ public class ContentsContentPageEditorSidebarPanel
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	@Activate

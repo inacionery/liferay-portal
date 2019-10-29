@@ -49,11 +49,18 @@ public class AccountUserDisplaySearchContainerFactory {
 		String navigation = ParamUtil.getString(
 			liferayPortletRequest, "navigation", "active");
 
+		String emptyResultsMessage =
+			"there-are-no-users-associated-with-this-account";
+
+		if (_accountUserRetriever.getAccountUsersCount(accountEntryId) > 0) {
+			emptyResultsMessage = "no-users-were-found";
+		}
+
 		SearchContainer accountUserDisplaySearchContainer = new SearchContainer(
 			liferayPortletRequest,
 			PortletURLUtil.getCurrent(
 				liferayPortletRequest, liferayPortletResponse),
-			null, "there-are-no-users-associated-with-this-account");
+			null, emptyResultsMessage);
 
 		accountUserDisplaySearchContainer.setId("accountUsers");
 

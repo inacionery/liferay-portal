@@ -43,7 +43,6 @@ import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntry;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -61,6 +60,7 @@ import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -486,9 +486,9 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 			new Class<?>[] {Layout.class, ModelWrapper.class},
 			new LayoutStagingHandler(layout));
 
-		Map<Layout, Object> proxiedLayouts = HashMapBuilder.<Layout, Object>put(
-			layout, proxiedLayout
-		).build();
+		Map<Layout, Object> proxiedLayouts = new HashMap<>();
+
+		proxiedLayouts.put(layout, proxiedLayout);
 
 		ProxiedLayoutsThreadLocal.setProxiedLayouts(
 			new ObjectValuePair<>(currentServiceContext, proxiedLayouts));
@@ -710,9 +710,10 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 				if (Arrays.equals(
 						parameterTypes, _UPDATE_LAYOUT_PARAMETER_TYPES)) {
 
-					friendlyURLMap = HashMapBuilder.put(
-						LocaleUtil.getSiteDefault(), (String)arguments[11]
-					).build();
+					friendlyURLMap = new HashMap<>();
+
+					friendlyURLMap.put(
+						LocaleUtil.getSiteDefault(), (String)arguments[11]);
 				}
 				else {
 					friendlyURLMap = (Map<Locale, String>)arguments[11];

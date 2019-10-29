@@ -69,7 +69,8 @@
 
 	{if
 		$availableSegmentsExperiences and
-		length($availableSegmentsExperiences) > 0 and
+		(($hasUpdatePermissions and length($availableSegmentsExperiences) > 0)
+		or (not $hasUpdatePermissions and length($availableSegmentsExperiences) > 1)) and
 		$canCreateExperiences
 	}
 		<div

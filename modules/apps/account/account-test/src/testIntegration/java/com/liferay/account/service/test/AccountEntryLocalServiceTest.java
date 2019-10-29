@@ -17,7 +17,10 @@ package com.liferay.account.service.test;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -55,6 +58,34 @@ public class AccountEntryLocalServiceTest {
 				_accountEntryLocalService.deleteAccountEntry(accountEntry);
 			}
 		}
+	}
+
+	@Test
+	public void testAccountEntryGroup() throws Exception {
+		AccountEntry accountEntry = _addAccountEntry();
+
+		Group group = accountEntry.getAccountEntryGroup();
+
+		Assert.assertNotNull(group);
+
+		long classNameId = _classNameLocalService.getClassNameId(
+			AccountEntry.class);
+
+		Assert.assertEquals(classNameId, group.getClassNameId());
+
+		Assert.assertEquals(
+			accountEntry.getAccountEntryId(), group.getClassPK());
+
+		long accountEntryGroupId = accountEntry.getAccountEntryGroupId();
+
+		Assert.assertNotEquals(
+			GroupConstants.DEFAULT_LIVE_GROUP_ID, accountEntryGroupId);
+
+		Assert.assertEquals(group.getGroupId(), accountEntryGroupId);
+
+		_accountEntryLocalService.deleteAccountEntry(accountEntry);
+
+		Assert.assertNull(accountEntry.getAccountEntryGroup());
 	}
 
 	@Test
@@ -254,6 +285,9 @@ public class AccountEntryLocalServiceTest {
 
 	@Inject
 	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Inject
+	private ClassNameLocalService _classNameLocalService;
 
 	@Inject
 	private ResourcePermissionLocalService _resourcePermissionLocalService;

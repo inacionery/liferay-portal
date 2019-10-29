@@ -141,7 +141,7 @@ class RuleBuilder extends Component {
 
 		makeFetch({
 			method: 'GET',
-			url: dataProviderInstancesURL
+			url: `${dataProviderInstancesURL}?languageId=${themeDisplay.getLanguageId()}&scopeGroupId=${themeDisplay.getScopeGroupId()}`
 		})
 			.then(responseData => {
 				if (!this.isDisposed()) {

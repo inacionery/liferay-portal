@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.upload.FileItem;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.CookieUtil;
 import com.liferay.portal.kernel.util.FileUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -250,13 +249,13 @@ public class SPIAgentRequestTest {
 
 		// Upload servlet request with multipart data
 
+		Map<String, FileItem[]> fileParameters = new HashMap<>();
+
 		String fileParameter = "fileParameter";
 
 		FileItem[] fileItems = new FileItem[0];
 
-		Map<String, FileItem[]> fileParameters = HashMapBuilder.put(
-			fileParameter, fileItems
-		).build();
+		fileParameters.put(fileParameter, fileItems);
 
 		spiAgentRequest = new SPIAgentRequest(
 			new UploadServletRequestImpl(
@@ -292,13 +291,13 @@ public class SPIAgentRequestTest {
 
 		// Upload servlet request with multipart and regular data
 
+		Map<String, List<String>> regularParameters = new HashMap<>();
+
 		String regularParameter = "regularParameter";
 
 		List<String> parameters = new ArrayList<>();
 
-		Map<String, List<String>> regularParameters = HashMapBuilder.put(
-			regularParameter, parameters
-		).build();
+		regularParameters.put(regularParameter, parameters);
 
 		spiAgentRequest = new SPIAgentRequest(
 			new UploadServletRequestImpl(
@@ -932,14 +931,11 @@ public class SPIAgentRequestTest {
 
 		MockHttpSession originalHttpSession = new MockHttpSession();
 
-		Map<String, Serializable> portletSessionAttributes =
-			HashMapBuilder.<String, Serializable>put(
-				"key1", "value1"
-			).put(
-				"key2", "value2"
-			).put(
-				"key3", "value3"
-			).build();
+		Map<String, Serializable> portletSessionAttributes = new HashMap<>();
+
+		portletSessionAttributes.put("key1", "value1");
+		portletSessionAttributes.put("key2", "value2");
+		portletSessionAttributes.put("key3", "value3");
 
 		originalHttpSession.setAttribute(
 			WebKeys.PORTLET_SESSION_ATTRIBUTES.concat(servletContextName),

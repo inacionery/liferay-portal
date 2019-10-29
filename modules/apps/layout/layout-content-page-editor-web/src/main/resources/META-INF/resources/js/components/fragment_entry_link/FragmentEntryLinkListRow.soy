@@ -30,6 +30,7 @@
 	{@param? dropTargetBorder: string}
 	{@param? dropTargetItemId: string}
 	{@param? dropTargetItemType: string}
+	{@param? hasUpdatePermissions: bool}
 	{@param? hoveredItemId: string}
 	{@param? hoveredItemType: string}
 	{@param? spritemap: string}
@@ -105,30 +106,32 @@
 		style="{$rowStyle}"
 		tabindex="0"
 	>
-		<nav class="fragments-editor__topper tbar">
-			<ul class="tbar-nav">
-				<li class="fragments-editor__drag-handler fragments-editor__topper__item pr-0 tbar-item">
-					<div>
-						<svg class="fragments-editor__topper__drag-icon lexicon-icon">
-							<use xlink:href="{$spritemap ?: ''}#drag"></use>
-						</svg>
-					</div>
-				</li>
-				<li class="fragments-editor__drag-handler fragments-editor__topper__item fragments-editor__topper__title tbar-item tbar-item-expand">
-					{msg desc=""}section{/msg}
-				</li>
-				<li class="fragments-editor__topper__item tbar-item">
-					<button
-						class="btn btn-small btn-unstyled"
-						data-onclick="{$_handleRowRemoveButtonClick}"
-					>
-						<svg class="fragments-editor__topper__icon lexicon-icon">
-							<use xlink:href="{$spritemap ?: ''}#times-circle"></use>
-						</svg>
-					</button>
-				</li>
-			</ul>
-		</nav>
+	{if $hasUpdatePermissions}
+	  <nav class="fragments-editor__topper tbar">
+		<ul class="tbar-nav">
+		  <li class="fragments-editor__drag-handler fragments-editor__topper__item pr-0 tbar-item">
+			<div>
+			  <svg class="fragments-editor__topper__drag-icon lexicon-icon">
+				<use xlink:href="{$spritemap ?: ''}#drag"></use>
+			  </svg>
+			</div>
+		  </li>
+		  <li class="fragments-editor__drag-handler fragments-editor__topper__item fragments-editor__topper__title tbar-item tbar-item-expand">
+			{msg desc=""}section{/msg}
+		  </li>
+		  <li class="fragments-editor__topper__item tbar-item">
+			<button
+			  class="btn btn-small btn-unstyled"
+			  data-onclick="{$_handleRowRemoveButtonClick}"
+			>
+			  <svg class="fragments-editor__topper__icon lexicon-icon">
+				<use xlink:href="{$spritemap ?: ''}#times-circle"></use>
+			  </svg>
+			</button>
+		  </li>
+		</ul>
+	  </nav>
+	{/if}
 
 		{let $wrapperClasses kind="text"}
 			{if $row and $row.config and $row.config.containerType == 'fluid'}
@@ -184,6 +187,7 @@
 						{param dropTargetBorder: $dropTargetBorder /}
 						{param dropTargetItemId: $dropTargetItemId /}
 						{param dropTargetItemType: $dropTargetItemType /}
+						{param hasUpdatePermissions: $hasUpdatePermissions /}
 						{param hoveredItemId: $hoveredItemId /}
 						{param hoveredItemType: $hoveredItemType /}
 						{param key: $column.columnId /}
@@ -218,6 +222,7 @@
 	{@param? activeItemId: string}
 	{@param? activeItemType: string}
 	{@param? hoveredItemId: string}
+	{@param? hasUpdatePermissions: bool}
 	{@param? hoveredItemType: string}
 	{@param? lastColumn: bool}
 	{@param? rowType: string}
@@ -281,7 +286,7 @@
 			{/if}
 		{/foreach}
 
-		{if not $lastColumn}
+		{if $hasUpdatePermissions and not $lastColumn}
 			{call .resizer}
 				{param columnId: $columnId /}
 				{param _handleResizerMouseDown: $_handleResizerMouseDown /}

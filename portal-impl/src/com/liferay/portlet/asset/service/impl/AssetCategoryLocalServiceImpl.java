@@ -47,7 +47,6 @@ import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -59,6 +58,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -157,15 +157,15 @@ public class AssetCategoryLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		Map<Locale, String> titleMap = new HashMap<>();
+
 		Locale locale = LocaleUtil.getSiteDefault();
 
-		Map<Locale, String> titleMap = HashMapBuilder.put(
-			locale, title
-		).build();
+		titleMap.put(locale, title);
 
-		Map<Locale, String> descriptionMap = HashMapBuilder.put(
-			locale, StringPool.BLANK
-		).build();
+		Map<Locale, String> descriptionMap = new HashMap<>();
+
+		descriptionMap.put(locale, StringPool.BLANK);
 
 		return assetCategoryLocalService.addCategory(
 			userId, groupId, AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
@@ -665,14 +665,11 @@ public class AssetCategoryLocalServiceImpl
 
 		SearchContext searchContext = new SearchContext();
 
-		Map<String, Serializable> attributes =
-			HashMapBuilder.<String, Serializable>put(
-				Field.ASSET_PARENT_CATEGORY_IDS, parentCategoryIds
-			).put(
-				Field.ASSET_VOCABULARY_IDS, vocabularyIds
-			).put(
-				Field.TITLE, title
-			).build();
+		Map<String, Serializable> attributes = new HashMap<>();
+
+		attributes.put(Field.ASSET_PARENT_CATEGORY_IDS, parentCategoryIds);
+		attributes.put(Field.ASSET_VOCABULARY_IDS, vocabularyIds);
+		attributes.put(Field.TITLE, title);
 
 		searchContext.setAttributes(attributes);
 

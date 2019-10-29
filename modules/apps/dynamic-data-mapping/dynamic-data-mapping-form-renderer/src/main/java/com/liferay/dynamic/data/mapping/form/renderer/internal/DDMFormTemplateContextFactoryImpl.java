@@ -31,7 +31,6 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -194,11 +193,13 @@ public class DDMFormTemplateContextFactoryImpl
 	protected Map<String, String> getLanguageStringsMap(
 		ResourceBundle resourceBundle) {
 
-		return HashMapBuilder.put(
-			"next", LanguageUtil.get(resourceBundle, "next")
-		).put(
-			"previous", LanguageUtil.get(resourceBundle, "previous")
-		).build();
+		Map<String, String> stringsMap = new HashMap<>();
+
+		stringsMap.put("next", LanguageUtil.get(resourceBundle, "next"));
+		stringsMap.put(
+			"previous", LanguageUtil.get(resourceBundle, "previous"));
+
+		return stringsMap;
 	}
 
 	protected List<Object> getPages(
@@ -309,13 +310,13 @@ public class DDMFormTemplateContextFactoryImpl
 	}
 
 	protected Map<String, Object> toMap(DDMFormRule ddmFormRule) {
-		return HashMapBuilder.<String, Object>put(
-			"actions", ddmFormRule.getActions()
-		).put(
-			"condition", ddmFormRule.getCondition()
-		).put(
-			"enable", ddmFormRule.isEnabled()
-		).build();
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("actions", ddmFormRule.getActions());
+		map.put("condition", ddmFormRule.getCondition());
+		map.put("enable", ddmFormRule.isEnabled());
+
+		return map;
 	}
 
 	protected List<Object> toObjectList(List<DDMFormRule> ddmFormRules) {

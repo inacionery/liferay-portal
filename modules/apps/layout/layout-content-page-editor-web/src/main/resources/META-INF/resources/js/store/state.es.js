@@ -19,7 +19,8 @@ import {getEmptyLayoutData} from '../utils/LayoutDataList.es';
 import {
 	EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 	FRAGMENTS_EDITOR_ITEM_BORDERS,
-	FRAGMENTS_EDITOR_ROW_TYPES
+	FRAGMENTS_EDITOR_ROW_TYPES,
+	PAGE_TYPES
 } from '../utils/constants';
 
 const LayoutDataShape = Config.shapeOf({
@@ -563,6 +564,12 @@ const INITIAL_STATE = {
 	).value([]),
 
 	/**
+	 * @review
+	 * @type {number}
+	 */
+	pageType: Config.oneOf(Object.values(PAGE_TYPES)),
+
+	/**
 	 * Portlet namespace needed for prefixing form inputs
 	 * @default ''
 	 * @review
@@ -702,7 +709,7 @@ const INITIAL_STATE = {
 	 * @review
 	 * @type {string}
 	 */
-	selectedSidebarPanelId: Config.string().value('sections'),
+	selectedSidebarPanelId: Config.string().value('elements'),
 
 	/**
 	 * Flag indicating if resolved comments should be shown

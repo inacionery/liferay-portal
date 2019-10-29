@@ -14,6 +14,7 @@
 
 import Component from 'metal-component';
 import Soy from 'metal-soy';
+import {Config} from 'metal-state';
 
 import './comments/SidebarCommentsPanel.es';
 
@@ -28,7 +29,6 @@ import './page_structure/SidebarPageStructurePanel.es';
 import './widgets/SidebarWidgetsPanel.es';
 import {UPDATE_SELECTED_SIDEBAR_PANEL_ID} from '../../actions/actions.es';
 import {getConnectedComponent} from '../../store/ConnectedComponent.es';
-import {setIn} from '../../utils/FragmentsEditorUpdateUtils.es';
 import templates from './FragmentsEditorSidebarContent.soy';
 
 /**
@@ -36,32 +36,6 @@ import templates from './FragmentsEditorSidebarContent.soy';
  * @review
  */
 class FragmentsEditorSidebarContent extends Component {
-	/**
-	 * @inheritdoc
-	 * @param {object} state
-	 * @review
-	 */
-	prepareStateForRender(state) {
-		let nextState = state;
-
-		if (state.selectedSidebarPanelId && state.sidebarPanels) {
-			const selectedSidebarPanel = state.sidebarPanels.find(
-				sidebarPanel =>
-					sidebarPanel.sidebarPanelId === state.selectedSidebarPanelId
-			);
-
-			if (selectedSidebarPanel) {
-				nextState = setIn(
-					nextState,
-					['_selectedSidebarPanel'],
-					selectedSidebarPanel
-				);
-			}
-		}
-
-		return nextState;
-	}
-
 	/**
 	 * Opens look and feel configuration window
 	 * @private
@@ -80,7 +54,10 @@ class FragmentsEditorSidebarContent extends Component {
 	_handlePanelButtonClick(event) {
 		let {sidebarPanelId} = event.delegateTarget.dataset;
 
-		if (this.selectedSidebarPanelId === sidebarPanelId) {
+		if (
+			this.selectedSidebarPanel &&
+			this.selectedSidebarPanel.sidebarPanelId === sidebarPanelId
+		) {
 			sidebarPanelId = '';
 		}
 
@@ -103,9 +80,26 @@ class FragmentsEditorSidebarContent extends Component {
 	}
 }
 
+/**
+ * State definition.
+ * @review
+ * @static
+ * @type {!Object}
+ */
+FragmentsEditorSidebarContent.STATE = {
+	/**
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentsEditorSidebarContent
+	 * @review
+	 * @type {object}
+	 */
+	selectedSidebarPanel: Config.object().value(undefined)
+};
+
 const ConnectedFragmentsEditorSidebarContent = getConnectedComponent(
 	FragmentsEditorSidebarContent,
-	['lookAndFeelURL', 'selectedSidebarPanelId', 'sidebarPanels', 'spritemap']
+	['lookAndFeelURL', 'sidebarPanels', 'spritemap']
 );
 
 Soy.register(ConnectedFragmentsEditorSidebarContent, templates);

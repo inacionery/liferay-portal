@@ -59,7 +59,7 @@ class FragmentEditableBackgroundImage extends Component {
 		);
 
 		this.element.addEventListener(
-			'click',
+			'dblclick',
 			this._handleEditableBackgroundImageClick
 		);
 
@@ -87,6 +87,7 @@ class FragmentEditableBackgroundImage extends Component {
 	 */
 	syncActiveItemId() {
 		if (
+			this.hasUpdatePermissions &&
 			this.activeItemId === this._getItemId() &&
 			this.activeItemType ===
 				FRAGMENTS_EDITOR_ITEM_TYPES.backgroundImageEditable
@@ -256,7 +257,11 @@ class FragmentEditableBackgroundImage extends Component {
 	_handleEditableBackgroundImageClick(event) {
 		const item = event.target.closest('[data-fragments-editor-item-id]');
 
-		if (item === this.element && this._active) {
+		if (
+			this.hasUpdatePermissions &&
+			item === this.element &&
+			this._active
+		) {
 			openImageSelector(image =>
 				this._updateFragmentBackgroundImage(image)
 			);
@@ -466,6 +471,7 @@ const ConnectedFragmentEditableBackgroundImage = getConnectedComponent(
 	[
 		'activeItemId',
 		'activeItemType',
+		'hasUpdatePermissions',
 		'hoveredItemId',
 		'hoveredItemType',
 		'defaultLanguageId',

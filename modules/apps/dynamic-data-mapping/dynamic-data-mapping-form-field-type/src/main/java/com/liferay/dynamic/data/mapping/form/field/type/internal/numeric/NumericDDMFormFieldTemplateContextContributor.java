@@ -21,7 +21,6 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -29,6 +28,7 @@ import com.liferay.portal.kernel.util.Validator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -53,9 +53,11 @@ public class NumericDDMFormFieldTemplateContextContributor
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
-		Map<String, Object> parameters = HashMapBuilder.<String, Object>put(
-			"dataType", getDataType(ddmFormField, ddmFormFieldRenderingContext)
-		).build();
+		Map<String, Object> parameters = new HashMap<>();
+
+		parameters.put(
+			"dataType",
+			getDataType(ddmFormField, ddmFormFieldRenderingContext));
 
 		LocalizedValue placeholder = (LocalizedValue)ddmFormField.getProperty(
 			"placeholder");
@@ -145,13 +147,16 @@ public class NumericDDMFormFieldTemplateContextContributor
 		DecimalFormatSymbols decimalFormatSymbols =
 			formatter.getDecimalFormatSymbols();
 
-		return HashMapBuilder.put(
+		Map<String, String> symbolsMap = new HashMap<>();
+
+		symbolsMap.put(
 			"decimalSymbol",
-			String.valueOf(decimalFormatSymbols.getDecimalSeparator())
-		).put(
+			String.valueOf(decimalFormatSymbols.getDecimalSeparator()));
+		symbolsMap.put(
 			"thousandsSeparator",
-			String.valueOf(decimalFormatSymbols.getGroupingSeparator())
-		).build();
+			String.valueOf(decimalFormatSymbols.getGroupingSeparator()));
+
+		return symbolsMap;
 	}
 
 	protected String getValueString(

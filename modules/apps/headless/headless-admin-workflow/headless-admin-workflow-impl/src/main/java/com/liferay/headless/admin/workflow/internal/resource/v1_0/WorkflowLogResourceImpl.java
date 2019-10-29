@@ -24,11 +24,17 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowLogManager;
+import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.workflow.kaleo.KaleoWorkflowModelConverter;
+import com.liferay.portal.workflow.kaleo.definition.LogType;
 import com.liferay.portal.workflow.kaleo.definition.util.KaleoLogUtil;
 import com.liferay.portal.workflow.kaleo.service.KaleoLogLocalService;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,6 +50,26 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class WorkflowLogResourceImpl extends BaseWorkflowLogResourceImpl {
 
 	@Override
+	public Page<WorkflowLog> getWorkflowInstanceWorkflowLogsPage(
+			Long workflowInstanceId, String[] types, Pagination pagination)
+		throws Exception {
+
+		return Page.of(
+			transform(
+				_workflowLogManager.getWorkflowLogsByWorkflowInstance(
+					contextCompany.getCompanyId(), workflowInstanceId,
+					_toLogTypes(types), pagination.getStartPosition(),
+					pagination.getEndPosition(),
+					WorkflowComparatorFactoryUtil.getLogCreateDateComparator(
+						false)),
+				this::_toWorkflowLog),
+			pagination,
+			_workflowLogManager.getWorkflowLogCountByWorkflowInstance(
+				contextCompany.getCompanyId(), workflowInstanceId,
+				_toLogTypes(types)));
+	}
+
+	@Override
 	public WorkflowLog getWorkflowLog(Long workflowLogId) throws Exception {
 		return _toWorkflowLog(
 			_kaleoWorkflowModelConverter.toWorkflowLog(
@@ -52,19 +78,54 @@ public class WorkflowLogResourceImpl extends BaseWorkflowLogResourceImpl {
 
 	@Override
 	public Page<WorkflowLog> getWorkflowTaskWorkflowLogsPage(
-			Long workflowTaskId, Pagination pagination)
+			Long workflowTaskId, String[] types, Pagination pagination)
 		throws Exception {
 
 		return Page.of(
 			transform(
 				_workflowLogManager.getWorkflowLogsByWorkflowTask(
-					contextCompany.getCompanyId(), workflowTaskId, null,
-					pagination.getStartPosition(), pagination.getEndPosition(),
-					null),
+					contextCompany.getCompanyId(), workflowTaskId,
+					_toLogTypes(types), pagination.getStartPosition(),
+					pagination.getEndPosition(),
+					WorkflowComparatorFactoryUtil.getLogCreateDateComparator(
+						false)),
 				this::_toWorkflowLog),
 			pagination,
 			_workflowLogManager.getWorkflowLogCountByWorkflowTask(
-				contextCompany.getCompanyId(), workflowTaskId, null));
+				contextCompany.getCompanyId(), workflowTaskId,
+				_toLogTypes(types)));
+	}
+
+	private String _toLogTypeName(WorkflowLog.Type type) {
+		if (type == WorkflowLog.Type.TASK_ASSIGN) {
+			return LogType.TASK_ASSIGNMENT.name();
+		}
+		else if (type == WorkflowLog.Type.TASK_COMPLETION) {
+			return LogType.TASK_COMPLETION.name();
+		}
+		else if (type == WorkflowLog.Type.TASK_UPDATE) {
+			return LogType.TASK_UPDATE.name();
+		}
+		else if (type == WorkflowLog.Type.TRANSITION) {
+			return LogType.NODE_EXIT.name();
+		}
+
+		return null;
+	}
+
+	private List<Integer> _toLogTypes(String[] types) {
+		return Stream.of(
+			types
+		).map(
+			WorkflowLog.Type::create
+		).map(
+			this::_toLogTypeName
+		).map(
+			KaleoLogUtil::convert
+		).distinct(
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	private Role _toRole(long roleId) throws PortalException {
@@ -117,9 +178,27 @@ public class WorkflowLogResourceImpl extends BaseWorkflowLogResourceImpl {
 				role = _toRole(workflowLog.getRoleId());
 				state = workflowLog.getState();
 				taskId = workflowLog.getWorkflowTaskId();
-				type = KaleoLogUtil.convert(workflowLog.getType());
+				type = _toWorkflowLogType(
+					KaleoLogUtil.convert(workflowLog.getType()));
 			}
 		};
+	}
+
+	private WorkflowLog.Type _toWorkflowLogType(String type) {
+		if (type == LogType.NODE_EXIT.name()) {
+			return WorkflowLog.Type.TRANSITION;
+		}
+		else if (type == LogType.TASK_ASSIGNMENT.name()) {
+			return WorkflowLog.Type.TASK_ASSIGN;
+		}
+		else if (type == LogType.TASK_COMPLETION.name()) {
+			return WorkflowLog.Type.TASK_COMPLETION;
+		}
+		else if (type == LogType.TASK_UPDATE.name()) {
+			return WorkflowLog.Type.TASK_UPDATE;
+		}
+
+		return null;
 	}
 
 	@Reference

@@ -219,6 +219,7 @@ class FragmentEntryLinkListRow extends Component {
 	 */
 	rendered() {
 		if (
+			this.hasUpdatePermissions &&
 			this.rowId === this.activeItemId &&
 			this.activeItemType === FRAGMENTS_EDITOR_ITEM_TYPES.row &&
 			!this._resizing &&
@@ -638,6 +639,7 @@ const ConnectedFragmentEntryLinkListRow = getConnectedComponent(
 		'dropTargetItemId',
 		'dropTargetItemType',
 		'getAssetFieldValueURL',
+		'hasUpdatePermissions',
 		'hoveredItemId',
 		'hoveredItemType',
 		'layoutData',

@@ -54,7 +54,6 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.test.rule.AdviseWith;
 import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 
@@ -430,10 +429,15 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 
 	@Test
 	public void testLoadPaths() throws Exception {
+		final Map<Path, Path> mergedPaths = new HashMap<>();
+
 		Path inputPath1 = Paths.get("inputPaths1");
 		Path mappedInputPath1 = Paths.get("mappedInputPath1");
 		Path inputPath2 = Paths.get("inputPaths2");
 		Path mappedInputPath2 = Paths.get("mappedInputPath2");
+
+		mergedPaths.put(inputPath1, mappedInputPath1);
+		mergedPaths.put(inputPath2, mappedInputPath2);
 
 		Path bootstrapPath1 = Paths.get("bootstrapPath1");
 		Path mappedBootstrapPath1 = Paths.get("mappedBootstrapPath1");
@@ -442,6 +446,10 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 		Path bootstrapPath3 = Paths.get("bootstrapPath3");
 		Path mappedBootstrapPath3 = Paths.get("mappedBootstrapPath3");
 
+		mergedPaths.put(bootstrapPath1, mappedBootstrapPath1);
+		mergedPaths.put(bootstrapPath2, mappedBootstrapPath2);
+		mergedPaths.put(bootstrapPath3, mappedBootstrapPath3);
+
 		Path runtimePath1 = Paths.get("runtimePath1");
 		Path mappedRuntimePath1 = Paths.get("mappedRuntimePath1");
 		Path runtimePath2 = Paths.get("runtimePath2");
@@ -449,13 +457,6 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 		Path runtimePath3 = Paths.get("runtimePath3");
 		Path mappedRuntimePath3 = Paths.get("mappedRuntimePath3");
 
-		final Map<Path, Path> mergedPaths = new HashMap<>();
-
-		mergedPaths.put(bootstrapPath1, mappedBootstrapPath1);
-		mergedPaths.put(bootstrapPath2, mappedBootstrapPath2);
-		mergedPaths.put(bootstrapPath3, mappedBootstrapPath3);
-		mergedPaths.put(inputPath1, mappedInputPath1);
-		mergedPaths.put(inputPath2, mappedInputPath2);
 		mergedPaths.put(runtimePath1, mappedRuntimePath1);
 		mergedPaths.put(runtimePath2, mappedRuntimePath2);
 		mergedPaths.put(runtimePath3, mappedRuntimePath3);
@@ -541,10 +542,12 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 
 		// With log
 
+		final Map<Path, Path> mergedPaths = new HashMap<>();
+
 		Path bootstrapPath1 = Paths.get("bootstrapPath1");
 		Path mappedBootstrapPath1 = Paths.get("mappedBootstrapPath1");
-
-		final Map<Path, Path> mergedPaths = new HashMap<>();
+		Path bootstrapPath2 = Paths.get("bootstrapPath2");
+		Path bootstrapPath3 = Paths.get("bootstrapPath3");
 
 		mergedPaths.put(bootstrapPath1, mappedBootstrapPath1);
 
@@ -572,14 +575,10 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 
 		ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
-		Path bootstrapPath2 = Paths.get("bootstrapPath2");
-		Path bootstrapPath3 = Paths.get("bootstrapPath3");
-
 		builder.setBootstrapClassPath(
 			StringBundler.concat(
 				bootstrapPath1, File.pathSeparator, bootstrapPath2,
 				File.pathSeparator, bootstrapPath3));
-
 		builder.setRuntimeClassPath(StringPool.BLANK);
 
 		ProcessConfig processConfig = builder.build();
@@ -672,10 +671,11 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 
 	@Test
 	public void testLoadPathsMissedInputPaths() throws InterruptedException {
+		final Map<Path, Path> mergedPaths = new HashMap<>();
+
 		Path inputPath1 = Paths.get("inputPaths1");
 		Path mappedInputPath1 = Paths.get("mappedInputPath1");
-
-		final Map<Path, Path> mergedPaths = new HashMap<>();
+		Path inputPath2 = Paths.get("inputPaths2");
 
 		mergedPaths.put(inputPath1, mappedInputPath1);
 
@@ -707,8 +707,6 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 		builder.setRuntimeClassPath(StringPool.BLANK);
 
 		ProcessConfig processConfig = builder.build();
-
-		Path inputPath2 = Paths.get("inputPaths2");
 
 		ProcessCallable<Serializable> processCallable =
 			new LoadPathProcessCallable(
@@ -746,13 +744,13 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 
 		// With log
 
+		final Map<Path, Path> mergedPaths = new HashMap<>();
+
 		Path runtimePath1 = Paths.get("runtimePath1");
 		Path mappedRuntimePath1 = Paths.get("mappedRuntimePath1");
 		Path runtimePath2 = Paths.get("runtimePath2");
 		Path runtimePath3 = Paths.get("runtimePath3");
 		Path mappedRuntimePath3 = Paths.get("mappedRuntimePath3");
-
-		final Map<Path, Path> mergedPaths = new HashMap<>();
 
 		mergedPaths.put(runtimePath1, mappedRuntimePath1);
 		mergedPaths.put(runtimePath3, mappedRuntimePath3);
@@ -1010,11 +1008,10 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 		Path inputPath2 = FileServerTestUtil.createEmptyFile(
 			Paths.get("inputPath2"));
 
-		Map<Path, Path> inputPaths = HashMapBuilder.put(
-			inputPath1, inputPath1
-		).put(
-			inputPath2, inputPath2
-		).build();
+		Map<Path, Path> inputPaths = new HashMap<>();
+
+		inputPaths.put(inputPath1, inputPath1);
+		inputPaths.put(inputPath2, inputPath2);
 
 		PostFabricWorkerFinishFutureListener
 			postFabricWorkerFinishFutureListener =
@@ -1083,11 +1080,10 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 		inputPath2 = FileServerTestUtil.createEmptyFile(
 			Paths.get("inputPath2"));
 
-		inputPaths = HashMapBuilder.put(
-			inputPath1, inputPath1
-		).put(
-			inputPath2, inputPath2
-		).build();
+		inputPaths = new HashMap<>();
+
+		inputPaths.put(inputPath1, inputPath1);
+		inputPaths.put(inputPath2, inputPath2);
 
 		postFabricWorkerFinishFutureListener =
 			nettyFabricWorkerExecutionChannelHandler.

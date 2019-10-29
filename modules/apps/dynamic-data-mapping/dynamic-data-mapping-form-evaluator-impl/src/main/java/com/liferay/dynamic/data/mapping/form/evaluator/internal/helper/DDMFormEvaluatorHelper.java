@@ -408,6 +408,10 @@ public class DDMFormEvaluatorHelper {
 	protected void setRequiredErrorMessage(
 		DDMFormEvaluatorFieldContextKey fieldContextKey) {
 
+		Map<String, Object> properties = new HashMap<>();
+
+		properties.put("valid", false);
+
 		UpdateFieldPropertyRequest.Builder builder =
 			UpdateFieldPropertyRequest.Builder.newBuilder(
 				fieldContextKey.getName(), "errorMessage",

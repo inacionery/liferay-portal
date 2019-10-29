@@ -63,7 +63,7 @@ dependencies {
 		String testBaseDirName = poshiRunnerProperties.getProperty("test.base.dir.name")
 
 		if (testBaseDirName) {
-			Matcher matcher = testBaseDirName =~ /.*\/(?<portalVersion>\d+(\.\d+)*).*/
+			Matcher matcher = testBaseDirName =~ /.*liferay-qa-portal-legacy-ee.*\/(?<portalVersion>\d+(\.\d+)*).*/
 
 			if (matcher.find()) {
 				String portalVersion = matcher.group("portalVersion")

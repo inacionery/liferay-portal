@@ -324,6 +324,14 @@ public class ReportsEngineDisplayContext {
 		return false;
 	}
 
+	public boolean isDisabled() throws PortalException {
+		if (getTotalItems() == 0) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isReportsTabSelected() {
 		String tabs1 = _getTabs1();
 
@@ -387,6 +395,11 @@ public class ReportsEngineDisplayContext {
 			definitionSearch.setResults(results);
 		}
 
+		if (definitionSearch.isSearch()) {
+			definitionSearch.setEmptyResultsMessage(
+				"no-definitions-were-found");
+		}
+
 		return definitionSearch;
 	}
 
@@ -433,6 +446,10 @@ public class ReportsEngineDisplayContext {
 				entrySearch.getEnd(), entrySearch.getOrderByComparator());
 
 			entrySearch.setResults(results);
+		}
+
+		if (entrySearch.isSearch()) {
+			entrySearch.setEmptyResultsMessage("no-reports-were-found");
 		}
 
 		return entrySearch;
@@ -532,6 +549,10 @@ public class ReportsEngineDisplayContext {
 				sourceSearch.getEnd(), sourceSearch.getOrderByComparator());
 
 			sourceSearch.setResults(results);
+		}
+
+		if (sourceSearch.isSearch()) {
+			sourceSearch.setEmptyResultsMessage("no-sources-were-found");
 		}
 
 		return sourceSearch;

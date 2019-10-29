@@ -19,6 +19,7 @@ import com.liferay.talend.common.oas.constants.OASConstants;
 import com.liferay.talend.common.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -33,9 +34,38 @@ import javax.json.JsonObject;
 public class OASExplorer {
 
 	public Set<String> getEndpointList(
-		String operation, JsonObject oasJsonObject) {
+		JsonObject oasJsonObject, String... operations) {
 
-		return _extractEndpoints(operation, oasJsonObject);
+		if (operations.length == 0) {
+			return _extractEndpoints(oasJsonObject, null);
+		}
+
+		Set<String> endpoints = new HashSet<>();
+
+		for (String operation : operations) {
+			endpoints.addAll(_extractEndpoints(oasJsonObject, operation));
+		}
+
+		return endpoints;
+	}
+
+	public Set<String> getEntitySchemaNames(JsonObject oasJsonObject) {
+		Set<String> entitySchemaNames = new HashSet<>();
+
+		JsonObject componentSchemaJsonObject =
+			_jsonFinder.getDescendantJsonObject(
+				OASConstants.PATH_COMPONENTS_SCHEMAS, oasJsonObject);
+
+		componentSchemaJsonObject.forEach(
+			(entityName, entityDefinition) -> {
+				if (entityName.startsWith("Page")) {
+					return;
+				}
+
+				entitySchemaNames.add(entityName);
+			});
+
+		return entitySchemaNames;
 	}
 
 	public List<OASParameter> getParameters(
@@ -71,7 +101,7 @@ public class OASExplorer {
 	}
 
 	private Set<String> _extractEndpoints(
-		String operation, JsonObject oasJsonObject) {
+		JsonObject oasJsonObject, String operation) {
 
 		Set<String> endpoints = new TreeSet<>();
 
@@ -85,16 +115,18 @@ public class OASExplorer {
 
 				operationsJsonObject.forEach(
 					(operationName, operationJsonValue) -> {
-						if (!Objects.equals(operation, operationName)) {
-							return;
-						}
+						if (operation != null) {
+							if (!Objects.equals(operation, operationName)) {
+								return;
+							}
 
-						if (!Objects.equals(
-								operation, OASConstants.OPERATION_GET)) {
+							if (!Objects.equals(
+									operation, OASConstants.OPERATION_GET)) {
 
-							endpoints.add(path);
+								endpoints.add(path);
 
-							return;
+								return;
+							}
 						}
 
 						if (_jsonFinder.hasPath(

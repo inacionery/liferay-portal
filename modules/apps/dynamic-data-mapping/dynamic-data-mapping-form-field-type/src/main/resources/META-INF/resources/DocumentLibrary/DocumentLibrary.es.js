@@ -56,7 +56,8 @@ class DocumentLibrary extends Component {
 	}
 
 	getDocumentLibrarySelectorURL() {
-		const {itemSelectorAuthToken, portletNamespace} = this;
+		const {itemSelectorAuthToken} = this.initialConfig_;
+		const {portletNamespace} = this;
 
 		const criterionJSON = {
 			desiredItemSelectorReturnTypes:

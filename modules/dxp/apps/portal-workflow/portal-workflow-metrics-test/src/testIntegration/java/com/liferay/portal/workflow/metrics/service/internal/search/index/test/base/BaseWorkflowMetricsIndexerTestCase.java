@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
@@ -65,6 +64,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,12 +110,14 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 				Log4JLoggerTestUtil.configureLog4JLogger(
 					"com.liferay.petra.mail.MailEngine", Level.OFF)) {
 
-			_blogsEntry = _blogsEntryLocalService.addEntry(
+			BlogsEntry blogsEntry = _blogsEntryLocalService.addEntry(
 				TestPropsValues.getUserId(), StringUtil.randomString(),
 				StringUtil.randomString(), new Date(),
 				ServiceContextTestUtil.getServiceContext());
 
-			return _blogsEntry;
+			_blogsEntries.add(blogsEntry);
+
+			return blogsEntry;
 		}
 	}
 
@@ -472,11 +474,11 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 	private Map<String, Serializable> _createWorkflowContext()
 		throws PortalException {
 
-		Map<String, Serializable> workflowContext =
-			HashMapBuilder.<String, Serializable>put(
-				WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME,
-				BlogsEntry.class.getName()
-			).build();
+		Map<String, Serializable> workflowContext = new HashMap<>();
+
+		workflowContext.put(
+			WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME,
+			BlogsEntry.class.getName());
 
 		BlogsEntry blogsEntry = addBlogsEntry();
 
@@ -500,7 +502,7 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 	}
 
 	@DeleteAfterTestRun
-	private BlogsEntry _blogsEntry;
+	private final List<BlogsEntry> _blogsEntries = new ArrayList<>();
 
 	@Inject
 	private BlogsEntryLocalService _blogsEntryLocalService;

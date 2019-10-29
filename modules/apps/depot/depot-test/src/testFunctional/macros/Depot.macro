@@ -1,0 +1,95 @@
+definition {
+
+	macro addDepot {
+		Click(locator1 = "Button#PLUS");
+
+		Type(
+			locator1 = "TextInput#NAME",
+			value1 = "${depotName}");
+
+		Button.clickSave();
+
+		Alert.viewSuccessMessageText(successMessage = "Repository was added.");
+
+		AssertTextEquals(
+			locator1 = "ControlMenu#HEADING",
+			value1 = "${depotName}");
+
+		if (isSet(depotDescription)) {
+			Type(
+				locator1 = "TextArea#DESCRIPTION",
+				value1 = "${depotDescription}");
+		}
+
+		Button.clickSave();
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro deleteCP {
+		LexiconEntry.gotoEntryMenuItemNoError(
+			menuItem = "Delete",
+			rowEntry = "${depotName}");
+
+		AssertConfirm(value1 = "Removing a repository can affect sites that use the contents stored in it. Are you sure you want to continue removing this repository?");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro editDepot {
+		DepotNavigator.gotoEdit(depotName = "${depotName}");
+
+		if (isSet(depotNameEdit)) {
+			Type(
+				locator1 = "TextInput#NAME",
+				value1 = "${depotNameEdit}");
+		}
+
+		if (isSet(depotDescriptionEdit)) {
+			Type(
+				locator1 = "TextArea#DESCRIPTION",
+				value1 = "${depotDescriptionEdit}");
+		}
+
+		Button.clickSave();
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro viewDefaultCP {
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO",
+			value1 = "No repositories were found.");
+	}
+
+	macro viewSearchResult {
+		if ("${resultCount}" != "1") {
+			AssertTextEquals.assertPartialText(
+				locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+				value1 = "${resultCount} Results for ${searchTerm}");
+		}
+
+		else {
+			AssertTextEquals.assertPartialText(
+				locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+				value1 = "1 Result for ${searchTerm}");
+		}
+
+		for (var depotName : list "${includedResults}") {
+			var key_card = "${depotName}";
+
+			AssertTextEquals(
+				locator1 = "LexiconCard#CARD_TITLE",
+				value1 = "${depotName}");
+		}
+
+		if (isSet(excludedResults)) {
+			for (var depotName : list "${excludedResults}") {
+				var key_card = "${depotName}";
+
+				AssertElementNotPresent(locator1 = "LexiconCard#CARD_TITLE");
+			}
+		}
+	}
+
+}
