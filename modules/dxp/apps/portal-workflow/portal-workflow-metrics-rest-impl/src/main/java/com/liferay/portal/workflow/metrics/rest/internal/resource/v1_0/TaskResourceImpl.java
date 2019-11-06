@@ -277,6 +277,7 @@ public class TaskResourceImpl
 		return new Task() {
 			{
 				breachedInstanceCount = 0L;
+				breachedInstancePercentage = 0.0;
 				durationAvg = 0L;
 				instanceCount = 0L;
 				key = taskName;
@@ -406,6 +407,9 @@ public class TaskResourceImpl
 			breachedFilterAggregation, countFilterAggregation,
 			onTimeFilterAggregation, overdueFilterAggregation);
 
+		termsAggregation.addPipelineAggregation(
+			_resourceHelper.createBucketScriptPipelineAggregation());
+
 		if (fieldSort != null) {
 			termsAggregation.addPipelineAggregation(
 				_resourceHelper.createBucketSortPipelineAggregation(
@@ -437,7 +441,7 @@ public class TaskResourceImpl
 			bucket -> {
 				Task task = tasksMap.remove(bucket.getKey());
 
-				_populateTaskWithSLAMetrics(bucket, task);
+				_populateTaskWithSLAMetrics(bucket, completed, task);
 				_setDurationAvg(bucket, task);
 				_setInstanceCount(bucket, task);
 
@@ -542,10 +546,17 @@ public class TaskResourceImpl
 		return false;
 	}
 
-	private void _populateTaskWithSLAMetrics(Bucket bucket, Task task) {
-		_setBreachedInstanceCount(bucket, task);
-		_setOnTimeInstanceCount(bucket, task);
-		_setOverdueInstanceCount(bucket, task);
+	private void _populateTaskWithSLAMetrics(
+		Bucket bucket, boolean completed, Task task) {
+
+		if (completed) {
+			_setBreachedInstanceCount(bucket, task);
+			_setBreachedInstancePercentage(bucket, task);
+		}
+		else {
+			_setOnTimeInstanceCount(bucket, task);
+			_setOverdueInstanceCount(bucket, task);
+		}
 	}
 
 	private void _setBreachedInstanceCount(Bucket bucket, Task task) {
@@ -555,6 +566,15 @@ public class TaskResourceImpl
 
 		task.setBreachedInstanceCount(
 			_resourceHelper.getBreachedInstanceCount(bucket));
+	}
+
+	private void _setBreachedInstancePercentage(Bucket bucket, Task task) {
+		if (bucket == null) {
+			return;
+		}
+
+		task.setBreachedInstancePercentage(
+			_resourceHelper.getBreachedInstancePercentage(bucket));
 	}
 
 	private void _setDurationAvg(Bucket bucket, Task task) {

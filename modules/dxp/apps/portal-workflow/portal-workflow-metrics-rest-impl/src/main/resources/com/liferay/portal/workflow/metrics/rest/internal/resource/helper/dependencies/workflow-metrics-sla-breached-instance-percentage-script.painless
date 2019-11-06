@@ -1,0 +1,1 @@
+(params.breachedInstanceCount / params.instanceCount) * 100
