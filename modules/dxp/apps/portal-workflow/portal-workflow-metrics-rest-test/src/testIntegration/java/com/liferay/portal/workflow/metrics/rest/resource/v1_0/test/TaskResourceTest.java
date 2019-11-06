@@ -190,6 +190,7 @@ public class TaskResourceTest extends BaseTaskResourceTestCase {
 		Task task3 = randomTask();
 
 		task3.setBreachedInstanceCount(2L);
+		task3.setBreachedInstancePercentage(100.0);
 		task3.setDurationAvg(3000L);
 		task3.setInstanceCount(2L);
 		task3.setOnTimeInstanceCount(0L);
@@ -200,20 +201,51 @@ public class TaskResourceTest extends BaseTaskResourceTestCase {
 
 		Task task4 = randomTask();
 
-		task4.setBreachedInstanceCount(0L);
+		task4.setBreachedInstanceCount(1L);
+		task4.setBreachedInstancePercentage(50.0);
 		task4.setDurationAvg(4000L);
-		task4.setInstanceCount(1L);
+		task4.setInstanceCount(2L);
 		task4.setOnTimeInstanceCount(1L);
-		task4.setOverdueInstanceCount(0L);
+		task4.setOverdueInstanceCount(1L);
 
 		testGetProcessTasksPage_addTask(
 			_process.getId(), "COMPLETED", task4, "2.0");
 
 		page = taskResource.getProcessTasksPage(
 			_process.getId(), true, null, null, null, Pagination.of(1, 2),
-			"durationAvg:desc");
+			"breachedInstancePercentage:desc");
 
-		assertEquals(Arrays.asList(task4, task3), (List<Task>)page.getItems());
+		assertEquals(
+			Arrays.asList(
+				new Task() {
+					{
+						breachedInstanceCount =
+							task3.getBreachedInstanceCount();
+						breachedInstancePercentage =
+							task3.getBreachedInstancePercentage();
+						durationAvg = task3.getDurationAvg();
+						instanceCount = task3.getInstanceCount();
+						key = task3.getKey();
+						name = task3.getName();
+						onTimeInstanceCount = 0L;
+						overdueInstanceCount = 0L;
+					}
+				},
+				new Task() {
+					{
+						breachedInstanceCount =
+							task4.getBreachedInstanceCount();
+						breachedInstancePercentage =
+							task4.getBreachedInstancePercentage();
+						durationAvg = task4.getDurationAvg();
+						instanceCount = task4.getInstanceCount();
+						key = task4.getKey();
+						name = task4.getName();
+						onTimeInstanceCount = 0L;
+						overdueInstanceCount = 0L;
+					}
+				}),
+			(List<Task>)page.getItems());
 	}
 
 	@Override
@@ -249,6 +281,7 @@ public class TaskResourceTest extends BaseTaskResourceTestCase {
 	protected Task randomTask() throws Exception {
 		Task task = super.randomTask();
 
+		task.setBreachedInstancePercentage(0.0);
 		task.setDurationAvg(0L);
 
 		int instanceCount = RandomTestUtil.randomInt(0, 20);
