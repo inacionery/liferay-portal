@@ -12,7 +12,7 @@
 import React from 'react';
 
 import {formatDuration} from '../../../shared/util/duration.es';
-import {getFormattedPercentage} from '../../../shared/util/util.es';
+import {formatNumber} from '../../../shared/util/numeral.es';
 import PerformanceByStepCard from './PerformanceByStepCard.es';
 
 const Table = ({items = []}) => (
@@ -43,11 +43,19 @@ const Table = ({items = []}) => (
 	</div>
 );
 
-const Item = ({durationAvg, instanceCount, name, overdueInstanceCount}) => {
+const getFormattedPercentage = percentage => {
+	return formatNumber(percentage, '0[.]00') + '%';
+};
+
+const Item = ({
+	breachedInstanceCount,
+	breachedInstancePercentage,
+	durationAvg,
+	name
+}) => {
 	const formattedDuration = formatDuration(durationAvg);
 	const formattedPercentage = getFormattedPercentage(
-		overdueInstanceCount,
-		instanceCount
+		breachedInstancePercentage
 	);
 
 	return (
@@ -55,7 +63,7 @@ const Item = ({durationAvg, instanceCount, name, overdueInstanceCount}) => {
 			<td data-testid="stepName">{name}</td>
 
 			<td className="text-right" data-testid="slaBreached">
-				{`${overdueInstanceCount} (${formattedPercentage})`}
+				{`${breachedInstanceCount} (${formattedPercentage})`}
 			</td>
 
 			<td className="text-right" data-testid="avgCompletionTime">
