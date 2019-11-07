@@ -15,6 +15,8 @@
 package com.liferay.portal.workflow.metrics.rest.internal.resource.v1_0;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -497,7 +499,17 @@ public class ProcessResourceImpl
 			searchSearchRequest.setStart(0);
 		}
 
-		return _searchRequestExecutor.executeSearchRequest(searchSearchRequest);
+		try {
+			return _searchRequestExecutor.executeSearchRequest(
+				searchSearchRequest);
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+
+			return new SearchSearchResponse();
+		}
 	}
 
 	private TermsAggregationResult _getSLATermsAggregationResult(
@@ -656,6 +668,9 @@ public class ProcessResourceImpl
 
 		return fieldSort;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ProcessResourceImpl.class);
 
 	private static final EntityModel _entityModel = new ProcessEntityModel();
 
