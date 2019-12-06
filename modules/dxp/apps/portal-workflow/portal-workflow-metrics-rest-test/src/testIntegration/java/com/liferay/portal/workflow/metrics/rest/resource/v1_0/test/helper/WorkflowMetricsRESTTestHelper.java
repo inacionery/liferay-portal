@@ -614,7 +614,8 @@ public class WorkflowMetricsRESTTestHelper {
 
 	private Document _creatWorkflowMetricsSLAProcessResultDocument(
 		long companyId, boolean instanceCompleted, long instanceId,
-		boolean onTime, long processId, long slaDefinitionId) {
+		boolean onTime, long processId,
+		long slaDefinitionId) {
 
 		Document document = new DocumentImpl();
 
