@@ -192,7 +192,7 @@ public class WorkflowMetricsSLAProcessBackgroundTaskExecutor
 		if (completed && (createDate != null)) {
 			booleanQuery.addMustQueryClauses(
 				_queries.rangeTerm(
-					"completionDate", true, false, _formatDate(createDate),
+					"completionDate", false, false, _formatDate(createDate),
 					null));
 		}
 
