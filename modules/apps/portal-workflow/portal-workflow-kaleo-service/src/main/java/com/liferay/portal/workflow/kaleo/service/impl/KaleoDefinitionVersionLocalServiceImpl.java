@@ -15,22 +15,25 @@
 package com.liferay.portal.workflow.kaleo.service.impl;
 
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
-import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Junction;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ProjectionList;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.GroupBy;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.workflow.exception.IncompleteWorkflowInstancesException;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
@@ -42,10 +45,15 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTransitionLocalService;
 import com.liferay.portal.workflow.kaleo.service.base.KaleoDefinitionVersionLocalServiceBaseImpl;
 import com.liferay.portal.workflow.kaleo.util.comparator.KaleoDefinitionVersionIdComparator;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -306,96 +314,175 @@ public class KaleoDefinitionVersionLocalServiceImpl
 		long companyId, String keywords, int status, int start, int end,
 		OrderByComparator<KaleoDefinitionVersion> orderByComparator) {
 
-		List<Long> kaleoDefinitionVersionIds = getKaleoDefinitionVersionIds(
-			companyId, keywords, status);
-
-		if (kaleoDefinitionVersionIds.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
-			KaleoDefinitionVersion.class, getClassLoader());
-
-		Property property = PropertyFactoryUtil.forName(
-			"kaleoDefinitionVersionId");
-
-		dynamicQuery.add(property.in(kaleoDefinitionVersionIds));
-
-		return dynamicQuery(dynamicQuery, start, end, orderByComparator);
+		return doSearch(
+			companyId,
+			HashMapBuilder.put(
+				"name", (Serializable)keywords
+			).put(
+				"status", status
+			).put(
+				"title", keywords
+			).build(),
+			start, end, orderByComparator);
 	}
 
 	@Override
 	public int getLatestKaleoDefinitionVersionsCount(
 		long companyId, String keywords, int status) {
 
-		List<Long> kaleoDefinitionVersionIds = getKaleoDefinitionVersionIds(
-			companyId, keywords, status);
-
-		return kaleoDefinitionVersionIds.size();
+		return doSearchCount(
+			companyId,
+			HashMapBuilder.put(
+				"name", (Serializable)keywords
+			).put(
+				"status", status
+			).put(
+				"title", keywords
+			).build());
 	}
 
-	protected void addKeywordsCriterion(
-		DynamicQuery dynamicQuery, String keywords) {
+	protected SearchContext buildSearchContext(
+		long companyId, Map<String, Serializable> searchAttributes, int start,
+		int end, OrderByComparator<KaleoDefinitionVersion> orderByComparator) {
 
-		if (Validator.isNull(keywords)) {
-			return;
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setAttributes(searchAttributes);
+		searchContext.setCompanyId(companyId);
+		searchContext.setEnd(end);
+
+		GroupBy groupBy = new GroupBy(_fieldNameOrderByCols.get("name"));
+
+		groupBy.setSize(1);
+		groupBy.setSorts(
+			new Sort[] {
+				new Sort(
+					_fieldNameOrderByCols.get("kaleoDefinitionVersionId"), true)
+			});
+
+		searchContext.setGroupBy(groupBy);
+
+		searchContext.setStart(start);
+
+		if (orderByComparator != null) {
+			searchContext.setSorts(getSortsFromComparator(orderByComparator));
 		}
 
-		Junction junction = RestrictionsFactoryUtil.disjunction();
-
-		for (String keyword : _customSQL.keywords(keywords)) {
-			junction.add(RestrictionsFactoryUtil.ilike("name", keyword));
-			junction.add(RestrictionsFactoryUtil.ilike("title", keyword));
-		}
-
-		dynamicQuery.add(junction);
+		return searchContext;
 	}
 
-	protected void addStatusCriterion(DynamicQuery dynamicQuery, int status) {
-		if (status != WorkflowConstants.STATUS_ANY) {
-			Junction junction = RestrictionsFactoryUtil.disjunction();
+	protected List<KaleoDefinitionVersion> doSearch(
+		long companyId, Map<String, Serializable> searchAttributes, int start,
+		int end, OrderByComparator<KaleoDefinitionVersion> orderByComparator) {
 
-			junction.add(RestrictionsFactoryUtil.eq("status", status));
+		try {
+			Indexer<KaleoDefinitionVersion> indexer =
+				IndexerRegistryUtil.getIndexer(
+					KaleoDefinitionVersion.class.getName());
 
-			dynamicQuery.add(junction);
+			Hits hits = indexer.search(
+				buildSearchContext(
+					companyId, searchAttributes, start, end,
+					orderByComparator));
+			
+			return Stream.of(
+				hits.getGroupedHits()
+			).map(
+				document -> GetterUtil.getLong(
+					document.get(Field.ENTRY_CLASS_PK))
+			).map(
+				kaleoDefinitionVersionPersistence::fetchByPrimaryKey
+			).filter(
+				Objects::nonNull
+			).collect(
+				Collectors.toList()
+			);
 		}
-	}
-
-	protected List<Long> getKaleoDefinitionVersionIds(
-		long companyId, String keywords, int status) {
-
-		List<Long> kaleoDefinitionVersionIds = new ArrayList<>();
-
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
-			KaleoDefinitionVersion.class, getClassLoader());
-
-		Property companyIdProperty = PropertyFactoryUtil.forName("companyId");
-
-		dynamicQuery.add(companyIdProperty.eq(companyId));
-
-		addKeywordsCriterion(dynamicQuery, keywords);
-
-		addStatusCriterion(dynamicQuery, status);
-
-		ProjectionList projectionList = ProjectionFactoryUtil.projectionList();
-
-		projectionList.add(
-			ProjectionFactoryUtil.max("kaleoDefinitionVersionId"));
-		projectionList.add(ProjectionFactoryUtil.groupProperty("name"));
-
-		dynamicQuery.setProjection(projectionList);
-
-		List<Object[]> results = dynamicQuery(dynamicQuery);
-
-		for (Object[] result : results) {
-			kaleoDefinitionVersionIds.add((Long)result[0]);
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
 		}
 
-		return kaleoDefinitionVersionIds;
+		return Collections.emptyList();
 	}
 
-	@Reference
-	private CustomSQL _customSQL;
+	protected int doSearchCount(
+		long companyId, Map<String, Serializable> searchAttributes) {
+
+		try {
+			Indexer<KaleoDefinitionVersion> indexer =
+				IndexerRegistryUtil.getIndexer(
+					KaleoDefinitionVersion.class.getName());
+
+			return (int)indexer.searchCount(
+				buildSearchContext(
+					companyId, searchAttributes, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null));
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
+		}
+
+		return 0;
+	}
+
+	protected Sort[] getSortsFromComparator(
+		OrderByComparator<KaleoDefinitionVersion> orderByComparator) {
+
+		if (orderByComparator == null) {
+			return null;
+		}
+
+		return Stream.of(
+			orderByComparator.getOrderByFields()
+		).map(
+			orderByFieldName -> {
+				String fieldName = _fieldNameOrderByCols.getOrDefault(
+					orderByFieldName, orderByFieldName);
+
+				return new Sort(
+					fieldName,
+					_fieldNameSortTypes.getOrDefault(
+						fieldName, Sort.STRING_TYPE),
+					!orderByComparator.isAscending());
+			}
+		).toArray(
+			Sort[]::new
+		);
+	}
+
+	private static String _getSortableFieldName(String name, String type) {
+		return Field.getSortableFieldName(
+			StringBundler.concat(name, StringPool.UNDERLINE, type));
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		KaleoDefinitionVersionLocalServiceImpl.class);
+
+	private static final Map<String, String> _fieldNameOrderByCols =
+		HashMapBuilder.put(
+			"createDate", _getSortableFieldName(Field.CREATE_DATE, "Number")
+		).put(
+			"kaleoDefinitionVersionId",
+			_getSortableFieldName("kaleoDefinitionVersionId", "Number")
+		).put(
+			"name", _getSortableFieldName("name", "String")
+		).put(
+			"title", _getSortableFieldName("title", "String")
+		).put(
+			"userId", _getSortableFieldName(Field.USER_ID, "Number")
+		).put(
+			"version", _getSortableFieldName("version", "Number")
+		).build();
+	private static final Map<String, Integer> _fieldNameSortTypes =
+		HashMapBuilder.put(
+			Field.CREATE_DATE, Sort.LONG_TYPE
+		).put(
+			Field.MODIFIED_DATE, Sort.LONG_TYPE
+		).build();
 
 	@Reference
 	private KaleoConditionLocalService _kaleoConditionLocalService;
