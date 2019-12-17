@@ -19,6 +19,13 @@ const MockContext = ({children, clientMock}) => (
 	<MockRouter client={clientMock}>{children}</MockRouter>
 );
 
+const mockHistory = {
+	location: {
+		pathname: '/'
+	},
+	replace: jest.fn()
+};
+
 test('Should render component', () => {
 	const clientMock = {
 		get: jest.fn().mockResolvedValue({data: {items: [], totalCount: 0}})
@@ -27,6 +34,7 @@ test('Should render component', () => {
 	const component = renderer.create(
 		<MockContext clientMock={clientMock}>
 			<ProcessListPage
+				history={mockHistory}
 				page="1"
 				pageSize="20"
 				sort="overdueInstanceCount:desc"
@@ -92,6 +100,7 @@ test('Should render component with 10 records', () => {
 	const component = renderer.create(
 		<MockContext clientMock={clientMock}>
 			<ProcessListPage
+				history={mockHistory}
 				page="1"
 				pageSize="20"
 				sort="overdueInstanceCount:desc"
@@ -134,6 +143,7 @@ test('Should render component with 4 records', () => {
 	const component = renderer.create(
 		<MockContext clientMock={clientMock}>
 			<ProcessListPage
+				history={mockHistory}
 				page="1"
 				pageSize="20"
 				sort="overdueInstanceCount:desc"
