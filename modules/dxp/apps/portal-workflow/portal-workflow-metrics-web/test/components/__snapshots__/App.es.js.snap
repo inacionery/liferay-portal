@@ -79,7 +79,6 @@ Array [
         </div>
       </div>
     </nav>
-    
     <div
       className="container-fluid-1280"
     >
@@ -174,7 +173,6 @@ exports[`Should render default component without custom header 1`] = `
       </div>
     </div>
   </nav>
-  
   <div
     className="container-fluid-1280"
   >
