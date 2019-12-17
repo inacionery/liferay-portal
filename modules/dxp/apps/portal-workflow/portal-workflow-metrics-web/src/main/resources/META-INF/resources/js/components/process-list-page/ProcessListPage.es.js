@@ -26,17 +26,22 @@ import {
 import {Item} from './ProcessListPageItem.es';
 import {Table} from './ProcessListPageTable.es';
 
-const ProcessListPage = ({page, pageSize, query, sort}) => {
-	usePageTitle(Liferay.Language.get('metrics'));
-	const {search = ''} = parse(query);
+const ProcessListPage = ({history, page, pageSize, query, sort}) => {
+	if (history.location.pathname === '/') {
+		history.replace(
+			`/processes/20/1/${encodeURIComponent('overdueInstanceCount:desc')}`
+		);
+	}
 
-	const title = search.length ? search : null;
+	usePageTitle(Liferay.Language.get('metrics'));
+
+	const {search = null} = parse(query);
 
 	const {data, fetchData} = useFetch('/processes', {
 		page,
 		pageSize,
-		sort: decodeURIComponent(sort),
-		title
+		sort,
+		title: search
 	});
 
 	const promises = useMemo(() => [fetchData()], [fetchData]);
