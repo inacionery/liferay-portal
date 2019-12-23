@@ -114,6 +114,7 @@ public class SLATaskResultWorkflowMetricsIndexer
 		}
 
 		document.addKeyword("deleted", false);
+		document.addKeyword("expired", false);
 		document.addKeyword(
 			"instanceCompleted",
 			workflowMetricsSLATaskResult.getCompletionLocalDateTime() != null);

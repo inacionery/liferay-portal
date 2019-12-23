@@ -17,12 +17,20 @@ package com.liferay.portal.workflow.metrics.internal.search.index;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.hits.SearchHit;
+import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
@@ -32,11 +40,18 @@ import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.service.KaleoInstanceLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentInstanceLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService;
+import com.liferay.portal.workflow.metrics.internal.sla.processor.WorkflowMetricsSLATaskResult;
+import com.liferay.portal.workflow.metrics.model.WorkflowMetricsSLADefinition;
+import com.liferay.portal.workflow.metrics.service.WorkflowMetricsSLADefinitionLocalService;
 import com.liferay.portal.workflow.metrics.sla.processor.WorkflowMetricsSLAStatus;
 
 import java.time.Duration;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -139,6 +154,119 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 		return document;
 	}
 
+	public void addDocument(Document document) {
+		if (searchEngineAdapter == null) {
+			return;
+		}
+		
+		super.addDocument(document);
+
+		List<WorkflowMetricsSLADefinition> workflowMetricsSLADefinitions =
+			_workflowMetricsSLADefinitionLocalService.
+				getWorkflowMetricsSLADefinitions(
+					GetterUtil.getLong(document.get("companyId")),
+					GetterUtil.getBoolean(document.get("active")),
+					GetterUtil.getLong(document.get("processId")),
+					WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null);
+		
+		List<WorkflowMetricsSLATaskResult> workflowMetricsSLATaskResults =
+				new ArrayList<WorkflowMetricsSLATaskResult>();
+
+		for (WorkflowMetricsSLADefinition workflowMetricsSLADefinition :
+				workflowMetricsSLADefinitions) {
+
+				WorkflowMetricsSLATaskResult workflowMetricsSLATaskResult =
+					_createtWorkflowMetricsSLATaskResult(
+						document, GetterUtil.getLong(document.get("processId")),
+						workflowMetricsSLADefinition);
+
+				if (workflowMetricsSLATaskResult != null) {
+					workflowMetricsSLATaskResults.add(
+						workflowMetricsSLATaskResult);
+				}
+		}
+
+		_slaTaskResultWorkflowMetricsIndexer.addDocuments(
+			workflowMetricsSLATaskResults);
+
+	}
+	
+	protected WorkflowMetricsSLATaskResult
+		_createtWorkflowMetricsSLATaskResult(
+			Document tokenDocument, long instanceId,
+			WorkflowMetricsSLADefinition workflowMetricsSLADefinition) {
+
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+	
+		searchSearchRequest.setIndexNames(
+			"workflow-metrics-sla-instance-results");
+	
+		BooleanQuery booleanQuery = queries.booleanQuery();
+	
+		booleanQuery.addMustQueryClauses(
+			queries.term(
+				"companyId", workflowMetricsSLADefinition.getCompanyId()),
+			queries.term("deleted", false),
+			queries.term("instanceId", instanceId), 
+			queries.term(
+				"slaDefinitionId",
+				workflowMetricsSLADefinition.
+					getWorkflowMetricsSLADefinitionId()));
+	
+		return Stream.of(
+			searchEngineAdapter.execute(searchSearchRequest)
+		).map(
+			SearchSearchResponse::getSearchHits
+		).map(
+			SearchHits::getSearchHits
+		).flatMap(
+			List::parallelStream
+		).map(
+			SearchHit::getDocument
+		).findFirst(
+		).map(
+			document -> new WorkflowMetricsSLATaskResult() {
+				{
+					setCompanyId(
+						workflowMetricsSLADefinition.getCompanyId());
+					setInstanceId(instanceId);
+					setLastCheckLocalDateTime(
+						LocalDateTime.parse(
+							document.getString("lastCheckDate"),
+							_dateTimeFormatter));
+					setOnTime(
+						GetterUtil.getBoolean(document.getValue("onTime")));
+					setProcessId(
+						workflowMetricsSLADefinition.getProcessId());
+					setSLADefinitionId(
+						workflowMetricsSLADefinition.
+							getWorkflowMetricsSLADefinitionId());
+					setTaskId(document.getLong("taskId"));
+					setTaskName(document.getString("taskName"));
+					setTokenId(document.getLong("tokenId"));
+					setWorkflowMetricsSLAStatus(
+						WorkflowMetricsSLAStatus.valueOf(
+							document.getString("status")));
+				}
+			}
+		).orElseGet(
+			() -> null
+		);
+	}
+
+
+	private final DateTimeFormatter _dateTimeFormatter =
+		DateTimeFormatter.ofPattern(
+			PropsUtil.get(PropsKeys.INDEX_DATE_FORMAT_PATTERN));
+	
+	private void _getCurrentSLAInstanceStatus(
+		long companyId, long instanceId, long slaDefinitionId) {
+		
+		
+		
+	}
+	
 	@Override
 	public void updateDocument(Document document) {
 		super.updateDocument(document);
@@ -156,8 +284,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 			_slaInstanceResultWorkflowMetricsIndexer.updateDocuments(
 				documentImpl -> new DocumentImpl() {
 					{
-						addKeyword(
-							"status", WorkflowMetricsSLAStatus.EXPIRED.name());
+						addKeyword("expired", true);
 						addKeyword(
 							Field.UID, documentImpl.getString(Field.UID));
 					}
@@ -167,8 +294,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 			_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
 				documentImpl -> new DocumentImpl() {
 					{
-						addKeyword(
-							"status", WorkflowMetricsSLAStatus.EXPIRED.name());
+						addKeyword("expired", true);
 						addKeyword(
 							Field.UID, documentImpl.getString(Field.UID));
 					}
@@ -202,10 +328,15 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 		actionableDynamicQuery.setPerformActionMethod(
 			(KaleoTaskInstanceToken kaleoTaskInstanceToken) ->
 				workflowMetricsPortalExecutor.execute(
-					() -> addDocument(createDocument(kaleoTaskInstanceToken))));
+					() -> super.addDocument(
+						createDocument(kaleoTaskInstanceToken))));
 
 		actionableDynamicQuery.performActions();
 	}
+
+	@Reference
+	private WorkflowMetricsSLADefinitionLocalService
+		_workflowMetricsSLADefinitionLocalService;
 
 	@Reference
 	private KaleoInstanceLocalService _kaleoInstanceLocalService;

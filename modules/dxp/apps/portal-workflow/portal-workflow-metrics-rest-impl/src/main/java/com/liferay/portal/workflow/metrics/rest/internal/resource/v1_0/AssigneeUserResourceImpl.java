@@ -209,28 +209,19 @@ public class AssigneeUserResourceImpl
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		booleanQuery.addMustNotQueryClauses(_queries.term("instanceId", 0));
+		booleanQuery.addMustNotQueryClauses(
+			_queries.term("expired", true), _queries.term("instanceId", 0));
 
-		if (completed) {
-			booleanQuery.addMustNotQueryClauses(
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.RUNNING.name()));
+		if (completed && (dateEnd != null) && (dateStart != null)) {
+			booleanQuery.addMustQueryClauses(
+				_queries.rangeTerm(
+					"completionDate", true, true,
+					_resourceHelper.formatDate(dateStart),
+					_resourceHelper.formatDate(dateEnd)));
+		}
 
-			if ((dateEnd != null) && (dateStart != null)) {
-				booleanQuery.addMustQueryClauses(
-					_queries.rangeTerm(
-						"completionDate", true, true,
-						_resourceHelper.formatDate(dateStart),
-						_resourceHelper.formatDate(dateEnd)));
-			}
-		}
-		else {
-			booleanQuery.addMustNotQueryClauses(
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.COMPLETED.name()),
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.EXPIRED.name()));
-		}
+		booleanQuery.addMustQueryClauses(
+			_queries.term("instanceCompleted", completed));
 
 		if (taskKeys.length > 0) {
 			TermsQuery termsQuery = _queries.terms("taskName");

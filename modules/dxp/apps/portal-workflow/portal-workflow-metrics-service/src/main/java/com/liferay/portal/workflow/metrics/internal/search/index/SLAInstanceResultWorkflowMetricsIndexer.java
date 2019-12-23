@@ -98,6 +98,8 @@ public class SLAInstanceResultWorkflowMetricsIndexer
 		document.addKeyword("deleted", false);
 		document.addKeyword(
 			"elapsedTime", workflowMetricsSLAInstanceResult.getElapsedTime());
+
+		document.addKeyword("expired", false);
 		document.addKeyword(
 			"instanceCompleted",
 			workflowMetricsSLAInstanceResult.getCompletionLocalDateTime() !=

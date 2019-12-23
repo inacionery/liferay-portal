@@ -14,7 +14,7 @@ if (doc.uid.value.startsWith("WorkflowMetricsSLAInstanceResult")) {
 		(key, oldSLAStatus) -> {
 			if (((oldSLAStatus == null) || oldSLAStatus.equals("untracked")) &&
 				((doc.elapsedTime.value == 0) ||
-				 doc.status.value.equals("EXPIRED"))) {
+				 (doc.expired != null && doc.expired.value))) {
 
 				return "untracked";
 			}
