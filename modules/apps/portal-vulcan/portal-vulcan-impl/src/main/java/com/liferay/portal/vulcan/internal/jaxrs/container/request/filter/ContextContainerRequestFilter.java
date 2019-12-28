@@ -18,6 +18,9 @@ import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.internal.accept.language.AcceptLanguageImpl;
@@ -46,10 +49,16 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 public class ContextContainerRequestFilter implements ContainerRequestFilter {
 
 	public ContextContainerRequestFilter(
-		Language language, Portal portal, ScopeChecker scopeChecker) {
+		Language language, Portal portal,
+		ResourceActionLocalService resourceActionLocalService,
+		ResourcePermissionLocalService resourcePermissionLocalService,
+		RoleLocalService roleLocalService, ScopeChecker scopeChecker) {
 
 		_language = language;
 		_portal = portal;
+		_resourceActionLocalService = resourceActionLocalService;
+		_resourcePermissionLocalService = resourcePermissionLocalService;
+		_roleLocalService = roleLocalService;
 		_scopeChecker = scopeChecker;
 	}
 
@@ -114,6 +123,25 @@ public class ContextContainerRequestFilter implements ContainerRequestFilter {
 				field.set(
 					instance, message.getContextualProperty("HTTP.RESPONSE"));
 			}
+			else if (fieldClass.isAssignableFrom(
+						ResourceActionLocalService.class)) {
+
+				field.setAccessible(true);
+
+				field.set(instance, _resourceActionLocalService);
+			}
+			else if (fieldClass.isAssignableFrom(
+						ResourcePermissionLocalService.class)) {
+
+				field.setAccessible(true);
+
+				field.set(instance, _resourcePermissionLocalService);
+			}
+			else if (fieldClass.isAssignableFrom(RoleLocalService.class)) {
+				field.setAccessible(true);
+
+				field.set(instance, _roleLocalService);
+			}
 			else if (fieldClass.isAssignableFrom(ScopeChecker.class)) {
 				field.setAccessible(true);
 
@@ -134,6 +162,10 @@ public class ContextContainerRequestFilter implements ContainerRequestFilter {
 
 	private final Language _language;
 	private final Portal _portal;
+	private final ResourceActionLocalService _resourceActionLocalService;
+	private final ResourcePermissionLocalService
+		_resourcePermissionLocalService;
+	private final RoleLocalService _roleLocalService;
 	private final ScopeChecker _scopeChecker;
 
 }

@@ -21,6 +21,9 @@ import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
@@ -127,7 +130,9 @@ public class VulcanFeature implements Feature {
 		featureContext.register(new CompanyContextProvider(_portal));
 		featureContext.register(
 			new ContextContainerRequestFilter(
-				_language, _portal, _scopeChecker));
+				_language, _portal, _resourceActionLocalService,
+				_resourcePermissionLocalService, _roleLocalService,
+				_scopeChecker));
 		featureContext.register(
 			new FilterContextProvider(
 				_expressionConvert, _filterParserProvider, _language, _portal));
@@ -182,6 +187,15 @@ public class VulcanFeature implements Feature {
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
 	private ScopeChecker _scopeChecker;
+
+	@Reference
+	private ResourceActionLocalService _resourceActionLocalService;
+
+	@Reference
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
 
 	@Reference
 	private SortParserProvider _sortParserProvider;
