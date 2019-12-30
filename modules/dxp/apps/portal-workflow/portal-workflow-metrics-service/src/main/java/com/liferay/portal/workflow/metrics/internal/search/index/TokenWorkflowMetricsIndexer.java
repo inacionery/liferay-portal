@@ -165,7 +165,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 			_workflowMetricsSLADefinitionLocalService.
 				getWorkflowMetricsSLADefinitions(
 					GetterUtil.getLong(document.get("companyId")),
-					GetterUtil.getBoolean(document.get("active")),
+					true,
 					GetterUtil.getLong(document.get("processId")),
 					WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null);
@@ -178,8 +178,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 
 				WorkflowMetricsSLATaskResult workflowMetricsSLATaskResult =
 					_createtWorkflowMetricsSLATaskResult(
-						document, GetterUtil.getLong(document.get("processId")),
-						workflowMetricsSLADefinition);
+						document, workflowMetricsSLADefinition);
 
 				if (workflowMetricsSLATaskResult != null) {
 					workflowMetricsSLATaskResults.add(
@@ -194,7 +193,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 	
 	protected WorkflowMetricsSLATaskResult
 		_createtWorkflowMetricsSLATaskResult(
-			Document tokenDocument, long instanceId,
+			Document tokenDocument,
 			WorkflowMetricsSLADefinition workflowMetricsSLADefinition) {
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
@@ -208,12 +207,15 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 			queries.term(
 				"companyId", workflowMetricsSLADefinition.getCompanyId()),
 			queries.term("deleted", false),
-			queries.term("instanceId", instanceId), 
+			queries.term(
+				"processId", workflowMetricsSLADefinition.getProcessId()), 
 			queries.term(
 				"slaDefinitionId",
 				workflowMetricsSLADefinition.
 					getWorkflowMetricsSLADefinitionId()));
-	
+
+		searchSearchRequest.setQuery(booleanQuery);
+
 		return Stream.of(
 			searchEngineAdapter.execute(searchSearchRequest)
 		).map(
@@ -230,7 +232,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 				{
 					setCompanyId(
 						workflowMetricsSLADefinition.getCompanyId());
-					setInstanceId(instanceId);
+					setInstanceId(document.getLong("instanceId"));
 					setLastCheckLocalDateTime(
 						LocalDateTime.parse(
 							document.getString("lastCheckDate"),
@@ -242,9 +244,9 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 					setSLADefinitionId(
 						workflowMetricsSLADefinition.
 							getWorkflowMetricsSLADefinitionId());
-					setTaskId(document.getLong("taskId"));
-					setTaskName(document.getString("taskName"));
-					setTokenId(document.getLong("tokenId"));
+					setTaskId(GetterUtil.getLong(tokenDocument.get("taskId")));
+					setTaskName(tokenDocument.get("taskName"));
+					setTokenId(GetterUtil.getLong(tokenDocument.get("tokenId")));
 					setWorkflowMetricsSLAStatus(
 						WorkflowMetricsSLAStatus.valueOf(
 							document.getString("status")));
