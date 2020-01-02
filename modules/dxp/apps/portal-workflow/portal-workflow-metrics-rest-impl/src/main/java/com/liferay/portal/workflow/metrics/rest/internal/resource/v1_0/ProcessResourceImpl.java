@@ -304,8 +304,6 @@ public class ProcessResourceImpl
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		booleanQuery.addMustNotQueryClauses(_queries.term("expired", true));
-
 		if (completed) {
 			BooleanQuery shouldBooleanQuery = _queries.booleanQuery();
 

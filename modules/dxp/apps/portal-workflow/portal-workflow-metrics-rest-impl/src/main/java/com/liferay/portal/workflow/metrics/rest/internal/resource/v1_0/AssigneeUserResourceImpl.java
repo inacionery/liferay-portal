@@ -210,7 +210,7 @@ public class AssigneeUserResourceImpl
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
 		booleanQuery.addMustNotQueryClauses(
-			_queries.term("expired", true), _queries.term("instanceId", 0));
+			_queries.term("instanceId", 0));
 
 		if (completed && (dateEnd != null) && (dateStart != null)) {
 			booleanQuery.addMustQueryClauses(

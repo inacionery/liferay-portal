@@ -237,8 +237,6 @@ public class TaskResourceImpl
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		booleanQuery.addMustNotQueryClauses(_queries.term("expired", true));
-
 		if (completed && (dateEnd != null) && (dateStart != null)) {
 			booleanQuery.addMustQueryClauses(
 				_createCompletionDateBooleanQuery(dateEnd, dateStart));

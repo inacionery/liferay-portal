@@ -99,7 +99,6 @@ public class SLAInstanceResultWorkflowMetricsIndexer
 		document.addKeyword(
 			"elapsedTime", workflowMetricsSLAInstanceResult.getElapsedTime());
 
-		document.addKeyword("expired", false);
 		document.addKeyword(
 			"instanceCompleted",
 			workflowMetricsSLAInstanceResult.getCompletionLocalDateTime() !=

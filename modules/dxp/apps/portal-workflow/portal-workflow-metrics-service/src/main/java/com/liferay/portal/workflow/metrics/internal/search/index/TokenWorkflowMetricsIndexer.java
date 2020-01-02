@@ -164,8 +164,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 		List<WorkflowMetricsSLADefinition> workflowMetricsSLADefinitions =
 			_workflowMetricsSLADefinitionLocalService.
 				getWorkflowMetricsSLADefinitions(
-					GetterUtil.getLong(document.get("companyId")),
-					true,
+					GetterUtil.getLong(document.get("companyId")), true,
 					GetterUtil.getLong(document.get("processId")),
 					WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null);
@@ -257,17 +256,9 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 		);
 	}
 
-
 	private final DateTimeFormatter _dateTimeFormatter =
 		DateTimeFormatter.ofPattern(
 			PropsUtil.get(PropsKeys.INDEX_DATE_FORMAT_PATTERN));
-	
-	private void _getCurrentSLAInstanceStatus(
-		long companyId, long instanceId, long slaDefinitionId) {
-		
-		
-		
-	}
 	
 	@Override
 	public void updateDocument(Document document) {
@@ -283,22 +274,29 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 					"instanceId",
 					GetterUtil.getLong(document.get("instanceId"))));
 
-			_slaInstanceResultWorkflowMetricsIndexer.updateDocuments(
-				documentImpl -> new DocumentImpl() {
-					{
-						addKeyword("expired", true);
-						addKeyword(
-							Field.UID, documentImpl.getString(Field.UID));
-					}
-				},
-				booleanQuery);
-
 			_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
 				documentImpl -> new DocumentImpl() {
 					{
-						addKeyword("expired", true);
 						addKeyword(
 							Field.UID, documentImpl.getString(Field.UID));
+
+						try {
+							addDateSortable(
+								"completionDate",
+								document.getDate("completionDate"));
+						}
+						catch (Exception e) {
+						}
+
+						addKeyword(
+							"completionUserId",
+							GetterUtil.getLong(
+								document.get("completionUserId")));
+						addKeyword(
+							"instanceCompleted", true);
+						addKeyword(
+							"status",
+							WorkflowMetricsSLAStatus.COMPLETED.name());
 					}
 				},
 				booleanQuery);

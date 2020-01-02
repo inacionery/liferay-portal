@@ -164,7 +164,6 @@ public class InstanceWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 						}
 
 						addKeyword("instanceCompleted", true);
-						addKeyword("expired", true);
 						addKeyword(
 							Field.UID, documentImpl.getString(Field.UID));
 					}
@@ -175,7 +174,6 @@ public class InstanceWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 				documentImpl -> new DocumentImpl() {
 					{
 						addKeyword("instanceCompleted", true);
-						addKeyword("expired", true);
 						addKeyword(
 							Field.UID, documentImpl.getString(Field.UID));
 					}
