@@ -1072,6 +1072,10 @@
 				"store": true,
 				"type": "long"
 			},
+			"expired": {
+				"store": true,
+				"type": "boolean"
+			},
 			"instanceCompleted": {
 				"store": true,
 				"type": "boolean"
@@ -1153,6 +1157,10 @@
 				"type": "keyword"
 			},
 			"deleted": {
+				"store": true,
+				"type": "boolean"
+			},
+			"expired": {
 				"store": true,
 				"type": "boolean"
 			},

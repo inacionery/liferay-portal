@@ -237,23 +237,13 @@ public class TaskResourceImpl
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		if (completed) {
-			booleanQuery.addMustNotQueryClauses(
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.RUNNING.name()));
+		if (completed && (dateEnd != null) && (dateStart != null)) {
+			booleanQuery.addMustQueryClauses(
+				_createCompletionDateBooleanQuery(dateEnd, dateStart));
+		}
 
-			if ((dateEnd != null) && (dateStart != null)) {
-				booleanQuery.addMustQueryClauses(
-					_createCompletionDateBooleanQuery(dateEnd, dateStart));
-			}
-		}
-		else {
-			booleanQuery.addMustNotQueryClauses(
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.COMPLETED.name()),
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.EXPIRED.name()));
-		}
+		booleanQuery.addMustQueryClauses(
+			_queries.term("instanceCompleted", completed));
 
 		TermsQuery termsQuery = _queries.terms("taskName");
 
