@@ -54,6 +54,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -238,10 +239,6 @@ public class TaskResourceImpl
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
 		if (completed) {
-			booleanQuery.addMustNotQueryClauses(
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.RUNNING.name()));
-
 			if ((dateEnd != null) && (dateStart != null)) {
 				booleanQuery.addMustQueryClauses(
 					_createCompletionDateBooleanQuery(dateEnd, dateStart));
@@ -250,9 +247,7 @@ public class TaskResourceImpl
 		else {
 			booleanQuery.addMustNotQueryClauses(
 				_queries.term(
-					"status", WorkflowMetricsSLAStatus.COMPLETED.name()),
-				_queries.term(
-					"status", WorkflowMetricsSLAStatus.EXPIRED.name()));
+					"status", WorkflowMetricsSLAStatus.COMPLETED.name()));
 		}
 
 		TermsQuery termsQuery = _queries.terms("taskName");
@@ -262,12 +257,17 @@ public class TaskResourceImpl
 		return booleanQuery.addMustQueryClauses(
 			_queries.term("companyId", contextCompany.getCompanyId()),
 			_queries.term("deleted", Boolean.FALSE),
+			_queries.term("instanceCompleted", completed),
 			_queries.term("processId", processId), termsQuery);
 	}
 
 	private Task _createTask(String taskName) {
 		return new Task() {
 			{
+				breachedInstanceCount = 0L;
+				breachedInstancePercentage = 0D;
+				durationAvg = 0L;
+				instanceCount = 0L;
 				key = taskName;
 				name = _language.get(
 					_resourceHelper.getResourceBundle(
@@ -305,6 +305,7 @@ public class TaskResourceImpl
 			_queries.term("companyId", contextCompany.getCompanyId()),
 			_queries.term("completed", completed),
 			_queries.term("deleted", Boolean.FALSE),
+			_queries.term("instanceCompleted", completed),
 			_queries.term("processId", processId));
 	}
 
@@ -415,7 +416,7 @@ public class TaskResourceImpl
 			_createBooleanQuery(
 				completed, dateEnd, dateStart, processId, tasksMap.keySet()));
 
-		return Stream.of(
+		List<Task> tasks = Stream.of(
 			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)
 		).map(
 			SearchSearchResponse::getAggregationResultsMap
@@ -439,6 +440,10 @@ public class TaskResourceImpl
 		).collect(
 			Collectors.toList()
 		);
+
+		tasks.addAll(tasksMap.values());
+
+		return tasks;
 	}
 
 	private Map<String, Task> _getTasksMap(

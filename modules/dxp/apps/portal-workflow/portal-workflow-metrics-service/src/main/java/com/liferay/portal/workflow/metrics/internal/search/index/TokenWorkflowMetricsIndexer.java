@@ -21,25 +21,17 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
-import com.liferay.portal.workflow.kaleo.service.KaleoInstanceLocalService;
-import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentInstanceLocalService;
-import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService;
-import com.liferay.portal.workflow.metrics.sla.processor.WorkflowMetricsSLAStatus;
 
 import java.time.Duration;
 
 import java.util.Date;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Inácio Nery
@@ -62,7 +54,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 				kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId()));
 
 		KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance =
-			_kaleoTaskAssignmentInstanceLocalService.
+			kaleoTaskAssignmentInstanceLocalService.
 				fetchFirstKaleoTaskAssignmentInstance(
 					kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
 					User.class.getName(), null);
@@ -100,7 +92,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 		}
 
 		KaleoInstance kaleoInstance =
-			_kaleoInstanceLocalService.fetchKaleoInstance(
+			kaleoInstanceLocalService.fetchKaleoInstance(
 				kaleoTaskInstanceToken.getKaleoInstanceId());
 
 		if (kaleoInstance != null) {
@@ -140,44 +132,6 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 	}
 
 	@Override
-	public void updateDocument(Document document) {
-		super.updateDocument(document);
-
-		if (GetterUtil.getBoolean(document.get("completed"))) {
-			BooleanQuery booleanQuery = queries.booleanQuery();
-
-			booleanQuery.addMustQueryClauses(
-				queries.term(
-					"companyId", GetterUtil.getLong(document.get("companyId"))),
-				queries.term(
-					"instanceId",
-					GetterUtil.getLong(document.get("instanceId"))));
-
-			_slaInstanceResultWorkflowMetricsIndexer.updateDocuments(
-				documentImpl -> new DocumentImpl() {
-					{
-						addKeyword(
-							"status", WorkflowMetricsSLAStatus.EXPIRED.name());
-						addKeyword(
-							Field.UID, documentImpl.getString(Field.UID));
-					}
-				},
-				booleanQuery);
-
-			_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
-				documentImpl -> new DocumentImpl() {
-					{
-						addKeyword(
-							"status", WorkflowMetricsSLAStatus.EXPIRED.name());
-						addKeyword(
-							Field.UID, documentImpl.getString(Field.UID));
-					}
-				},
-				booleanQuery);
-		}
-	}
-
-	@Override
 	protected String getIndexName() {
 		return "workflow-metrics-tokens";
 	}
@@ -190,7 +144,7 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 	@Override
 	protected void reindex(long companyId) throws PortalException {
 		ActionableDynamicQuery actionableDynamicQuery =
-			_kaleoTaskInstanceTokenLocalService.getActionableDynamicQuery();
+			kaleoTaskInstanceTokenLocalService.getActionableDynamicQuery();
 
 		actionableDynamicQuery.setAddCriteriaMethod(
 			dynamicQuery -> {
@@ -206,24 +160,5 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 
 		actionableDynamicQuery.performActions();
 	}
-
-	@Reference
-	private KaleoInstanceLocalService _kaleoInstanceLocalService;
-
-	@Reference
-	private KaleoTaskAssignmentInstanceLocalService
-		_kaleoTaskAssignmentInstanceLocalService;
-
-	@Reference
-	private KaleoTaskInstanceTokenLocalService
-		_kaleoTaskInstanceTokenLocalService;
-
-	@Reference
-	private SLAInstanceResultWorkflowMetricsIndexer
-		_slaInstanceResultWorkflowMetricsIndexer;
-
-	@Reference
-	private SLATaskResultWorkflowMetricsIndexer
-		_slaTaskResultWorkflowMetricsIndexer;
 
 }
