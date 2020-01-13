@@ -26,10 +26,14 @@ import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 import java.util.Locale;
 import java.util.Map;
@@ -179,8 +183,33 @@ public class DDMFormValuesToFieldsConverterImpl
 		Field ddmField, String type, Value value) {
 
 		for (Locale availableLocales : value.getAvailableLocales()) {
-			Serializable serializable = FieldConstants.getSerializable(
-				type, value.getString(availableLocales));
+			Serializable serializable = null;
+
+			if (type.equals(FieldConstants.NUMBER) ||
+				type.equals(FieldConstants.DOUBLE)) {
+
+				String stringValue = GetterUtil.getString(
+					value.getString(availableLocales));
+
+				NumberFormat numberFormat = NumberFormat.getInstance(
+					availableLocales);
+
+				if (type.equals(FieldConstants.DOUBLE)) {
+					numberFormat.setMinimumFractionDigits(1);
+				}
+
+				try {
+					serializable = numberFormat.parse(stringValue);
+				}
+				catch (ParseException pe) {
+					serializable = FieldConstants.getSerializable(
+						type, value.getString(availableLocales));
+				}
+			}
+			else {
+				serializable = FieldConstants.getSerializable(
+					type, value.getString(availableLocales));
+			}
 
 			ddmField.addValue(availableLocales, serializable);
 		}

@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
+import java.text.NumberFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -208,6 +210,17 @@ public class FieldsToDDMFormValuesConverterImpl
 			Date valueDate = (Date)fieldValue;
 
 			fieldValue = valueDate.getTime();
+		}
+		else if (fieldValue instanceof Number) {
+			NumberFormat numberFormat = NumberFormat.getInstance(locale);
+
+			Number number = (Number)fieldValue;
+
+			if (number instanceof Double) {
+				numberFormat.setMinimumFractionDigits(1);
+			}
+
+			return numberFormat.format(number.doubleValue());
 		}
 
 		return String.valueOf(fieldValue);
