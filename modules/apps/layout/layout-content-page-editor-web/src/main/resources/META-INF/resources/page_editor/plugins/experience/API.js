@@ -14,82 +14,49 @@
 
 import React from 'react';
 
-import serviceFetch from '../../app/services/serviceFetch';
+import ExperienceService from '../../app/services/ExperienceService';
+
+const {
+	createExperience,
+	removeExperience,
+	updateExperience,
+	updateExperiencePriority
+} = ExperienceService;
 
 export const APIContext = React.createContext({});
 
-export default function API({
-	addSegmentsExperienceURL,
-	classNameId,
-	classPK,
-	deleteSegmentsExperienceURL,
-	portletNamespace,
-	updateSegmentsExperiencePriorityURL,
-	updateSegmentsExperienceURL
-}) {
-	function createExperience({name, segmentsEntryId}) {
-		const body = {
-			active: true,
-			classNameId,
-			classPK,
-			name,
-			segmentsEntryId
-		};
+const API = config => ({
+	createExperience: ({name, segmentsEntryId}) =>
+		createExperience({
+			body: {name, segmentsEntryId},
+			config
+		}),
+	removeExperience: (segmentsExperienceId, fragmentEntryLinkIds = []) =>
+		removeExperience({
+			body: {
+				fragmentEntryLinkIds,
+				segmentsExperienceId
+			},
+			config
+		}),
+	updateExperience: ({active, name, segmentsEntryId, segmentsExperienceId}) =>
+		updateExperience({
+			body: {
+				active,
+				name,
+				segmentsEntryId,
+				segmentsExperienceId
+			},
+			config
+		}),
+	updateExperiencePriority: ({newPriority, segmentsExperienceId}) =>
+		updateExperiencePriority({
+			body: {
+				newPriority,
+				segmentsExperienceId
+			},
+			config
+		})
+});
 
-		return serviceFetch({portletNamespace}, addSegmentsExperienceURL, body);
-	}
-
-	function removeExperience(segmentsExperienceId, fragmentEntryLinkIds = []) {
-		const body = {
-			deleteSegmentsExperience: true,
-			fragmentEntryLinkIds: JSON.stringify(fragmentEntryLinkIds),
-			segmentsExperienceId
-		};
-
-		return serviceFetch(
-			{portletNamespace},
-			deleteSegmentsExperienceURL,
-			body
-		);
-	}
-
-	function updateExperiencePriority({newPriority, segmentsExperienceId}) {
-		const body = {
-			newPriority,
-			segmentsExperienceId
-		};
-
-		return serviceFetch(
-			{portletNamespace},
-			updateSegmentsExperiencePriorityURL,
-			body
-		);
-	}
-
-	function updateExperience({
-		active,
-		name,
-		segmentsEntryId,
-		segmentsExperienceId
-	}) {
-		const body = {
-			active,
-			name,
-			segmentsEntryId,
-			segmentsExperienceId
-		};
-
-		return serviceFetch(
-			{portletNamespace},
-			updateSegmentsExperienceURL,
-			body
-		);
-	}
-
-	return {
-		createExperience,
-		removeExperience,
-		updateExperience,
-		updateExperiencePriority
-	};
-}
+export default API;
