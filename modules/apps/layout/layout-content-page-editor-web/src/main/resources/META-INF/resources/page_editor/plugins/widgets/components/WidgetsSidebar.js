@@ -14,7 +14,7 @@
 
 import React, {useContext, useMemo, useState} from 'react';
 
-import {ConfigContext} from '../../../app/config/index';
+import {StoreContext} from '../../../app/store/index';
 import Collapse from '../../../common/components/Collapse';
 import SearchForm from '../../../common/components/SearchForm';
 import SidebarPanelContent from '../../../common/components/SidebarPanelContent';
@@ -22,7 +22,7 @@ import SidebarPanelHeader from '../../../common/components/SidebarPanelHeader';
 import Widget from './Widget';
 
 export default function WidgetsSidebar() {
-	const {widgets} = useContext(ConfigContext);
+	const {widgets} = useContext(StoreContext);
 	const [searchValue, setSearchValue] = useState('');
 
 	const filteredWidgets = useMemo(() => {

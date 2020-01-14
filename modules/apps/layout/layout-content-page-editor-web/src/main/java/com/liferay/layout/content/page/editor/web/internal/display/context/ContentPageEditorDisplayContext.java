@@ -360,8 +360,6 @@ public class ContentPageEditorDisplayContext {
 				"updateSegmentsExperienceURL",
 				getFragmentEntryActionURL(
 					"/content_layout/update_segments_experience")
-			).put(
-				"widgets", editorSoyContext.get("widgets")
 			).build()
 		).put(
 			"state",
@@ -390,6 +388,8 @@ public class ContentPageEditorDisplayContext {
 				"showResolvedComments",
 				GetterUtil.getBoolean(
 					editorSoyContext.get("showResolvedComments"))
+			).put(
+				"widgets", editorSoyContext.get("widgets")
 			).build()
 		).build();
 	}
