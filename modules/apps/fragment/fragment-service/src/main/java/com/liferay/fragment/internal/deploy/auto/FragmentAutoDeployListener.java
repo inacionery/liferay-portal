@@ -56,6 +56,7 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.liferay.staging.StagingGroupHelper;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -143,7 +144,7 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 		}
 
 		if ((company != null) && deployJSONObject.has("groupKey")) {
-			group = _groupLocalService.getGroup(
+			group = _getDeploymentGroup(
 				company.getCompanyId(), deployJSONObject.getString("groupKey"));
 		}
 		else if (company != null) {
@@ -207,6 +208,24 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 			return JSONFactoryUtil.createJSONObject(
 				StringUtil.read(zipFile.getInputStream(zipEntry)));
 		}
+	}
+
+	private Group _getDeploymentGroup(long companyId, String groupKey)
+		throws PortalException {
+
+		Group group = _groupLocalService.getGroup(companyId, groupKey);
+
+		if(group == null) {
+			return null;
+		}
+
+		if (_stagingGroupHelper.isLocalLiveGroup(group) ||
+			_stagingGroupHelper.isRemoteLiveGroup(group)) {
+
+			return group.getStagingGroup();
+		}
+
+		return group;
 	}
 
 	private ZipEntry _getDeployZipEntry(ZipFile zipFile) {
@@ -279,5 +298,8 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 
 	@Reference
 	private UserLocalService _userLocalService;
+
+	@Reference
+	private StagingGroupHelper _stagingGroupHelper;
 
 }
