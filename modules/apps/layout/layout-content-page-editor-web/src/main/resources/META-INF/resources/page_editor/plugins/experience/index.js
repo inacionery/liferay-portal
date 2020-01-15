@@ -15,19 +15,8 @@
 import React from 'react';
 
 import {Component} from '../../core/AppContext';
-import {
-	CREATE_SEGMENTS_EXPERIENCE,
-	DELETE_SEGMENTS_EXPERIENCE,
-	SELECT_SEGMENTS_EXPERIENCE,
-	UPDATE_SEGMENTS_EXPERIENCE,
-	UPDATE_SEGMENTS_EXPERIENCE_PRIORITY
-} from './actions';
 import ExperienceToolbarSection from './components/ExperienceToolbarSection';
-import createExperienceReducer from './reducers/createExperience';
-import deleteExperienceReducer from './reducers/deleteExperience';
-import selectExperienceReducer from './reducers/selectExperience';
-import updateExperienceReducer from './reducers/updateExperience';
-import updateExperiencePriorityReducer from './reducers/updateExperiencePriority';
+import ExperienceReducer from './reducers/index';
 
 function renderExperiencesSection() {
 	const {Component} = this;
@@ -42,36 +31,7 @@ function renderExperiencesSection() {
 }
 
 function experiencesActivate() {
-	const reducer = (state, action) => {
-		let nextState = state;
-
-		switch (action.type) {
-			case CREATE_SEGMENTS_EXPERIENCE:
-				nextState = createExperienceReducer(nextState, action.payload);
-				break;
-			case DELETE_SEGMENTS_EXPERIENCE:
-				nextState = deleteExperienceReducer(nextState, action.payload);
-				break;
-			case UPDATE_SEGMENTS_EXPERIENCE:
-				nextState = updateExperienceReducer(nextState, action.payload);
-				break;
-			case SELECT_SEGMENTS_EXPERIENCE:
-				nextState = selectExperienceReducer(nextState, action.payload);
-				break;
-			case UPDATE_SEGMENTS_EXPERIENCE_PRIORITY:
-				nextState = updateExperiencePriorityReducer(
-					nextState,
-					action.payload
-				);
-				break;
-			default:
-				break;
-		}
-
-		return nextState;
-	};
-
-	this.dispatch(this.Actions.loadReducer(reducer, Experience.name));
+	this.dispatch(this.Actions.loadReducer(ExperienceReducer, Experience.name));
 }
 
 /**
