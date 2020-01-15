@@ -97,7 +97,8 @@ const mockState = {
 			segmentsExperimentURL: 'https//:experience-2.com'
 		}
 	},
-	segmentsExperienceId: '0'
+	segmentsExperienceId: '0',
+	widgets: []
 };
 
 const mockConfig = {
@@ -159,6 +160,8 @@ describe('ExperienceToolbarSection', () => {
 	});
 
 	it('displays a help hint on the locked icon for a locked Experience', async () => {
+		serviceFetch.mockImplementation(() => Promise.resolve());
+
 		const mockStateWithLockedExperience = {
 			...mockState,
 			availableSegmentsExperiences: {
@@ -344,15 +347,21 @@ describe('ExperienceToolbarSection', () => {
 	});
 
 	it('calls the backend to create a new experience', async () => {
-		serviceFetch.mockImplementation((config, url, body) =>
-			Promise.resolve({
-				active: true,
-				name: body.name,
-				priority: '1000',
-				segmentsEntryId: body.segmentsEntryId,
-				segmentsExperienceId: 'a-new-test-experience-id'
-			})
-		);
+		serviceFetch
+			.mockImplementationOnce((config, url, body) =>
+				Promise.resolve({
+					segmentsExperience: {
+						active: true,
+						name: body.name,
+						priority: '1000',
+						segmentsEntryId: body.segmentsEntryId,
+						segmentsExperienceId: 'a-new-test-experience-id'
+					}
+				})
+			)
+			.mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			});
 
 		const mockDispatch = jest.fn(() => {});
 
@@ -388,7 +397,7 @@ describe('ExperienceToolbarSection', () => {
 
 		userEvent.click(getByText('save'));
 
-		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(1));
+		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(2));
 
 		expect(serviceFetch).toHaveBeenCalledWith(
 			expect.objectContaining({}),
@@ -482,7 +491,9 @@ describe('ExperienceToolbarSection', () => {
 	});
 
 	it('calls the backend to delete experience', async () => {
-		serviceFetch.mockImplementation(() => Promise.resolve());
+		serviceFetch
+			.mockImplementationOnce(() => Promise.resolve())
+			.mockImplementationOnce(() => Promise.resolve([]));
 
 		/**
 		 * Auto confirm deletion
@@ -602,7 +613,7 @@ describe('ExperienceToolbarSection', () => {
 
 		await wait(() => expect(window.confirm).toHaveBeenCalledTimes(1));
 
-		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(1));
+		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(2));
 
 		expect(serviceFetch).toHaveBeenCalledWith(
 			expect.objectContaining({}),

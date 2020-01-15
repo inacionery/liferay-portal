@@ -16,6 +16,7 @@ import PropTypes from 'prop-types';
 import React, {useContext} from 'react';
 
 import AppContext from '../../../core/AppContext';
+import {APIContext} from '../API';
 import {SELECT_SEGMENTS_EXPERIENCE} from '../actions';
 import {ExperienceType} from '../types';
 import ExperienceItem from './ExperienceItem';
@@ -31,15 +32,21 @@ const ExperiencesList = ({
 	onPriorityIncrease
 }) => {
 	const {dispatch} = useContext(AppContext);
+	const {selectExperience} = useContext(APIContext);
 
-	const handleExperienceSelection = id =>
-		dispatch({
-			payload: {
-				segmentsExperienceId: id
-			},
-			type: SELECT_SEGMENTS_EXPERIENCE
+	const handleExperienceSelection = id => {
+		selectExperience({
+			segmentsExperienceId: id
+		}).then(portletIds => {
+			dispatch({
+				payload: {
+					portletIds,
+					segmentsExperienceId: id
+				},
+				type: SELECT_SEGMENTS_EXPERIENCE
+			});
 		});
-
+	};
 	return (
 		<ul className="list-unstyled mt-4" role="list">
 			{experiences.map((experience, i) => {

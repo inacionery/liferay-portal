@@ -303,6 +303,9 @@ public class ContentPageEditorDisplayContext {
 				"getAvailableTemplatesURL",
 				editorSoyContext.get("getAvailableTemplatesURL")
 			).put(
+				"getExperienceUsedPortletsURL",
+				editorSoyContext.get("getExperienceUsedPortletsURL")
+			).put(
 				"hasEditSegmentsEntryPermission",
 				editorSoyContext.get("hasEditSegmentsEntryPermission")
 			).put(

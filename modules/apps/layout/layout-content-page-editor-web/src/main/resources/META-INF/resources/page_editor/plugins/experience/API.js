@@ -19,6 +19,7 @@ import ExperienceService from '../../app/services/ExperienceService';
 const {
 	createExperience,
 	removeExperience,
+	selectExperience,
 	updateExperience,
 	updateExperiencePriority
 } = ExperienceService;
@@ -31,14 +32,21 @@ const API = config => ({
 			body: {name, segmentsEntryId},
 			config
 		}),
-	removeExperience: (segmentsExperienceId, fragmentEntryLinkIds = []) =>
+	removeExperience: (
+		segmentsExperienceId,
+		fragmentEntryLinkIds = [],
+		selectedExperienceId
+	) =>
 		removeExperience({
 			body: {
 				fragmentEntryLinkIds,
-				segmentsExperienceId
+				segmentsExperienceId,
+				selectedExperienceId
 			},
 			config
 		}),
+	selectExperience: ({segmentsExperienceId}) =>
+		selectExperience({body: {segmentsExperienceId}, config}),
 	updateExperience: ({active, name, segmentsEntryId, segmentsExperienceId}) =>
 		updateExperience({
 			body: {

@@ -207,7 +207,12 @@ const ExperienceSelector = ({
 				segmentsEntryId
 			})
 				.then(
-					({fragmentEntryLinks, layoutData, segmentsExperience}) => {
+					({
+						fragmentEntryLinks,
+						layoutData,
+						portletIds,
+						segmentsExperience
+					}) => {
 						if (isMounted()) {
 							onModalClose();
 						}
@@ -216,6 +221,7 @@ const ExperienceSelector = ({
 							payload: {
 								fragmentEntryLinks,
 								layoutData,
+								portletIds,
 								segmentsExperience
 							},
 							type: CREATE_SEGMENTS_EXPERIENCE
@@ -296,11 +302,16 @@ const ExperienceSelector = ({
 				)
 		);
 
-		removeExperience(id, uniqueFragmentEntryLinks)
-			.then(() =>
+		removeExperience(
+			id,
+			uniqueFragmentEntryLinks,
+			selectedExperience.segmentsExperienceId
+		)
+			.then(({portletIds}) =>
 				dispatch({
 					payload: {
 						defaultExperienceId: defaultSegmentsExperienceId,
+						portletIds,
 						segmentsExperienceId: id
 					},
 					type: DELETE_SEGMENTS_EXPERIENCE

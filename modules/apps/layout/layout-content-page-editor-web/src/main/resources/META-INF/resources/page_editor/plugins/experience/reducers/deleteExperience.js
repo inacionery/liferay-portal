@@ -16,13 +16,14 @@ import {
 	selectExperience,
 	deleteExperienceById,
 	removeLayoutDataItemById,
+	setUsedWidgets,
 	switchLayoutData,
 	setExperienceLock
 } from './utils';
 
 function deleteExperienceReducer(state, payload) {
 	let nextState = state;
-	const {defaultExperienceId, segmentsExperienceId} = payload;
+	const {defaultExperienceId, portletIds, segmentsExperienceId} = payload;
 
 	if (nextState.segmentsExperienceId === segmentsExperienceId) {
 		nextState = selectExperience(nextState, defaultExperienceId);
@@ -36,10 +37,12 @@ function deleteExperienceReducer(state, payload) {
 		});
 	}
 
+	if (portletIds) {
+		nextState = setUsedWidgets(nextState, {portletIds});
+	}
+
 	nextState = removeLayoutDataItemById(nextState, segmentsExperienceId);
 	nextState = deleteExperienceById(nextState, segmentsExperienceId);
-
-	// TODO setWidgets
 
 	return nextState;
 }
