@@ -964,6 +964,28 @@ public class EditAssetListDisplayContext {
 		List<AssetVocabulary> vocabularies =
 			AssetVocabularyServiceUtil.getGroupsVocabularies(groupIds);
 
+		vocabularies = ListUtil.filter(
+			vocabularies,
+			vocabulary -> {
+				long[] classNameIds = vocabulary.getSelectedClassNameIds();
+
+				for (long classNameId : classNameIds) {
+					if (classNameId == 0) {
+						continue;
+					}
+
+					AssetRendererFactory assetRendererFactory =
+						AssetRendererFactoryRegistryUtil.
+							getAssetRendererFactoryByClassNameId(classNameId);
+
+					if (!assetRendererFactory.isSelectable()) {
+						return false;
+					}
+				}
+
+				return true;
+			});
+
 		return ListUtil.toList(
 			vocabularies, AssetVocabulary.VOCABULARY_ID_ACCESSOR);
 	}
