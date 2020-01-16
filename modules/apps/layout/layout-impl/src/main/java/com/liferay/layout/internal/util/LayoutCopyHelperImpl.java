@@ -603,14 +603,13 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		JSONObject itemsJSONObject = dataJSONObject.getJSONObject("items");
+
 		JSONObject rootItemsJSONObject = dataJSONObject.getJSONObject(
 			"rootItems");
 
-		String mainItemId = rootItemsJSONObject.getString("main");
-
-		JSONObject itemsJSONObject = dataJSONObject.getJSONObject("items");
-
-		JSONObject mainJSONObject = itemsJSONObject.getJSONObject(mainItemId);
+		JSONObject mainJSONObject = itemsJSONObject.getJSONObject(
+			rootItemsJSONObject.getString("main"));
 
 		_processChildrenJSONArray(
 			mainJSONObject.getJSONArray("children"), itemsJSONObject,
