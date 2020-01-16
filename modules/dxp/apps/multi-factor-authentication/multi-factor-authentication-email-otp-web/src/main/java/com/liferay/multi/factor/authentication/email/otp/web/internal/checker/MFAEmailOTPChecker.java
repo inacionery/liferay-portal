@@ -270,10 +270,10 @@ public class MFAEmailOTPChecker {
 	}
 
 	private boolean _verify(HttpSession httpSession, String otp) {
-		if (!Objects.equals(
-				httpSession.getAttribute(MFAEmailOTPWebKeys.MFA_EMAIL_OTP),
-				otp)) {
+		String expectedOtp = (String)httpSession.getAttribute(
+			MFAEmailOTPWebKeys.MFA_EMAIL_OTP);
 
+		if ((expectedOtp == null) || !expectedOtp.equals(otp)) {
 			return false;
 		}
 
