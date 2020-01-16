@@ -188,21 +188,12 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
 				groupId, classNameId, classPK);
 
-		Layout layout = _layoutLocalService.getLayout(classPK);
-
-		int type = LayoutPageTemplateEntryTypeConstants.TYPE_BASIC;
-
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_layoutPageTemplateEntryLocalService.
-				fetchLayoutPageTemplateEntryByPlid(layout.getClassPK());
-
-		if (layoutPageTemplateEntry != null) {
-			type = layoutPageTemplateEntry.getType();
-		}
-
 		JSONObject jsonObject =
 			LayoutPageTemplateStructureHelperUtil.
-				generateContentLayoutStructure(fragmentEntryLinks, type);
+				generateContentLayoutStructure(
+					fragmentEntryLinks,
+					_getLayoutPageTemplateEntryType(
+						_layoutLocalService.getLayout(classPK)));
 
 		LayoutPageTemplateStructure layoutPageTemplateStructure =
 			fetchLayoutPageTemplateStructure(groupId, classNameId, classPK);
@@ -275,6 +266,32 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 			updateLayoutPageTemplateStructure(
 				groupId, classNameId, classPK,
 				SegmentsExperienceConstants.ID_DEFAULT, data);
+	}
+
+	private int _getLayoutPageTemplateEntryType(Layout layout) {
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_layoutPageTemplateEntryLocalService.
+				fetchLayoutPageTemplateEntryByPlid(layout.getClassPK());
+
+		if (layoutPageTemplateEntry != null) {
+			return layoutPageTemplateEntry.getType();
+		}
+
+		Layout draftLayout = _layoutLocalService.fetchLayout(
+			_portal.getClassNameId(Layout.class), layout.getPlid());
+
+		if (draftLayout != null) {
+			LayoutPageTemplateEntry draftLayoutPageTemplateEntry =
+				_layoutPageTemplateEntryLocalService.
+					fetchLayoutPageTemplateEntryByPlid(
+						draftLayout.getClassPK());
+
+			if (draftLayoutPageTemplateEntry != null) {
+				return draftLayoutPageTemplateEntry.getType();
+			}
+		}
+
+		return LayoutPageTemplateEntryTypeConstants.TYPE_BASIC;
 	}
 
 	private void _updateClassedModel(long classNameId, long classPK)
