@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.List;
@@ -108,23 +109,7 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 				PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
 		}
 
-		Layout layout = _layoutLocalService.fetchLayout(
-			layoutPageTemplateEntry.getPlid());
-
-		if (layout != null) {
-			Layout draftLayout = _layoutLocalService.fetchLayout(
-				_portal.getClassNameId(Layout.class), layout.getPlid());
-
-			if (draftLayout != null) {
-				StagedModelDataHandlerUtil.exportReferenceStagedModel(
-					portletDataContext, layoutPageTemplateEntry, draftLayout,
-					PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
-			}
-
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, layoutPageTemplateEntry, layout,
-				PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
-		}
+		_exportReferenceLayout(layoutPageTemplateEntry, portletDataContext);
 
 		Element entryElement = portletDataContext.getExportDataElement(
 			layoutPageTemplateEntry);
@@ -404,6 +389,42 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 
 		return _stagedModelRepository.addStagedModel(
 			portletDataContext, layoutPageTemplateEntry);
+	}
+
+	private void _exportReferenceLayout(
+			LayoutPageTemplateEntry layoutPageTemplateEntry,
+			PortletDataContext portletDataContext)
+		throws PortletDataException {
+
+		Layout layout = _layoutLocalService.fetchLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		if (layout == null) {
+			return;
+		}
+
+		Element layoutElement = portletDataContext.getReferenceElement(
+			Layout.class.getName(), Long.valueOf(layout.getPlid()));
+
+		if ((layoutElement != null) &&
+			Validator.isNotNull(
+				layoutElement.attributeValue("master-layout-uuid"))) {
+
+			return;
+		}
+
+		Layout draftLayout = _layoutLocalService.fetchLayout(
+			_portal.getClassNameId(Layout.class), layout.getPlid());
+
+		if (draftLayout != null) {
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, layoutPageTemplateEntry, draftLayout,
+				PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
+		}
+
+		StagedModelDataHandlerUtil.exportReferenceStagedModel(
+			portletDataContext, layoutPageTemplateEntry, layout,
+			PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
 	}
 
 	private void _validateLayoutPrototype(
