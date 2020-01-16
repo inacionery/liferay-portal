@@ -20,12 +20,27 @@ const HEADERS = {
 	'Content-Type': 'application/json'
 };
 
+const parseJSON = (response, resolve, reject) =>
+	response
+		.text()
+		.then(text => resolve(text ? JSON.parse(text) : {}))
+		.catch(error => reject(error));
+
+const parseResponse = response =>
+	new Promise((resolve, reject) => {
+		if (response.ok) {
+			parseJSON(response, resolve, reject);
+		} else {
+			parseJSON(response, reject, reject);
+		}
+	});
+
 export const addItem = (endpoint, item) =>
 	fetch(getURL(endpoint), {
 		body: JSON.stringify(item),
 		headers: HEADERS,
 		method: 'POST'
-	}).then(response => response.json());
+	}).then(response => parseResponse(response));
 
 export const confirmDelete = endpoint => item =>
 	new Promise((resolve, reject) => {
@@ -79,6 +94,4 @@ export const updateItem = (endpoint, item, params) =>
 		body: JSON.stringify(item),
 		headers: HEADERS,
 		method: 'PUT'
-	})
-		.then(response => response.text())
-		.then(text => (text ? JSON.parse(text) : {}));
+	}).then(response => parseResponse(response));

@@ -73,6 +73,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -514,9 +516,22 @@ public class AppResourceImpl
 			for (Object value : name.values()) {
 				String localizedName = (String)value;
 
+				if (Validator.isNull(localizedName)) {
+					throw new InvalidAppException(
+						"The app name cannot be null");
+				}
+
 				if (localizedName.length() > 30) {
 					throw new InvalidAppException(
 						"The app name has more than 30 characters");
+				}
+
+				Matcher matcher = _invalidAppNameCharsPattern.matcher(
+					localizedName);
+
+				if (matcher.matches()) {
+					throw new InvalidAppException(
+						"The app name must not contain special characters");
 				}
 			}
 		}
@@ -528,6 +543,8 @@ public class AppResourceImpl
 
 	private static final EntityModel _entityModel =
 		new AppBuilderAppEntityModel();
+	private static final Pattern _invalidAppNameCharsPattern = Pattern.compile(
+		".*[$&+,:;=\\\\?@#|/'<>.^*()%!-].*");
 
 	@Reference
 	private AppBuilderAppDeploymentLocalService

@@ -67,7 +67,7 @@ export default withRouter(
 			);
 		};
 
-		const addSuccessToast = appId => {
+		const onSuccess = appId => {
 			addToast({
 				displayType: 'success',
 				message: (
@@ -80,6 +80,25 @@ export default withRouter(
 				),
 				title: `${Liferay.Language.get('success')}:`
 			});
+
+			setDeploying(false);
+		};
+
+		const onError = error => {
+			const {title: message = ''} = error;
+
+			addToast({
+				displayType: 'danger',
+				message: (
+					<>
+						{message}
+						{'.'}
+					</>
+				),
+				title: `${Liferay.Language.get('error')}:`
+			});
+
+			setDeploying(false);
 		};
 
 		const onCancel = () => {
@@ -91,17 +110,17 @@ export default withRouter(
 
 			if (appId) {
 				updateItem(`/o/app-builder/v1.0/apps/${appId}`, app)
-					.then(() => addSuccessToast(appId))
+					.then(() => onSuccess(appId))
 					.then(onCancel)
-					.catch(() => setDeploying(false));
+					.catch(onError);
 			} else {
 				addItem(
 					`/o/app-builder/v1.0/data-definitions/${dataDefinitionId}/apps`,
 					app
 				)
-					.then(app => addSuccessToast(app.id))
+					.then(app => onSuccess(app.id))
 					.then(onCancel)
-					.catch(() => setDeploying(false));
+					.catch(onError);
 			}
 		};
 
