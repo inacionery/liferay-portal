@@ -3257,6 +3257,11 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		layout.setType(type);
 
+		if (Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+			layout.setLayoutPrototypeUuid(StringPool.BLANK);
+			layout.setLayoutPrototypeLinkEnabled(false);
+		}
+
 		return layoutLocalService.updateLayout(layout);
 	}
 
