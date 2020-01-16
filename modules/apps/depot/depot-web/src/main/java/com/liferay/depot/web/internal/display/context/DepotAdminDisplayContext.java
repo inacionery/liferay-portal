@@ -60,11 +60,9 @@ public class DepotAdminDisplayContext {
 		_depotAdminGroupSearchProvider =
 			(DepotAdminGroupSearchProvider)httpServletRequest.getAttribute(
 				DepotAdminWebKeys.DEPOT_ADMIN_GROUP_SEARCH_PROVIDER);
-
 		_depotEntryLocalService =
 			(DepotEntryLocalService)httpServletRequest.getAttribute(
 				DepotEntryLocalService.class.getName());
-
 		_groupURLProvider = (GroupURLProvider)httpServletRequest.getAttribute(
 			DepotAdminWebKeys.DEPOT_ADMIN_GROUP_URL_PROVIDER);
 	}
