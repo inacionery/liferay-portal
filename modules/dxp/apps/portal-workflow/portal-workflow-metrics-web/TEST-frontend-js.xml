@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="" id="0" errors="0" failures="7" name="Jest" package=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web" skipped="0" tests="116" time="0" timestamp="1579787038432">
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should change SLA form values" time="0.069">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:40:36
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:40:19)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test fetch data" time="0.008">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:111:3
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:110:38)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test fetch data without some parts" time="0.002">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:130:3
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:129:38)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test initial state" time="0.003">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:170:3
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:169:38)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test reset" time="0.035">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:194:3
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:193:38)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test save data" time="0.002">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:218:3
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:217:38)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test update data" time="0.002">
+    <failure message="TypeError: Cannot read property &apos;errors&apos; of undefined">TypeError: Cannot read property &apos;errors&apos; of undefined
+    at errors (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/src/main/resources/META-INF/resources/js/components/sla/store/SLAStore.es.js:21:49)
+    at /Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:242:3
+    at TestHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:27:14)
+    at renderWithHooks (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6211:18)
+    at mountIndeterminateComponent (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8626:13)
+    at beginWork$1 (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9975:16)
+    at performUnitOfWork (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14629:12)
+    at workLoopSync (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14602:22)
+    at performSyncWorkOnRoot (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14277:11)
+    at /Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2088:24
+    at unstable_runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/node_modules/scheduler/cjs/scheduler.development.js:815:12)
+    at runWithPriority (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2038:10)
+    at flushSyncCallbackQueueImpl (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2083:7)
+    at flushSyncCallbackQueue (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2071:3)
+    at batchedUpdates (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:14380:7)
+    at act (/Users/gabriel/workspace/liferay-portal/modules/node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17208:14)
+    at renderHook (/Users/gabriel/workspace/liferay-portal/modules/node_modules/@testing-library/react-hooks/lib/index.js:114:30)
+    at Object.&lt;anonymous&gt;.test (/Users/gabriel/workspace/liferay-portal/modules/dxp/apps/portal-workflow/portal-workflow-metrics-web/test/components/sla/store/SLAStore.es.js:241:38)
+    at Object.asyncJestTest (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at resolve (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:43:12)
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at promise.then (/Users/gabriel/workspace/liferay-portal/modules/node_modules/jest-jasmine2/build/queueRunner.js:73:41)
+    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla" name="Should render component" time="0.104">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla" name="Should render component after item was removed" time="0.017">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla" name="Should render toast with SLA saved message" time="0.183">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla" name="Should render toast with SLA updated message" time="0.042">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla" name="Should remove a item" time="0.057">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla" name="Should test props change" time="0.112">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics" name="Should render component with completed tab activated" time="0.311">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics" name="Should render component with default tab activated" time="0.048">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics" name="Should render component with failure state" time="0.091">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics" name="Should render with blocked SLA" time="0.103">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should add a tag" time="0.2">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should hide the dropdown list" time="0.033">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should remove a tag" time="0.028">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should search" time="0.08">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should show the dropdown list" time="0.022">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should test component render" time="0.023">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should test keydown press" time="0.024">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should test keyenter press" time="0.035">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Should test keyup press" time="0.016">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should component receive props" time="0.381">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should component set error state after request fails" time="0.031">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should component shows empty state when items is undefined" time="0.036">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should not reload component while loading state is true" time="0.039">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should render component" time="0.075">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should render component with empty data" time="0.073">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should render component with error state" time="0.008">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should active item when input is checked" time="0.246">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should hide dropdown when click outside filter" time="0.066">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should keep dropdown open when click inside filter" time="0.027">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should render component" time="0.058">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should render component with search wrapper" time="0.023">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should search items" time="0.06">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should toggle dropdown" time="0.032">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should format percentage" time="0.238">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should format value for values with more than 3 digits" time="0.022">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should not format percentage for total item" time="0.02">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should not format value for values with 3 or less digits" time="0.017">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should render component" time="0.043">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should render component with disabled state" time="0.019">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.process-items" name="Should test mouse over" time="0.021">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test fetch" time="0.058">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test fetch data" time="0.045">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should test initial state" time="0.075">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The default Velocity Unit should Be &quot;Inst/Hour&quot; when the time range is less than 1 day" time="0.066">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The default Velocity Unit should Be &quot;Inst/Day&quot; when the time range diff is less than 30 days" time="0.005">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The default Velocity Unit should Be &quot;Inst/Week&quot; when the time range diff is less than 90 days" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The default Velocity Unit should Be &quot;Inst/Month&quot; when the time range diff is less than 730 days" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The default Velocity Unit should Be &quot;Inst/Year&quot; when the time range diff is more than 730 days" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="When the time range is less than 90 days, the selected Velocity Unit should Be &quot;Inst/Days&quot; when the initial key is &quot;Days&quot;" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="When the time range is less than 90 days, the selected Velocity Unit should Be &quot;Inst/Days&quot; when the initial key is &quot;Weeks&quot;" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="When the time range is less than 90 days, the selected Velocity Unit should Be &quot;Inst/Days&quot; when the initial key is &quot;Months&quot;" time="0.01">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The velocity unit store should Keep the selected velocity unit when the keys are the same" time="0.018">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The velocity unit store should Update the selected velocity unit when the keys changed" time="0.018">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The velocity unit provider should be rendered" time="0.007">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should fetch calendars" time="0.033">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should get default calendar" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should init with default state" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should return empty json when there is no default calendar" time="0">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.store" name="Should set state" time="0">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.tabs" name="Should expand tab items" time="0.132">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.tabs" name="Should hide tab items" time="0.033">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.tabs" name="Should render component" time="0.011">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should display hyphen when the task has no count" time="0.126">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.workload-by-step-card" name="Should render component" time="0.013">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.search-field" name="Should render component" time="0.023">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.search-field" name="Should change search value" time="0.119">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should not render component when the items are not selected" time="0.007">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should render component" time="0.021">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components" name="Should render default component" time="0.22">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components" name="Should render default component without custom header" time="0.02">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components" name="Should set status" time="0.061">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.chart" name="Should render component" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.util" name="Should test duration" time="0.005">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.util" name="Should test errors" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.util" name="Should test hours" time="0.007">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.util" name="Should test name" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.sla.util" name="Should test nodes" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Panel does not render component child components without content" time="0.068">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Panel renders component" time="0.03">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Panel renders class passed by props" time="0.015">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components" name="Panel renders header with title" time="0.008">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected process statuses should Be empty when there is no initial key" time="0.038">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected process statuses should Be &quot;Completed&quot; when the initial key is &quot;Completed&quot;" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected process statuses should Be &quot;Completed&quot; when the initial key is &quot;Pending&quot;" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected process statuses should Be &quot;Completed&quot; and &quot;Pending&quot; when the initial keys are &quot;Completed&quot; and &quot;Pending&quot;" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The process status store should Keep the selected process statuses when the keys are the same" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The process status store should Update the selected process statuses when the keys changed" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The process status store should Return &quot;false&quot; when the pending status is selected" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The process status store should Return &quot;true&quot; when the completed status is selected" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The process status provider should be rendered" time="0.007">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected SLA statuses should Be empty when there is no initial key" time="0.008">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected SLA statuses should Be &quot;On Time&quot; when the initial key is &quot;OnTime&quot;" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected SLA statuses should Be &quot;Overdue&quot; when the initial key is &quot;Overdue&quot;" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected SLA statuses should Be &quot;Untracked&quot; when the initial key is &quot;Untracked&quot;" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The selected SLA statuses should Be &quot;On Time&quot; and &quot;Overdue&quot; when the initial keys are &quot;OnTime&quot; and &quot;Overdue&quot;" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The SLA status store should Keep the selected SLA statuses when the keys are the same" time="0.003">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The SLA status store should Update the selected SLA statuses when the keys changed" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.process-metrics.filter.store" name="The SLA status provider should be rendered" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.header-controller" name="Should not render component without container" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.header-controller" name="Should render component on container" time="0.006">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.filter.util" name="The velocityUnitUtil should Return an array when dateEnd and dateStarte have 1 week interval" time="0.013">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.components.filter.util" name="The velocityUnitUtil should Return an array when dateEnd and dateStarte have 1 week interval" time="0.001">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.filter" name="Should render component" time="0.006">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.header-controller" name="Should render component on container" time="0.027">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.header-controller" name="Should render component on container" time="0.005">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.header-controller" name="Should set document title" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.header-controller" name="Should set document title if title prop changed" time="0.002">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.list" name="Should component reload page" time="0.004">
+  </testcase>
+  <testcase classname=".Users.gabriel.workspace.liferay-portal.modules.dxp.apps.portal-workflow.portal-workflow-metrics-web.test.shared.components.loading" name="Should test component render" time="0.007">
+  </testcase>
+</testsuite>
