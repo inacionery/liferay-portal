@@ -640,9 +640,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 			return workflowMetricsSLADefinition.getName();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(e, e);
+				_log.warn(exception, exception);
 			}
 
 			return null;
@@ -799,9 +799,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 				}
 			};
 		}
-		catch (PortalException pe) {
+		catch (PortalException portalException) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(pe, pe);
+				_log.warn(portalException, portalException);
 			}
 
 			return null;
@@ -823,9 +823,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 				}
 			};
 		}
-		catch (PortalException pe) {
+		catch (PortalException portalException) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(pe, pe);
+				_log.warn(portalException, portalException);
 			}
 
 			return null;
@@ -839,9 +839,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		try {
 			return dateFormat.parse(dateString);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(e, e);
+				_log.warn(exception, exception);
 			}
 
 			return null;

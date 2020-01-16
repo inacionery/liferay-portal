@@ -203,9 +203,9 @@ public class LayoutStagedModelDataHandler
 
 			return sb.toString();
 		}
-		catch (PortalException pe) {
+		catch (PortalException portalException) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(pe, pe);
+				_log.warn(portalException, portalException);
 			}
 		}
 
@@ -1007,12 +1007,12 @@ public class LayoutStagedModelDataHandler
 				layoutElement.addAttribute(
 					"linked-to-layout-uuid", linkedToLayout.getUuid());
 			}
-			catch (NoSuchLayoutException nsle) {
+			catch (NoSuchLayoutException noSuchLayoutException) {
 
 				// LPS-52675
 
 				if (_log.isDebugEnabled()) {
-					_log.debug(nsle, nsle);
+					_log.debug(noSuchLayoutException, noSuchLayoutException);
 				}
 			}
 		}
@@ -1127,9 +1127,9 @@ public class LayoutStagedModelDataHandler
 
 			return layout;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
+				_log.debug(exception, exception);
 			}
 			else if (_log.isWarnEnabled()) {
 				_log.warn(
@@ -1878,7 +1878,7 @@ public class LayoutStagedModelDataHandler
 
 			layout.setTypeSettings(previousTypeSettingsProperties.toString());
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 			layout.setTypeSettings(newTypeSettings);
 		}
 	}

@@ -501,8 +501,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -519,8 +519,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -537,8 +537,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -555,8 +555,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -573,8 +573,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -591,8 +591,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -609,8 +609,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -627,8 +627,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -784,8 +784,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -801,8 +801,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -874,12 +874,13 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				layoutSetLocalService.deleteLayoutSet(
 					group.getGroupId(), true, serviceContext);
 			}
-			catch (NoSuchLayoutSetException nslse) {
+			catch (NoSuchLayoutSetException noSuchLayoutSetException) {
 
 				// LPS-52675
 
 				if (_log.isDebugEnabled()) {
-					_log.debug(nslse, nslse);
+					_log.debug(
+						noSuchLayoutSetException, noSuchLayoutSetException);
 				}
 			}
 
@@ -887,12 +888,13 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				layoutSetLocalService.deleteLayoutSet(
 					group.getGroupId(), false, serviceContext);
 			}
-			catch (NoSuchLayoutSetException nslse) {
+			catch (NoSuchLayoutSetException noSuchLayoutSetException) {
 
 				// LPS-52675
 
 				if (_log.isDebugEnabled()) {
-					_log.debug(nslse, nslse);
+					_log.debug(
+						noSuchLayoutSetException, noSuchLayoutSetException);
 				}
 			}
 
@@ -929,7 +931,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				try {
 					stagingLocalService.disableStaging(group, serviceContext);
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					_log.error(
 						"Unable to disable staging for group " +
 							group.getGroupId());
@@ -1062,7 +1064,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 						group.getCompanyId(), Group.class.getName(),
 						ResourceConstants.SCOPE_INDIVIDUAL, group.getGroupId());
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"No resources found for group " +
@@ -1125,8 +1127,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1143,8 +1145,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1163,8 +1165,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1181,8 +1183,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInOrganization(organizationId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1199,8 +1201,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1217,8 +1219,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1235,8 +1237,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -1253,8 +1255,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		try {
 			reindexUsersInUserGroup(userGroupId);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
+		catch (PortalException portalException) {
+			throw new SystemException(portalException);
 		}
 	}
 
@@ -3864,38 +3866,38 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			long remoteGroupId)
 		throws PortalException {
 
-		RemoteOptionsException roe = null;
+		RemoteOptionsException remoteOptionsException = null;
 
 		if (!Validator.isDomain(remoteAddress) &&
 			!Validator.isIPAddress(remoteAddress)) {
 
-			roe = new RemoteOptionsException(
+			remoteOptionsException = new RemoteOptionsException(
 				RemoteOptionsException.REMOTE_ADDRESS);
 
-			roe.setRemoteAddress(remoteAddress);
+			remoteOptionsException.setRemoteAddress(remoteAddress);
 
-			throw roe;
+			throw remoteOptionsException;
 		}
 
 		if ((remotePort < 1) || (remotePort > 65535)) {
-			roe = new RemoteOptionsException(
+			remoteOptionsException = new RemoteOptionsException(
 				RemoteOptionsException.REMOTE_PORT);
 
-			roe.setRemotePort(remotePort);
+			remoteOptionsException.setRemotePort(remotePort);
 
-			throw roe;
+			throw remoteOptionsException;
 		}
 
 		if (Validator.isNotNull(remotePathContext) &&
 			(!remotePathContext.startsWith(StringPool.FORWARD_SLASH) ||
 			 remotePathContext.endsWith(StringPool.FORWARD_SLASH))) {
 
-			roe = new RemoteOptionsException(
+			remoteOptionsException = new RemoteOptionsException(
 				RemoteOptionsException.REMOTE_PATH_CONTEXT);
 
-			roe.setRemotePathContext(remotePathContext);
+			remoteOptionsException.setRemotePathContext(remotePathContext);
 
-			throw roe;
+			throw remoteOptionsException;
 		}
 
 		validateRemoteGroup(
@@ -4061,7 +4063,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					portletDataContext, portletDataHandler.getPortletId(),
 					null);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				_log.error(
 					StringBundler.concat(
 						"Unable to add default data for portlet ",
@@ -4069,7 +4071,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 						group.getGroupId()));
 
 				if (portletDataHandler.isRollbackOnException()) {
-					throw new SystemException(e);
+					throw new SystemException(exception);
 				}
 			}
 		}
@@ -4089,16 +4091,16 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					portletDataContext, portletDataHandler.getPortletId(),
 					null);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				_log.error(
 					StringBundler.concat(
 						"Unable to delete data for portlet ",
 						portletDataHandler.getPortletId(), " in group ",
 						group.getGroupId()),
-					e);
+					exception);
 
 				if (portletDataHandler.isRollbackOnException()) {
-					throw e;
+					throw exception;
 				}
 			}
 		}
@@ -4497,8 +4499,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 				break;
 			}
-			catch (GroupFriendlyURLException gfurle) {
-				int type = gfurle.getType();
+			catch (GroupFriendlyURLException groupFriendlyURLException) {
+				int type = groupFriendlyURLException.getType();
 
 				if (type == GroupFriendlyURLException.DUPLICATE) {
 					if (friendlyURL.matches(".+-[0-9]+$")) {
@@ -4696,10 +4698,11 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 						indexableActionableDynamicQuery.addDocuments(
 							indexer.getDocument(user));
 					}
-					catch (PortalException pe) {
+					catch (PortalException portalException) {
 						if (_log.isWarnEnabled()) {
 							_log.warn(
-								"Unable to index user " + user.getUserId(), pe);
+								"Unable to index user " + user.getUserId(),
+								portalException);
 						}
 					}
 				}
@@ -4846,7 +4849,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					groupName, StorageType.PERSISTED);
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			_log.error(
 				"Unable to unschedule events for group: " + group.getGroupId());
 		}
@@ -4876,13 +4879,15 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		Group group = groupPersistence.fetchByC_F(companyId, friendlyURL);
 
 		if ((group != null) && (group.getGroupId() != groupId)) {
-			GroupFriendlyURLException gfurle = new GroupFriendlyURLException(
-				GroupFriendlyURLException.DUPLICATE);
+			GroupFriendlyURLException groupFriendlyURLException =
+				new GroupFriendlyURLException(
+					GroupFriendlyURLException.DUPLICATE);
 
-			gfurle.setDuplicateClassPK(group.getGroupId());
-			gfurle.setDuplicateClassName(Group.class.getName());
+			groupFriendlyURLException.setDuplicateClassPK(group.getGroupId());
+			groupFriendlyURLException.setDuplicateClassName(
+				Group.class.getName());
 
-			throw gfurle;
+			throw groupFriendlyURLException;
 		}
 
 		String groupIdFriendlyURL = friendlyURL.substring(1);
@@ -4896,13 +4901,14 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				 !PropsValues.USERS_SCREEN_NAME_ALLOW_NUMERIC) ||
 				(classNameId == groupClassNameId)) {
 
-				GroupFriendlyURLException gfurle =
+				GroupFriendlyURLException groupFriendlyURLException =
 					new GroupFriendlyURLException(
 						GroupFriendlyURLException.POSSIBLE_DUPLICATE);
 
-				gfurle.setKeywordConflict(groupIdFriendlyURL);
+				groupFriendlyURLException.setKeywordConflict(
+					groupIdFriendlyURL);
 
-				throw gfurle;
+				throw groupFriendlyURLException;
 			}
 		}
 
@@ -4947,12 +4953,12 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				throw new DuplicateGroupException("{groupId=" + groupId + "}");
 			}
 		}
-		catch (NoSuchGroupException nsge) {
+		catch (NoSuchGroupException noSuchGroupException) {
 
 			// LPS-52675
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(nsge, nsge);
+				_log.debug(noSuchGroupException, noSuchGroupException);
 			}
 		}
 
@@ -4964,9 +4970,9 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					throw new DuplicateGroupException();
 				}
 			}
-			catch (NoSuchCompanyException nsce) {
+			catch (NoSuchCompanyException noSuchCompanyException) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(nsce, nsce);
+					_log.debug(noSuchCompanyException, noSuchCompanyException);
 				}
 			}
 		}
@@ -5001,28 +5007,29 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			if (!LanguageUtil.isAvailableLocale(
 					LocaleUtil.fromLanguageId(languageId))) {
 
-				LocaleException le = new LocaleException(
+				LocaleException localeException = new LocaleException(
 					LocaleException.TYPE_DISPLAY_SETTINGS);
 
-				le.setSourceAvailableLocales(
+				localeException.setSourceAvailableLocales(
 					LanguageUtil.getAvailableLocales());
-				le.setTargetAvailableLocales(
+				localeException.setTargetAvailableLocales(
 					Arrays.asList(
 						LocaleUtil.fromLanguageIds(languageIdsArray)));
 
-				throw le;
+				throw localeException;
 			}
 		}
 
 		if (!ArrayUtil.contains(languageIdsArray, defaultLanguageId)) {
-			LocaleException le = new LocaleException(
+			LocaleException localeException = new LocaleException(
 				LocaleException.TYPE_DEFAULT);
 
-			le.setSourceAvailableLocales(LanguageUtil.getAvailableLocales());
-			le.setTargetAvailableLocales(
+			localeException.setSourceAvailableLocales(
+				LanguageUtil.getAvailableLocales());
+			localeException.setTargetAvailableLocales(
 				Arrays.asList(LocaleUtil.fromLanguageIds(languageIdsArray)));
 
-			throw le;
+			throw localeException;
 		}
 	}
 
@@ -5075,12 +5082,13 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		throws PortalException {
 
 		if (remoteGroupId <= 0) {
-			RemoteOptionsException roe = new RemoteOptionsException(
-				RemoteOptionsException.REMOTE_GROUP_ID);
+			RemoteOptionsException remoteOptionsException =
+				new RemoteOptionsException(
+					RemoteOptionsException.REMOTE_GROUP_ID);
 
-			roe.setRemoteGroupId(remoteGroupId);
+			remoteOptionsException.setRemoteGroupId(remoteGroupId);
 
-			throw roe;
+			throw remoteOptionsException;
 		}
 
 		Thread currentThread = Thread.currentThread();
@@ -5121,70 +5129,73 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			if (group.isCompany() ^
 				isCompanyGroup(httpPrincipal, remoteGroup)) {
 
-				RemoteExportException ree = new RemoteExportException(
-					RemoteExportException.INVALID_GROUP);
+				RemoteExportException remoteExportException =
+					new RemoteExportException(
+						RemoteExportException.INVALID_GROUP);
 
-				ree.setGroupId(remoteGroupId);
+				remoteExportException.setGroupId(remoteGroupId);
 
-				throw ree;
+				throw remoteExportException;
 			}
 		}
-		catch (NoSuchGroupException nsge) {
+		catch (NoSuchGroupException noSuchGroupException) {
 
 			// LPS-52675
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(nsge, nsge);
+				_log.debug(noSuchGroupException, noSuchGroupException);
 			}
 
-			RemoteExportException ree = new RemoteExportException(
-				RemoteExportException.NO_GROUP);
+			RemoteExportException remoteExportException =
+				new RemoteExportException(RemoteExportException.NO_GROUP);
 
-			ree.setGroupId(remoteGroupId);
+			remoteExportException.setGroupId(remoteGroupId);
 
-			throw ree;
+			throw remoteExportException;
 		}
-		catch (PrincipalException pe) {
+		catch (PrincipalException principalException) {
 
 			// LPS-52675
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(pe, pe);
+				_log.debug(principalException, principalException);
 			}
 
-			RemoteExportException ree = new RemoteExportException(
-				RemoteExportException.NO_PERMISSIONS);
+			RemoteExportException remoteExportException =
+				new RemoteExportException(RemoteExportException.NO_PERMISSIONS);
 
-			ree.setGroupId(remoteGroupId);
+			remoteExportException.setGroupId(remoteGroupId);
 
-			throw ree;
+			throw remoteExportException;
 		}
-		catch (RemoteAuthException rae) {
+		catch (RemoteAuthException remoteAuthException) {
 
 			// LPS-52675
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(rae, rae);
+				_log.debug(remoteAuthException, remoteAuthException);
 			}
 
-			rae.setURL(remoteURL);
+			remoteAuthException.setURL(remoteURL);
 
-			throw rae;
+			throw remoteAuthException;
 		}
-		catch (SystemException se) {
+		catch (SystemException systemException) {
 
 			// LPS-52675
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(se, se);
+				_log.debug(systemException, systemException);
 			}
 
-			RemoteExportException ree = new RemoteExportException(
-				RemoteExportException.BAD_CONNECTION, se.getMessage());
+			RemoteExportException remoteExportException =
+				new RemoteExportException(
+					RemoteExportException.BAD_CONNECTION,
+					systemException.getMessage());
 
-			ree.setURL(remoteURL);
+			remoteExportException.setURL(remoteURL);
 
-			throw ree;
+			throw remoteExportException;
 		}
 		finally {
 			currentThread.setContextClassLoader(contextClassLoader);
