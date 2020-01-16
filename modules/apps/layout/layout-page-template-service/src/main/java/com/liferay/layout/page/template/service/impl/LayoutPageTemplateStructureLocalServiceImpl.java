@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 
 import java.util.Date;
@@ -282,9 +283,9 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 		if (classNameId == _portal.getClassNameId(Layout.class)) {
 			Layout layout = _layoutLocalService.getLayout(classPK);
 
-			_layoutLocalService.updateLayout(
-				layout.getGroupId(), layout.isPrivateLayout(),
-				layout.getLayoutId(), layout.getTypeSettings());
+			layout.setStatus(WorkflowConstants.STATUS_DRAFT);
+
+			_layoutLocalService.updateLayout(layout);
 		}
 		else if (classNameId == _portal.getClassNameId(
 					LayoutPageTemplateEntry.class)) {
