@@ -46,13 +46,11 @@ public class ViewMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute(
 			DepotAdminWebKeys.DEPOT_ADMIN_GROUP_SEARCH_PROVIDER,
 			_depotAdminGroupSearchProvider);
-
-		renderRequest.setAttribute(
-			DepotEntryLocalService.class.getName(), _depotEntryLocalService);
-
 		renderRequest.setAttribute(
 			DepotAdminWebKeys.DEPOT_ADMIN_GROUP_URL_PROVIDER,
 			_groupURLProvider);
+		renderRequest.setAttribute(
+			DepotEntryLocalService.class.getName(), _depotEntryLocalService);
 
 		return "/view.jsp";
 	}
