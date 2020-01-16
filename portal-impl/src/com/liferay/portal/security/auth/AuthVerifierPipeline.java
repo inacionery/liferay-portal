@@ -118,6 +118,10 @@ public class AuthVerifierPipeline {
 
 		String contextPath = httpServletRequest.getContextPath();
 
+		if (requestURI.equals(contextPath)) {
+			requestURI += "/";
+		}
+
 		for (AuthVerifierConfiguration authVerifierConfiguration :
 				_authVerifierConfigurations) {
 
