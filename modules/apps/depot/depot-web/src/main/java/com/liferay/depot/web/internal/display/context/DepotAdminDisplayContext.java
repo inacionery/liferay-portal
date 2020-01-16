@@ -140,7 +140,6 @@ public class DepotAdminDisplayContext {
 				ResourceBundleUtil.getBundle(
 					_liferayPortletRequest.getLocale(), getClass()),
 				"no-repositories-were-found"));
-
 		_searchContainer.setId(getSearchContainerId());
 
 		GroupSearch groupSearch = _depotAdminGroupSearchProvider.getGroupSearch(
@@ -161,7 +160,6 @@ public class DepotAdminDisplayContext {
 
 		_searchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(_liferayPortletResponse));
-
 		_searchContainer.setTotal(groupSearch.getTotal());
 
 		return _searchContainer;
