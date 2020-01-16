@@ -23,8 +23,10 @@ import com.liferay.portal.kernel.model.LayoutType;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -395,8 +397,18 @@ public class NavItem implements Serializable {
 			return false;
 		}
 
-		if (Objects.equals(layout.getCreateDate(), layout.getPublishDate())) {
+		if (layout.isSystem()) {
 			return true;
+		}
+
+		Layout draftLayout = LayoutLocalServiceUtil.fetchLayout(
+			PortalUtil.getClassNameId(Layout.class), layout.getPlid());
+
+		if (draftLayout != null) {
+			boolean published = GetterUtil.getBoolean(
+				draftLayout.getTypeSettingsProperty("published"));
+
+			return !published;
 		}
 
 		return false;
