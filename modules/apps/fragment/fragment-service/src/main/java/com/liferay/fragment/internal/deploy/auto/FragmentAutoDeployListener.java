@@ -46,6 +46,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.staging.StagingGroupHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +57,6 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.liferay.staging.StagingGroupHelper;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -215,7 +215,7 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 
 		Group group = _groupLocalService.getGroup(companyId, groupKey);
 
-		if(group == null) {
+		if (group == null) {
 			return null;
 		}
 
@@ -297,9 +297,9 @@ public class FragmentAutoDeployListener implements AutoDeployListener {
 	private RoleLocalService _roleLocalService;
 
 	@Reference
-	private UserLocalService _userLocalService;
+	private StagingGroupHelper _stagingGroupHelper;
 
 	@Reference
-	private StagingGroupHelper _stagingGroupHelper;
+	private UserLocalService _userLocalService;
 
 }
