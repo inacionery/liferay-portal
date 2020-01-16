@@ -242,7 +242,7 @@ public class MFAEmailOTPChecker {
 		long validatedAtTime = (long)httpSession.getAttribute(
 			MFAEmailOTPWebKeys.MFA_EMAIL_OTP_VALIDATED_AT_TIME);
 
-		if ((validationExpirationTime + validatedAtTime * 1000) >
+		if ((validatedAtTime + validationExpirationTime * 1000) >
 				System.currentTimeMillis()) {
 
 			return true;
