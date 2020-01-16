@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutPrototype;
 import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -33,6 +34,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -116,6 +118,42 @@ public class BulkLayoutConverterTest {
 			_bulkLayoutConverter.convertLayouts(_group.getGroupId()));
 
 		_assertLayouts();
+	}
+
+	@Test
+	public void testConvertLinkedLayout() throws Exception {
+		UnicodeProperties typeSettingsProperties = new UnicodeProperties();
+
+		typeSettingsProperties.setProperty(
+			LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, "1_column");
+
+		Layout layout = LayoutTestUtil.addLayout(
+			_group.getGroupId(), typeSettingsProperties.toString());
+
+		LayoutPrototype layoutPrototype = LayoutTestUtil.addLayoutPrototype(
+			StringUtil.randomString());
+
+		layout.setLayoutPrototypeUuid(layoutPrototype.getUuid());
+
+		layout.setLayoutPrototypeLinkEnabled(true);
+
+		layout = _layoutLocalService.updateLayout(layout);
+
+		Assert.assertEquals(LayoutConstants.TYPE_PORTLET, layout.getType());
+		Assert.assertTrue(layout.isLayoutPrototypeLinkEnabled());
+		Assert.assertNotNull(layout.getLayoutPrototypeUuid());
+
+		_bulkLayoutConverter.convertLayout(layout.getPlid());
+
+		Layout convertedLayout = _layoutLocalService.getLayoutByUuidAndGroupId(
+			layout.getUuid(), layout.getGroupId(), layout.isPrivateLayout());
+
+		Assert.assertEquals(
+			LayoutConstants.TYPE_CONTENT, convertedLayout.getType());
+
+		Assert.assertFalse(convertedLayout.isLayoutPrototypeLinkEnabled());
+		Assert.assertEquals(
+			convertedLayout.getLayoutPrototypeUuid(), StringPool.BLANK);
 	}
 
 	@Test
