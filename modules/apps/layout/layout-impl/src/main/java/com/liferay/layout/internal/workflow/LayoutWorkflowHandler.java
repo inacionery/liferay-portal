@@ -126,7 +126,7 @@ public class LayoutWorkflowHandler extends BaseWorkflowHandler<Layout> {
 
 		typeSettingsProperties.setProperty("published", "true");
 
-		_layoutLocalService.updateLayout(
+		draftLayout = _layoutLocalService.updateLayout(
 			draftLayout.getGroupId(), draftLayout.isPrivateLayout(),
 			draftLayout.getLayoutId(), typeSettingsProperties.toString());
 
