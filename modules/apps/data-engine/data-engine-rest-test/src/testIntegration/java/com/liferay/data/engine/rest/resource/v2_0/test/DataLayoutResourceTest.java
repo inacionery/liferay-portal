@@ -71,26 +71,6 @@ public class DataLayoutResourceTest extends BaseDataLayoutResourceTestCase {
 	@Ignore
 	@Override
 	@Test
-	public void testGetSiteDataLayoutsPage() throws Exception {
-		super.testGetSiteDataLayoutsPage();
-
-		Page<DataLayout> page = dataLayoutResource.getSiteDataLayoutsPage(
-			testGetSiteDataLayoutsPage_getSiteId(), "form layout",
-			Pagination.of(1, 2), null);
-
-		Assert.assertEquals(0, page.getTotalCount());
-
-		_testGetSiteDataLayoutPage("FORM", "FoRmSLaYoUt");
-		_testGetSiteDataLayoutPage(
-			"abcdefghijklmnopqrstuvwxyz0123456789",
-			"abcdefghijklmnopqrstuvwxyz0123456789");
-		_testGetSiteDataLayoutPage("form layout", "form layout");
-		_testGetSiteDataLayoutPage("layo", "form layout");
-	}
-
-	@Ignore
-	@Override
-	@Test
 	public void testGraphQLDeleteDataLayout() {
 	}
 
@@ -103,13 +83,7 @@ public class DataLayoutResourceTest extends BaseDataLayoutResourceTestCase {
 	@Ignore
 	@Override
 	@Test
-	public void testGraphQLGetSiteDataLayoutByDataLayoutKey() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetSiteDataLayoutsPage() {
+	public void testGraphQLGetSiteDataLayoutByContentTypeByDataLayoutKey() {
 	}
 
 	@Override
@@ -172,20 +146,12 @@ public class DataLayoutResourceTest extends BaseDataLayoutResourceTestCase {
 	}
 
 	@Override
-	protected DataLayout testGetSiteDataLayoutByDataLayoutKey_addDataLayout()
+	protected DataLayout
+			testGetSiteDataLayoutByContentTypeByDataLayoutKey_addDataLayout()
 		throws Exception {
 
 		return dataLayoutResource.postDataDefinitionDataLayout(
 			_dataDefinition.getId(), randomDataLayout());
-	}
-
-	@Override
-	protected DataLayout testGetSiteDataLayoutsPage_addDataLayout(
-			Long siteId, DataLayout dataLayout)
-		throws Exception {
-
-		return dataLayoutResource.postDataDefinitionDataLayout(
-			dataLayout.getDataDefinitionId(), dataLayout);
 	}
 
 	@Override
@@ -229,26 +195,6 @@ public class DataLayoutResourceTest extends BaseDataLayoutResourceTestCase {
 		Page<DataLayout> page =
 			dataLayoutResource.getDataDefinitionDataLayoutsPage(
 				dataDefinitionId, keywords, Pagination.of(1, 2), null);
-
-		Assert.assertEquals(1, page.getTotalCount());
-
-		assertEqualsIgnoringOrder(
-			Arrays.asList(dataLayout), (List<DataLayout>)page.getItems());
-		assertValid(page);
-
-		dataLayoutResource.deleteDataLayout(dataLayout.getId());
-	}
-
-	private void _testGetSiteDataLayoutPage(String keywords, String name)
-		throws Exception {
-
-		Long siteId = testGetSiteDataLayoutsPage_getSiteId();
-
-		DataLayout dataLayout = testGetSiteDataLayoutsPage_addDataLayout(
-			siteId, _createDataLayout(name));
-
-		Page<DataLayout> page = dataLayoutResource.getSiteDataLayoutsPage(
-			siteId, keywords, Pagination.of(1, 2), null);
 
 		Assert.assertEquals(1, page.getTotalCount());
 

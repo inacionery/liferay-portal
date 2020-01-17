@@ -62,18 +62,6 @@ public class DataRecordCollectionResourceTest
 			"abcdefghijklmnopqrstuvwxyz0123456789");
 	}
 
-	@Override
-	@Test
-	public void testGetSiteDataRecordCollectionsPage() throws Exception {
-		super.testGetSiteDataRecordCollectionsPage();
-
-		_testGetSiteDataRecordCollectionsPage(
-			"CoLLeCTion dEsCrIpTiOn", "COLLECTION", "name");
-		_testGetSiteDataRecordCollectionsPage(
-			"definition", "abcdefghijklmnopqrstuvwxyz0123456789",
-			"abcdefghijklmnopqrstuvwxyz0123456789");
-	}
-
 	@Ignore
 	@Override
 	@Test
@@ -96,12 +84,6 @@ public class DataRecordCollectionResourceTest
 	@Override
 	@Test
 	public void testGraphQLGetSiteDataRecordCollectionByDataRecordCollectionKey() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetSiteDataRecordCollectionsPage() {
 	}
 
 	@Override
@@ -191,18 +173,6 @@ public class DataRecordCollectionResourceTest
 
 	@Override
 	protected DataRecordCollection
-			testGetSiteDataRecordCollectionsPage_addDataRecordCollection(
-				Long siteId, DataRecordCollection dataRecordCollection)
-		throws Exception {
-
-		return dataRecordCollectionResource.
-			postDataDefinitionDataRecordCollection(
-				dataRecordCollection.getDataDefinitionId(),
-				dataRecordCollection);
-	}
-
-	@Override
-	protected DataRecordCollection
 			testPostDataDefinitionDataRecordCollection_addDataRecordCollection(
 				DataRecordCollection dataRecordCollection)
 		throws Exception {
@@ -278,31 +248,6 @@ public class DataRecordCollectionResourceTest
 			dataRecordCollectionResource.
 				getDataDefinitionDataRecordCollectionsPage(
 					dataDefinitionId, keywords, Pagination.of(1, 2));
-
-		Assert.assertEquals(1, page.getTotalCount());
-
-		assertEqualsIgnoringOrder(
-			Arrays.asList(dataRecordCollection),
-			(List<DataRecordCollection>)page.getItems());
-		assertValid(page);
-
-		dataRecordCollectionResource.deleteDataRecordCollection(
-			dataRecordCollection.getId());
-	}
-
-	private void _testGetSiteDataRecordCollectionsPage(
-			String description, String keywords, String name)
-		throws Exception {
-
-		Long siteId = testGetSiteDataRecordCollectionsPage_getSiteId();
-
-		DataRecordCollection dataRecordCollection =
-			testGetSiteDataRecordCollectionsPage_addDataRecordCollection(
-				siteId, _createDataRecordCollection(description, name));
-
-		Page<DataRecordCollection> page =
-			dataRecordCollectionResource.getSiteDataRecordCollectionsPage(
-				siteId, keywords, Pagination.of(1, 2));
 
 		Assert.assertEquals(1, page.getTotalCount());
 
