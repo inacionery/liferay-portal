@@ -408,7 +408,7 @@ public class WorkflowLog {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Type type;
 
-	@Schema(description = "The task asociated with this workflow log.")
+	@Schema(description = "The task associated with this workflow log.")
 	public Long getWorkflowTaskId() {
 		return workflowTaskId;
 	}
@@ -432,7 +432,7 @@ public class WorkflowLog {
 		}
 	}
 
-	@GraphQLField(description = "The task asociated with this workflow log.")
+	@GraphQLField(description = "The task associated with this workflow log.")
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long workflowTaskId;
 
