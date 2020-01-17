@@ -12,16 +12,19 @@
  * details.
  */
 
-import {deleteExperienceById, removeLayoutDataItemById} from './utils';
+import {CREATE_SEGMENTS_EXPERIENCE} from '../actions/types';
 
-function deleteExperienceReducer(state, payload) {
-	let nextState = state;
-	const {segmentsExperienceId} = payload;
-
-	nextState = removeLayoutDataItemById(nextState, segmentsExperienceId);
-	nextState = deleteExperienceById(nextState, segmentsExperienceId);
-
-	return nextState;
+export default function createExperience({
+	fragmentEntryLinkIds,
+	layoutData,
+	segmentsExperience
+}) {
+	return {
+		payload: {
+			fragmentEntryLinkIds,
+			layoutData,
+			segmentsExperience
+		},
+		type: CREATE_SEGMENTS_EXPERIENCE
+	};
 }
-
-export default deleteExperienceReducer;

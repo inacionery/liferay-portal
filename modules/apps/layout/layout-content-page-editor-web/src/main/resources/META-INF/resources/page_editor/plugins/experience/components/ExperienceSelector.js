@@ -23,13 +23,10 @@ import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataIt
 import {ConfigContext} from '../../../app/config/index';
 import {StoreContext} from '../../../app/store/index';
 import AppContext from '../../../core/AppContext';
-import {APIContext} from '../API';
-import {
-	CREATE_SEGMENTS_EXPERIENCE,
-	DELETE_SEGMENTS_EXPERIENCE,
-	UPDATE_SEGMENTS_EXPERIENCE,
-	UPDATE_SEGMENTS_EXPERIENCE_PRIORITY
-} from '../actions';
+import createExperience from '../thunks/createExperience';
+import removeExperience from '../thunks/removeExperience';
+import updateExperience from '../thunks/updateExperience';
+import updateExperiencePriority from '../thunks/updateExperiencePriority';
 import {
 	storeModalExperienceState,
 	recoverModalExperienceState,
@@ -80,6 +77,10 @@ const ExperienceSelector = ({
 	selectId,
 	selectedExperience
 }) => {
+	const config = useContext(ConfigContext);
+	const {dispatch} = useContext(AppContext);
+	const {layoutData, layoutDataList} = useContext(StoreContext);
+
 	const {
 		classPK,
 		defaultSegmentsExperienceId,
@@ -87,15 +88,7 @@ const ExperienceSelector = ({
 		hasEditSegmentsEntryPermission,
 		hasUpdatePermissions,
 		selectedSegmentsEntryId
-	} = useContext(ConfigContext);
-	const {dispatch} = useContext(AppContext);
-	const {layoutData, layoutDataList} = useContext(StoreContext);
-	const {
-		createExperience,
-		removeExperience,
-		updateExperience,
-		updateExperiencePriority
-	} = useContext(APIContext);
+	} = config;
 
 	const isMounted = useIsMounted();
 	const [open, setOpen] = useState(false);
@@ -160,27 +153,17 @@ const ExperienceSelector = ({
 		segmentsExperienceId
 	}) => {
 		if (segmentsExperienceId) {
-			return updateExperience({
-				active: true,
-				name,
-				segmentsEntryId,
-				segmentsExperienceId
-			})
+			return dispatch(
+				updateExperience(
+					{name, segmentsEntryId, segmentsExperienceId},
+					config
+				)
+			)
 				.then(() => {
 					if (isMounted()) {
+						setEditingExperience({});
 						onModalClose();
 					}
-
-					dispatch({
-						payload: {
-							name,
-							segmentsEntryId,
-							segmentsExperienceId
-						},
-						type: UPDATE_SEGMENTS_EXPERIENCE
-					});
-
-					setEditingExperience({});
 
 					Liferay.Util.openToast({
 						title: Liferay.Language.get(
@@ -202,39 +185,27 @@ const ExperienceSelector = ({
 					}
 				});
 		} else {
-			return createExperience({
-				name,
-				segmentsEntryId
-			})
-				.then(
-					({
-						fragmentEntryLinks,
-						layoutData,
-						portletIds,
-						segmentsExperience
-					}) => {
-						if (isMounted()) {
-							onModalClose();
-						}
-
-						dispatch({
-							payload: {
-								fragmentEntryLinks,
-								layoutData,
-								portletIds,
-								segmentsExperience
-							},
-							type: CREATE_SEGMENTS_EXPERIENCE
-						});
-
-						Liferay.Util.openToast({
-							title: Liferay.Language.get(
-								'the-experience-was-created-successfully'
-							),
-							type: 'success'
-						});
-					}
+			return dispatch(
+				createExperience(
+					{
+						name,
+						segmentsEntryId
+					},
+					config
 				)
+			)
+				.then(() => {
+					if (isMounted()) {
+						onModalClose();
+					}
+
+					Liferay.Util.openToast({
+						title: Liferay.Language.get(
+							'the-experience-was-created-successfully'
+						),
+						type: 'success'
+					});
+				})
 				.catch(_error => {
 					if (isMounted()) {
 						setEditingExperience({
@@ -302,24 +273,19 @@ const ExperienceSelector = ({
 				)
 		);
 
-		removeExperience(
-			id,
-			uniqueFragmentEntryLinks,
-			selectedExperience.segmentsExperienceId
-		)
-			.then(({portletIds}) =>
-				dispatch({
-					payload: {
-						defaultExperienceId: defaultSegmentsExperienceId,
-						portletIds,
-						segmentsExperienceId: id
-					},
-					type: DELETE_SEGMENTS_EXPERIENCE
-				})
+		dispatch(
+			removeExperience(
+				{
+					fragmentEntryLinkIds: uniqueFragmentEntryLinks,
+					segmentsExperienceId: id,
+					selectedExperienceId:
+						selectedExperience.segmentsExperienceId
+				},
+				config
 			)
-			.catch(() => {
-				// TODO handle error
-			});
+		).catch(_error => {
+			// TODO handle error
+		});
 	};
 
 	const decreasePriority = id => {
@@ -329,22 +295,15 @@ const ExperienceSelector = ({
 			'down'
 		);
 
-		updateExperiencePriority({
-			newPriority: target.priority,
-			segmentsExperienceId: id
-		})
-			.then(() => {
-				dispatch({
-					payload: {
-						subtarget,
-						target
-					},
-					type: UPDATE_SEGMENTS_EXPERIENCE_PRIORITY
-				});
-			})
-			.catch(() => {
-				// TODO handle error
-			});
+		dispatch(
+			updateExperiencePriority(
+				{
+					subtarget,
+					target
+				},
+				config
+			)
+		);
 	};
 	const increasePriority = id => {
 		const {subtarget, target} = getUpdateExperiencePriorityTargets(
@@ -353,22 +312,15 @@ const ExperienceSelector = ({
 			'up'
 		);
 
-		updateExperiencePriority({
-			newPriority: target.priority,
-			segmentsExperienceId: id
-		})
-			.then(() => {
-				dispatch({
-					payload: {
-						subtarget,
-						target
-					},
-					type: UPDATE_SEGMENTS_EXPERIENCE_PRIORITY
-				});
-			})
-			.catch(() => {
-				// TODO handle error
-			});
+		dispatch(
+			updateExperiencePriority(
+				{
+					subtarget,
+					target
+				},
+				config
+			)
+		);
 	};
 
 	return (

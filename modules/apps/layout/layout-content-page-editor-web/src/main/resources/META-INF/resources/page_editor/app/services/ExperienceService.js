@@ -47,16 +47,7 @@ export default {
 			segmentsEntryId
 		};
 
-		return serviceFetch(config, addSegmentsExperienceURL, payload).then(
-			response => {
-				const {segmentsExperienceId} = response.segmentsExperience;
-
-				return getExperienceUsedPortletIds({
-					body: {segmentsExperienceId},
-					config
-				}).then(portletIds => ({...response, portletIds}));
-			}
-		);
+		return serviceFetch(config, addSegmentsExperienceURL, payload);
 	},
 
 	/**
@@ -69,15 +60,8 @@ export default {
 	 * @param {string} options.config.deleteSegmentsExperienceURL Url of the backend service
 	 */
 	removeExperience({body, config}) {
-		const {
-			fragmentEntryLinkIds,
-			segmentsExperienceId,
-			selectedExperienceId
-		} = body;
-		const {
-			defaultSegmentsExperienceId,
-			deleteSegmentsExperienceURL
-		} = config;
+		const {fragmentEntryLinkIds, segmentsExperienceId} = body;
+		const {deleteSegmentsExperienceURL} = config;
 
 		const payload = {
 			deleteSegmentsExperience: true,
@@ -85,18 +69,7 @@ export default {
 			segmentsExperienceId
 		};
 
-		if (selectedExperienceId === segmentsExperienceId) {
-			return serviceFetch(config, deleteSegmentsExperienceURL, payload);
-		}
-
-		return serviceFetch(config, deleteSegmentsExperienceURL, payload).then(
-			response => {
-				return getExperienceUsedPortletIds({
-					body: {segmentsExperienceId: defaultSegmentsExperienceId},
-					config
-				}).then(portletIds => ({...response, portletIds}));
-			}
-		);
+		return serviceFetch(config, deleteSegmentsExperienceURL, payload);
 	},
 
 	selectExperience({body, config}) {

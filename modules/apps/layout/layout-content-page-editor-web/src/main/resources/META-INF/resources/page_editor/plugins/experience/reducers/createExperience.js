@@ -13,23 +13,15 @@
  */
 
 import {
-	setExperienceLock,
 	storeNewLayoutData,
 	updateFragmentEntryLinksEditableValues,
-	selectExperience,
-	setUsedWidgets,
 	addExperience
 } from './utils';
 
 function createExperienceReducer(state, payload) {
 	let nextState = state;
 
-	const {
-		fragmentEntryLinks,
-		layoutData,
-		portletIds,
-		segmentsExperience
-	} = payload;
+	const {fragmentEntryLinks, layoutData, segmentsExperience} = payload;
 
 	const newExperience = {
 		...segmentsExperience,
@@ -37,7 +29,6 @@ function createExperienceReducer(state, payload) {
 	};
 
 	nextState = addExperience(nextState, newExperience);
-	nextState = selectExperience(nextState, newExperience.segmentsExperienceId);
 	nextState = storeNewLayoutData(
 		nextState,
 		newExperience.segmentsExperienceId,
@@ -47,12 +38,6 @@ function createExperienceReducer(state, payload) {
 		nextState,
 		fragmentEntryLinks
 	);
-
-	nextState = setExperienceLock(nextState, {
-		hasLockedSegmentsExperiment: newExperience.hasLockedSegmentsExperiment
-	});
-
-	nextState = setUsedWidgets(nextState, {portletIds});
 
 	return nextState;
 }

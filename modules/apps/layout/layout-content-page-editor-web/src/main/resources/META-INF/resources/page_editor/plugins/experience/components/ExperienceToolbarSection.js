@@ -16,7 +16,6 @@ import React, {useContext, useMemo} from 'react';
 
 import {ConfigContext} from '../../../app/config/index';
 import {StoreContext} from '../../../app/store/index';
-import API, {APIContext} from '../API';
 import ExperienceSelector from './ExperienceSelector';
 
 // TODO: show how to colocate CSS with plugins (may use loaders)
@@ -51,29 +50,22 @@ export default function ExperienceToolbarSection({selectId}) {
 		availableSegmentsEntries
 	]).filter(segment => segment.segmentsEntryId !== defaultSegmentsEntryId);
 
-	// TODO get endpoints URL from the display context
-	const APIService = useMemo(() => {
-		return API(config);
-	}, [config]);
-
 	const selectedExperience =
 		availableSegmentsExperiences[segmentsExperienceId];
 
 	return (
-		<APIContext.Provider value={APIService}>
-			<div className="mr-2 page-editor-toolbar-experience">
-				<label className="mr-2" htmlFor={selectId}>
-					{Liferay.Language.get('experience')}
-				</label>
+		<div className="mr-2 page-editor-toolbar-experience">
+			<label className="mr-2" htmlFor={selectId}>
+				{Liferay.Language.get('experience')}
+			</label>
 
-				<ExperienceSelector
-					editSegmentsEntryURL={editSegmentsEntryURL}
-					experiences={experiences}
-					segments={segments}
-					selectedExperience={selectedExperience}
-					selectId={selectId}
-				/>
-			</div>
-		</APIContext.Provider>
+			<ExperienceSelector
+				editSegmentsEntryURL={editSegmentsEntryURL}
+				experiences={experiences}
+				segments={segments}
+				selectedExperience={selectedExperience}
+				selectId={selectId}
+			/>
+		</div>
 	);
 }

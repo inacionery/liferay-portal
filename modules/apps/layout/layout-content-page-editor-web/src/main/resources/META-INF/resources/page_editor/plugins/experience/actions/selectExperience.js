@@ -12,16 +12,17 @@
  * details.
  */
 
-import {deleteExperienceById, removeLayoutDataItemById} from './utils';
+import {SELECT_SEGMENTS_EXPERIENCE} from './types';
 
-function deleteExperienceReducer(state, payload) {
-	let nextState = state;
-	const {segmentsExperienceId} = payload;
-
-	nextState = removeLayoutDataItemById(nextState, segmentsExperienceId);
-	nextState = deleteExperienceById(nextState, segmentsExperienceId);
-
-	return nextState;
+export default function selectExperience({
+	portletIds = [],
+	segmentsExperienceId
+}) {
+	return {
+		payload: {
+			portletIds,
+			segmentsExperienceId
+		},
+		type: SELECT_SEGMENTS_EXPERIENCE
+	};
 }
-
-export default deleteExperienceReducer;

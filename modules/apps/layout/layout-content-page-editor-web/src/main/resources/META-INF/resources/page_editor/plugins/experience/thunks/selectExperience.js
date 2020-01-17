@@ -12,16 +12,27 @@
  * details.
  */
 
-import {deleteExperienceById, removeLayoutDataItemById} from './utils';
+import ExperienceService from '../../../app/services/ExperienceService';
+import selectExperienceAction from '../actions/selectExperience';
 
-function deleteExperienceReducer(state, payload) {
-	let nextState = state;
-	const {segmentsExperienceId} = payload;
-
-	nextState = removeLayoutDataItemById(nextState, segmentsExperienceId);
-	nextState = deleteExperienceById(nextState, segmentsExperienceId);
-
-	return nextState;
+export default function selectExperience(id, config) {
+	return dispatch => {
+		return ExperienceService.selectExperience({
+			body: {
+				segmentsExperienceId: id
+			},
+			config
+		})
+			.then(portletIds => {
+				return dispatch(
+					selectExperienceAction({
+						portletIds,
+						segmentsExperienceId: id
+					})
+				);
+			})
+			.catch(error => {
+				return error;
+			});
+	};
 }
-
-export default deleteExperienceReducer;
