@@ -112,21 +112,6 @@ public class DataRecordCollectionResourceImpl
 	}
 
 	@Override
-	public Page<DataRecordCollection> getSiteDataRecordCollectionsPage(
-			Long siteId, String keywords, Pagination pagination)
-		throws Exception {
-
-		CommonDataRecordCollectionResource<DataRecordCollection>
-			commonDataRecordCollectionResource =
-				_getCommonDataRecordCollectionResource();
-
-		return commonDataRecordCollectionResource.
-			getSiteDataRecordCollectionsPage(
-				contextAcceptLanguage, contextCompany, keywords, pagination,
-				siteId);
-	}
-
-	@Override
 	public DataRecordCollection postDataDefinitionDataRecordCollection(
 			Long dataDefinitionId, DataRecordCollection dataRecordCollection)
 		throws Exception {

@@ -29,7 +29,6 @@ import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataDefinitionUtil;
 import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataLayoutUtil;
 import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataRecordCollectionUtil;
 import com.liferay.data.engine.rest.internal.model.InternalDataDefinition;
-import com.liferay.data.engine.rest.internal.model.InternalDataLayout;
 import com.liferay.data.engine.rest.internal.model.InternalDataRecordCollection;
 import com.liferay.data.engine.rest.internal.odata.entity.v2_0.DataDefinitionEntityModel;
 import com.liferay.data.engine.rest.internal.resource.common.CommonDataRecordCollectionResource;
@@ -142,7 +141,10 @@ public class DataDefinitionResourceImpl
 		_ddlRecordSetLocalService.deleteDDMStructureRecordSets(
 			dataDefinitionId);
 
-		_ddmStructureLocalService.deleteDDMStructure(dataDefinitionId);
+		DDMStructure ddmStructure = _ddmStructureLocalService.getDDMStructure(
+			dataDefinitionId);
+
+		_ddmStructureLocalService.deleteDDMStructure(ddmStructure);
 
 		List<DDMStructureVersion> ddmStructureVersions =
 			_ddmStructureVersionLocalService.getStructureVersions(
@@ -150,8 +152,7 @@ public class DataDefinitionResourceImpl
 
 		for (DDMStructureVersion ddmStructureVersion : ddmStructureVersions) {
 			_ddmStructureLayoutLocalService.deleteDDMStructureLayouts(
-				_portal.getClassNameId(InternalDataLayout.class),
-				ddmStructureVersion);
+				ddmStructure.getClassNameId(), ddmStructureVersion);
 
 			_ddmStructureVersionLocalService.deleteDDMStructureVersion(
 				ddmStructureVersion);
@@ -222,8 +223,8 @@ public class DataDefinitionResourceImpl
 			transformToArray(
 				_deDataDefinitionFieldLinkLocalService.
 					getDEDataDefinitionFieldLinks(
-						_portal.getClassNameId(InternalDataLayout.class),
-						dataDefinitionId, fieldName),
+						_getClassNameId(dataDefinitionId), dataDefinitionId,
+						fieldName),
 				deDataDefinitionFieldLink -> {
 					DDMStructureLayout ddmStructureLayout =
 						_ddmStructureLayoutLocalService.getDDMStructureLayout(
@@ -499,6 +500,13 @@ public class DataDefinitionResourceImpl
 		return null;
 	}
 
+	private long _getClassNameId(long dataDefinitionId) throws PortalException {
+		DDMStructure ddmStructure = _ddmStructureLocalService.getDDMStructure(
+			dataDefinitionId);
+
+		return ddmStructure.getClassNameId();
+	}
+
 	private JSONObject _getFieldTypeMetadataJSONObject(
 		AcceptLanguage acceptLanguage, String ddmFormFieldName,
 		HttpServletRequest httpServletRequest, ResourceBundle resourceBundle) {
@@ -751,7 +759,7 @@ public class DataDefinitionResourceImpl
 				transform(
 					_deDataDefinitionFieldLinkLocalService.
 						getDEDataDefinitionFieldLinks(
-							_portal.getClassNameId(InternalDataLayout.class),
+							_getClassNameId(dataDefinitionId),
 							ddmStructure.getStructureId(), removedFieldName),
 					deDataDefinitionFieldLink ->
 						deDataDefinitionFieldLink.getClassPK()));
@@ -767,7 +775,7 @@ public class DataDefinitionResourceImpl
 
 			_deDataDefinitionFieldLinkLocalService.
 				deleteDEDataDefinitionFieldLinks(
-					_portal.getClassNameId(InternalDataLayout.class),
+					_getClassNameId(dataDefinitionId),
 					ddmStructure.getStructureId(), removedFieldName);
 
 			_deDataDefinitionFieldLinkLocalService.
