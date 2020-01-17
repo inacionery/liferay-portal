@@ -134,9 +134,7 @@ public class PluginSettingLocalServiceImpl
 		pluginSetting.setRoles(roles);
 		pluginSetting.setActive(active);
 
-		pluginSettingPersistence.update(pluginSetting);
-
-		return pluginSetting;
+		return pluginSettingPersistence.update(pluginSetting);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

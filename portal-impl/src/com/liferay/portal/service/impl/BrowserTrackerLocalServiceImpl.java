@@ -65,7 +65,7 @@ public class BrowserTrackerLocalServiceImpl
 		browserTracker.setBrowserKey(browserKey);
 
 		try {
-			browserTrackerPersistence.update(browserTracker);
+			browserTracker = browserTrackerPersistence.update(browserTracker);
 		}
 		catch (SystemException systemException) {
 			if (_log.isWarnEnabled()) {

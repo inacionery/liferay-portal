@@ -425,7 +425,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			group.setExpandoBridgeAttributes(serviceContext);
 		}
 
-		groupPersistence.update(group);
+		group = groupPersistence.update(group);
 
 		// Layout sets
 
@@ -3622,9 +3622,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		group.setFriendlyURL(friendlyURL);
 
-		groupPersistence.update(group);
-
-		return group;
+		return groupPersistence.update(group);
 	}
 
 	@Override
@@ -3854,9 +3852,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		group.setSite(site);
 
-		groupPersistence.update(group);
-
-		return group;
+		return groupPersistence.update(group);
 	}
 
 	@Override

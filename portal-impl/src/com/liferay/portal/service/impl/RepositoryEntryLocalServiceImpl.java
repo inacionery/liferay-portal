@@ -54,9 +54,7 @@ public class RepositoryEntryLocalServiceImpl
 		repositoryEntry.setRepositoryId(repositoryId);
 		repositoryEntry.setMappedId(mappedId);
 
-		repositoryEntryPersistence.update(repositoryEntry);
-
-		return repositoryEntry;
+		return repositoryEntryPersistence.update(repositoryEntry);
 	}
 
 	@Override
@@ -127,9 +125,7 @@ public class RepositoryEntryLocalServiceImpl
 
 		repositoryEntry.setMappedId(mappedId);
 
-		repositoryEntryPersistence.update(repositoryEntry);
-
-		return repositoryEntry;
+		return repositoryEntryPersistence.update(repositoryEntry);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
