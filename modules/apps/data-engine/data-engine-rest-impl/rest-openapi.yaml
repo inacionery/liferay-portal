@@ -95,6 +95,8 @@ components:
             type: object
         DataLayout:
             properties:
+                contentType:
+                    type: string
                 dataDefinitionId:
                     format: int64
                     type: integer
