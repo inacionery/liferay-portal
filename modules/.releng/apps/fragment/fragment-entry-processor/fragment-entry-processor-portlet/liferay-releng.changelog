@@ -7,3 +7,8 @@
 # Bundle Version 3.0.1
 #
 cd5ee27f18e97ff394b36237bdb714fb94df9a0b^..e03c4f5860d5ed29ded7a2904362a6ed1f87908c=LPS-106892
+
+#
+# Bundle Version 3.0.2
+#
+e03c4f5860d5ed29ded7a2904362a6ed1f87908c^..ef330e0c859afab20367d74185b996bc1e9be984=LPS-106614
