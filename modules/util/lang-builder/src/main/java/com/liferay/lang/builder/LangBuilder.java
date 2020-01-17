@@ -153,10 +153,6 @@ public class LangBuilder {
 
 		// Automatic copy locales
 
-		_createProperties(content, "en_AU"); // English (Australia)
-		_createProperties(content, "en_GB"); // English (United Kingdom)
-		_createProperties(content, "fr_CA"); // French (Canada)
-
 		_createProperties(content, "ar"); // Arabic
 		_createProperties(content, "eu"); // Basque
 		_createProperties(content, "bg"); // Bulgarian
@@ -168,9 +164,12 @@ public class LangBuilder {
 		_createProperties(content, "da"); // Danish
 		_createProperties(content, "nl"); // Dutch (Netherlands)
 		_createProperties(content, "nl_BE", "nl"); // Dutch (Belgium)
+		_createProperties(content, "en_AU"); // English (Australia)
+		_createProperties(content, "en_GB"); // English (United Kingdom)
 		_createProperties(content, "et"); // Estonian
 		_createProperties(content, "fi"); // Finnish
 		_createProperties(content, "fr"); // French
+		_createProperties(content, "fr_CA"); // French (Canada)
 		_createProperties(content, "gl"); // Galician
 		_createProperties(content, "de"); // German
 		_createProperties(content, "el"); // Greek
