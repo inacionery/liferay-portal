@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Fragment Collection Contributor Featured Content
 Bundle-SymbolicName: com.liferay.fragment.collection.contributor.featured.content
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Import-Package:\
 	com.liferay.fragment.contributor;version="[1.0,2.0)",\
 	\
