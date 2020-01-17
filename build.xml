@@ -284,13 +284,6 @@ message.
 
 		<ant dir="portal-impl" inheritAll="false" target="compile" />
 
-		<parallel failonany="true" threadcount="${parallel.thread.count}">
-			<sequential>
-				<ant dir="sql" inheritAll="false" target="build-db" />
-				<ant dir="sql" inheritAll="false" target="rebuild-hypersonic" />
-			</sequential>
-		</parallel>
-
 		<if>
 			<available file="javac.output.txt" />
 			<then>
@@ -343,7 +336,16 @@ message.
 
 		<ant dir="portal-web" inheritAll="false" target="deploy" />
 
+		<antcall target="install-portal-snapshots" />
+
 		<touch file="${liferay.home}/.liferay-home" />
+
+		<parallel failonany="true" threadcount="${parallel.thread.count}">
+			<sequential>
+				<ant dir="sql" inheritAll="false" target="build-db" />
+				<ant dir="sql" inheritAll="false" target="rebuild-hypersonic" />
+			</sequential>
+		</parallel>
 
 		<copy
 			todir="${liferay.home}/data/hypersonic"
@@ -380,8 +382,6 @@ message.
 		</if>
 
 		<ant dir="portal-web" inheritAll="false" target="war" />
-
-		<antcall target="install-portal-snapshots" />
 
 		<stopwatch name="modules.stopwatch" />
 
