@@ -44,8 +44,8 @@ public class LayoutStructureItem {
 		_parentItemId = parentItemId;
 		_itemType = itemType;
 
-		_itemConfigJSONObject = JSONFactoryUtil.createJSONObject();
 		_childrenItemIds = new ArrayList<>();
+		_itemConfigJSONObject = JSONFactoryUtil.createJSONObject();
 	}
 
 	public void addChildrenItem(int position, String itemId) {

@@ -115,10 +115,10 @@ public class AddItemReactMVCActionCommandTest {
 
 		JSONObject newItemJSONObject = itemsJSONObject.getJSONObject(itemId);
 
+		Assert.assertEquals("root", newItemJSONObject.getString("parentId"));
 		Assert.assertEquals(
 			LayoutDataItemTypeConstants.TYPE_CONTAINER,
 			newItemJSONObject.getString("type"));
-		Assert.assertEquals("root", newItemJSONObject.getString("parentId"));
 	}
 
 	@Test
@@ -151,10 +151,10 @@ public class AddItemReactMVCActionCommandTest {
 
 		JSONObject newItemJSONObject = itemsJSONObject.getJSONObject(itemId);
 
+		Assert.assertEquals("root", newItemJSONObject.getString("parentId"));
 		Assert.assertEquals(
 			LayoutDataItemTypeConstants.TYPE_CONTAINER,
 			newItemJSONObject.getString("type"));
-		Assert.assertEquals("root", newItemJSONObject.getString("parentId"));
 	}
 
 	private MockActionRequest _getMockActionRequest() throws PortalException {
