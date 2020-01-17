@@ -731,13 +731,8 @@ public class JournalDisplayContext {
 				JournalPortletKeys.JOURNAL, "order-by-col", defaultOrderByCol);
 		}
 		else {
-			boolean saveOrderBy = ParamUtil.getBoolean(
-				_httpServletRequest, "saveOrderBy");
-
-			if (saveOrderBy) {
-				_portalPreferences.setValue(
-					JournalPortletKeys.JOURNAL, "order-by-col", _orderByCol);
-			}
+			_portalPreferences.setValue(
+				JournalPortletKeys.JOURNAL, "order-by-col", _orderByCol);
 		}
 
 		return _orderByCol;
@@ -768,13 +763,8 @@ public class JournalDisplayContext {
 				defaultOrderByType);
 		}
 		else {
-			boolean saveOrderBy = ParamUtil.getBoolean(
-				_httpServletRequest, "saveOrderBy");
-
-			if (saveOrderBy) {
-				_portalPreferences.setValue(
-					JournalPortletKeys.JOURNAL, "order-by-type", _orderByType);
-			}
+			_portalPreferences.setValue(
+				JournalPortletKeys.JOURNAL, "order-by-type", _orderByType);
 		}
 
 		return _orderByType;
