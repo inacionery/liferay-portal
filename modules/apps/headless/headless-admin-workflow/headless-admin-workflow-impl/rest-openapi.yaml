@@ -303,7 +303,7 @@ components:
                     type: string
                 workflowTaskId:
                     description:
-                        The task asociated with this workflow log.
+                        The task associated with this workflow log.
                     format: int64
                     readOnly: true
                     type: integer
