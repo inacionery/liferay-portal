@@ -1441,49 +1441,6 @@ paths:
                     description:
                         ""
             tags: ["DataDefinition"]
-    "/sites/{siteId}/data-layouts":
-        get:
-            operationId: getSiteDataLayoutsPage
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      format: int64
-                      type: integer
-                - in: query
-                  name: keywords
-                  schema:
-                      type: string
-                - in: query
-                  name: page
-                  schema:
-                      type: integer
-                - in: query
-                  name: pageSize
-                  schema:
-                      type: integer
-                - in: query
-                  name: sort
-                  required: false
-                  schema:
-                      type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/DataLayout"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/DataLayout"
-                                type: array
-                    description:
-                        ""
-            tags: ["DataLayout"]
     "/sites/{siteId}/data-layouts/by-data-layout-key/{dataLayoutKey}":
         get:
             operationId: getSiteDataLayoutByDataLayoutKey
@@ -1511,44 +1468,6 @@ paths:
                     description:
                         ""
             tags: ["DataLayout"]
-    "/sites/{siteId}/data-record-collections":
-        get:
-            operationId: getSiteDataRecordCollectionsPage
-            parameters:
-                - in: path
-                  name: siteId
-                  required: true
-                  schema:
-                      format: int64
-                      type: integer
-                - in: query
-                  name: keywords
-                  schema:
-                      type: string
-                - in: query
-                  name: page
-                  schema:
-                      type: integer
-                - in: query
-                  name: pageSize
-                  schema:
-                      type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/DataRecordCollection"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/DataRecordCollection"
-                                type: array
-                    description:
-                        ""
-            tags: ["DataRecordCollection"]
     "/sites/{siteId}/data-record-collections/by-data-record-collection-key/{dataRecordCollectionKey}":
         get:
             operationId: getSiteDataRecordCollectionByDataRecordCollectionKey
