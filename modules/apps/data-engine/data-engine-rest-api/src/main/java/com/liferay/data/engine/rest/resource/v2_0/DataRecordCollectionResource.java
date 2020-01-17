@@ -65,10 +65,6 @@ public interface DataRecordCollectionResource {
 			DataRecordCollection dataRecordCollection)
 		throws Exception;
 
-	public Page<DataRecordCollection> getSiteDataRecordCollectionsPage(
-			Long siteId, String keywords, Pagination pagination)
-		throws Exception;
-
 	public DataRecordCollection
 			getSiteDataRecordCollectionByDataRecordCollectionKey(
 				Long siteId, String dataRecordCollectionKey)

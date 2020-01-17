@@ -61,6 +61,20 @@ public class DataLayoutSerDes {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+		if (dataLayout.getContentType() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"contentType\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(dataLayout.getContentType()));
+
+			sb.append("\"");
+		}
+
 		if (dataLayout.getDataDefinitionId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -220,6 +234,13 @@ public class DataLayoutSerDes {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+		if (dataLayout.getContentType() == null) {
+			map.put("contentType", null);
+		}
+		else {
+			map.put("contentType", String.valueOf(dataLayout.getContentType()));
+		}
+
 		if (dataLayout.getDataDefinitionId() == null) {
 			map.put("dataDefinitionId", null);
 		}
@@ -319,7 +340,12 @@ public class DataLayoutSerDes {
 			DataLayout dataLayout, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "dataDefinitionId")) {
+			if (Objects.equals(jsonParserFieldName, "contentType")) {
+				if (jsonParserFieldValue != null) {
+					dataLayout.setContentType((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "dataDefinitionId")) {
 				if (jsonParserFieldValue != null) {
 					dataLayout.setDataDefinitionId(
 						Long.valueOf((String)jsonParserFieldValue));

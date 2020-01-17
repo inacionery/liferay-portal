@@ -76,23 +76,13 @@ public interface DataLayoutResource {
 			Long dataLayoutId, DataLayout dataLayout)
 		throws Exception;
 
-	public Page<DataLayout> getSiteDataLayoutsPage(
-			Long siteId, String keywords, Pagination pagination,
-			String sortString)
-		throws Exception;
-
-	public HttpInvoker.HttpResponse getSiteDataLayoutsPageHttpResponse(
-			Long siteId, String keywords, Pagination pagination,
-			String sortString)
-		throws Exception;
-
-	public DataLayout getSiteDataLayoutByDataLayoutKey(
-			Long siteId, String dataLayoutKey)
+	public DataLayout getSiteDataLayoutByContentTypeByDataLayoutKey(
+			Long siteId, String contentType, String dataLayoutKey)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
-			getSiteDataLayoutByDataLayoutKeyHttpResponse(
-				Long siteId, String dataLayoutKey)
+			getSiteDataLayoutByContentTypeByDataLayoutKeyHttpResponse(
+				Long siteId, String contentType, String dataLayoutKey)
 		throws Exception;
 
 	public static class Builder {
@@ -469,86 +459,13 @@ public interface DataLayoutResource {
 			return httpInvoker.invoke();
 		}
 
-		public Page<DataLayout> getSiteDataLayoutsPage(
-				Long siteId, String keywords, Pagination pagination,
-				String sortString)
+		public DataLayout getSiteDataLayoutByContentTypeByDataLayoutKey(
+				Long siteId, String contentType, String dataLayoutKey)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				getSiteDataLayoutsPageHttpResponse(
-					siteId, keywords, pagination, sortString);
-
-			String content = httpResponse.getContent();
-
-			_logger.fine("HTTP response content: " + content);
-
-			_logger.fine("HTTP response message: " + httpResponse.getMessage());
-			_logger.fine(
-				"HTTP response status code: " + httpResponse.getStatusCode());
-
-			return Page.of(content, DataLayoutSerDes::toDTO);
-		}
-
-		public HttpInvoker.HttpResponse getSiteDataLayoutsPageHttpResponse(
-				Long siteId, String keywords, Pagination pagination,
-				String sortString)
-			throws Exception {
-
-			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
-
-			if (_builder._locale != null) {
-				httpInvoker.header(
-					"Accept-Language", _builder._locale.toLanguageTag());
-			}
-
-			for (Map.Entry<String, String> entry :
-					_builder._headers.entrySet()) {
-
-				httpInvoker.header(entry.getKey(), entry.getValue());
-			}
-
-			for (Map.Entry<String, String> entry :
-					_builder._parameters.entrySet()) {
-
-				httpInvoker.parameter(entry.getKey(), entry.getValue());
-			}
-
-			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
-
-			if (keywords != null) {
-				httpInvoker.parameter("keywords", String.valueOf(keywords));
-			}
-
-			if (pagination != null) {
-				httpInvoker.parameter(
-					"page", String.valueOf(pagination.getPage()));
-				httpInvoker.parameter(
-					"pageSize", String.valueOf(pagination.getPageSize()));
-			}
-
-			if (sortString != null) {
-				httpInvoker.parameter("sort", sortString);
-			}
-
-			httpInvoker.path(
-				_builder._scheme + "://" + _builder._host + ":" +
-					_builder._port +
-						"/o/data-engine/v2.0/sites/{siteId}/data-layouts",
-				siteId);
-
-			httpInvoker.userNameAndPassword(
-				_builder._login + ":" + _builder._password);
-
-			return httpInvoker.invoke();
-		}
-
-		public DataLayout getSiteDataLayoutByDataLayoutKey(
-				Long siteId, String dataLayoutKey)
-			throws Exception {
-
-			HttpInvoker.HttpResponse httpResponse =
-				getSiteDataLayoutByDataLayoutKeyHttpResponse(
-					siteId, dataLayoutKey);
+				getSiteDataLayoutByContentTypeByDataLayoutKeyHttpResponse(
+					siteId, contentType, dataLayoutKey);
 
 			String content = httpResponse.getContent();
 
@@ -571,8 +488,8 @@ public interface DataLayoutResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				getSiteDataLayoutByDataLayoutKeyHttpResponse(
-					Long siteId, String dataLayoutKey)
+				getSiteDataLayoutByContentTypeByDataLayoutKeyHttpResponse(
+					Long siteId, String contentType, String dataLayoutKey)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -599,8 +516,8 @@ public interface DataLayoutResource {
 			httpInvoker.path(
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port +
-						"/o/data-engine/v2.0/sites/{siteId}/data-layouts/by-data-layout-key/{dataLayoutKey}",
-				siteId, dataLayoutKey);
+						"/o/data-engine/v2.0/sites/{siteId}/data-layouts/by-content-type/{contentType}/by-data-layout-key/{dataLayoutKey}",
+				siteId, contentType, dataLayoutKey);
 
 			httpInvoker.userNameAndPassword(
 				_builder._login + ":" + _builder._password);

@@ -57,12 +57,8 @@ public interface DataLayoutResource {
 	public DataLayout putDataLayout(Long dataLayoutId, DataLayout dataLayout)
 		throws Exception;
 
-	public Page<DataLayout> getSiteDataLayoutsPage(
-			Long siteId, String keywords, Pagination pagination, Sort[] sorts)
-		throws Exception;
-
-	public DataLayout getSiteDataLayoutByDataLayoutKey(
-			Long siteId, String dataLayoutKey)
+	public DataLayout getSiteDataLayoutByContentTypeByDataLayoutKey(
+			Long siteId, String contentType, String dataLayoutKey)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(
