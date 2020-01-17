@@ -517,8 +517,7 @@ public class AppResourceImpl
 				String localizedName = (String)value;
 
 				if (Validator.isNull(localizedName)) {
-					throw new InvalidAppException(
-						"The app name cannot be null");
+					throw new InvalidAppException("The app name is null");
 				}
 
 				if (localizedName.length() > 30) {
