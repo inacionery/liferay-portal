@@ -10479,13 +10479,15 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 
 								exit_code=$?
 
-								if [[ ($exit_code != "0") && ($output == *"SQL2555I"*) ]]
+								if [[ (${exit_code} != "0") && ($output == *"SQL2555I"*) ]]
 								then
 									echo "$output"
+
 									exit 0
 								else
 									echo "$output"
-									exit $exit_code
+
+									exit ${exit_code}
 								fi
 							]]>
 						</echo>
