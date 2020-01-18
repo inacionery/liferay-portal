@@ -197,7 +197,7 @@ public class ListUtilCheck extends BaseCheck {
 
 					return buildGradleContent;
 				}
-				catch (IOException ioException) {
+				catch (IOException ioe) {
 					return null;
 				}
 			}

@@ -198,7 +198,7 @@ public class Checker extends com.puppycrawl.tools.checkstyle.Checker {
 
 			return _walk(rootDetailAST, fileContents, checks);
 		}
-		catch (CheckstyleException checkstyleException) {
+		catch (CheckstyleException ce) {
 			return new TreeSet<>();
 		}
 	}

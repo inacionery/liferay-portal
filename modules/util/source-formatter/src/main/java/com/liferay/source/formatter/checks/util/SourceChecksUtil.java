@@ -135,10 +135,10 @@ public class SourceChecksUtil {
 						javaClass = JavaClassParser.parseJavaClass(
 							fileName, sourceChecksResult.getContent());
 					}
-					catch (ParseException parseException) {
+					catch (ParseException pe) {
 						sourceChecksResult.addSourceFormatterMessage(
 							new SourceFormatterMessage(
-								fileName, parseException.getMessage(),
+								fileName, pe.getMessage(),
 								CheckType.SOURCE_CHECK, clazz.getSimpleName(),
 								null, -1));
 
@@ -253,7 +253,7 @@ public class SourceChecksUtil {
 			try {
 				sourceCheckClass = Class.forName(sourceCheckName);
 			}
-			catch (ClassNotFoundException classNotFoundException) {
+			catch (ClassNotFoundException cnfe) {
 				SourceFormatterUtil.printError(
 					"sourcechecks.xml",
 					"sourcechecks.xml: Class " + sourceCheckName +

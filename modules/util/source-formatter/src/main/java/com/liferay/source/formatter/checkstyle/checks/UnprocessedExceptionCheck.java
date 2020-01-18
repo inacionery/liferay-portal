@@ -268,7 +268,7 @@ public class UnprocessedExceptionCheck extends BaseCheck {
 		try {
 			javaProjectBuilder.addSource(new UnsyncStringReader(content));
 		}
-		catch (ParseException parseException) {
+		catch (ParseException pe) {
 			return null;
 		}
 

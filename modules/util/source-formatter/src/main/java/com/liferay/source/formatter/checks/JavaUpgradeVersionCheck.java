@@ -207,7 +207,7 @@ public class JavaUpgradeVersionCheck extends BaseJavaTermCheck {
 					javaTerm.getLineNumber(x));
 			}
 		}
-		catch (IllegalArgumentException illegalArgumentException) {
+		catch (IllegalArgumentException iae) {
 		}
 	}
 

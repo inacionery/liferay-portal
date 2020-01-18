@@ -55,7 +55,7 @@ public class FileUtil {
 			return StringUtil.replace(
 				s, StringPool.RETURN_NEW_LINE, StringPool.NEW_LINE);
 		}
-		catch (FileNotFoundException fileNotFoundException) {
+		catch (FileNotFoundException fnfe) {
 			return null;
 		}
 	}

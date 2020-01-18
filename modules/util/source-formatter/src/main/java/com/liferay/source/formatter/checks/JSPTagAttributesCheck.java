@@ -428,7 +428,7 @@ public class JSPTagAttributesCheck extends TagAttributesCheck {
 			try {
 				Double.parseDouble(value);
 			}
-			catch (NumberFormatException numberFormatException) {
+			catch (NumberFormatException nfe) {
 				return false;
 			}
 
