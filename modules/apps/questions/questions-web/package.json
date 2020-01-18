@@ -24,5 +24,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test:watch": "env TZ=utc liferay-npm-scripts test --watch"
 	},
-	"version": "1.0.5"
+	"version": "1.0.6"
 }
