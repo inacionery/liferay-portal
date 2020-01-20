@@ -524,7 +524,7 @@ public class StructuredContentResourceImpl
 	}
 
 	@Override
-	protected String getStructuredContentResourceName() {
+	protected String getPermissionCheckerResourceName() {
 		return JournalArticle.class.getName();
 	}
 

@@ -88,7 +88,7 @@ public abstract class Base${schemaName}ResourceImpl implements ${schemaName}Reso
 			<#elseif stringUtil.equals(javaMethodSignature.methodName, "put" + schemaName + "Permission")>
 					PermissionChecker permissionChecker = PermissionThreadLocal.getPermissionChecker();
 
-					String resourceName = get${schemaName}ResourceName();
+					String resourceName = getPermissionCheckerResourceName();
 
 					if (!permissionChecker.hasPermission(0, resourceName, 0, ActionKeys.PERMISSIONS)) {
 						return;
@@ -97,8 +97,8 @@ public abstract class Base${schemaName}ResourceImpl implements ${schemaName}Reso
 					resourcePermissionLocalService.updateResourcePermissions(contextCompany.getCompanyId(), 0, resourceName, String.valueOf(structuredContentId), ModelPermissionsUtil.toModelPermissions(contextCompany.getCompanyId(), permissions, structuredContentId, resourceName, resourceActionLocalService, resourcePermissionLocalService, roleLocalService));
 				}
 
-				protected String get${schemaName}ResourceName() {
-					return null;
+				protected String getPermissionCheckerResourceName() {
+					throw new UnsupportedOperationException("This method needs to be implemented");
 			<#elseif stringUtil.equals(javaMethodSignature.returnType, "java.lang.String")>
 				return StringPool.BLANK;
 			<#elseif stringUtil.equals(javaMethodSignature.returnType, "javax.ws.rs.core.Response")>
