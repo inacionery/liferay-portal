@@ -55,6 +55,26 @@ public class ActionUtil {
 			groupedModel.getGroupId(), uriInfo);
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x)
+	 */
+	public static Map<String, String> addAction(
+		String actionName, Class clazz, GroupedModel groupedModel,
+		String methodName, UriInfo uriInfo) {
+
+		throw new UnsupportedOperationException("This method is deprecated");
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x)
+	 */
+	public static Map<String, String> addAction(
+		String actionName, Class clazz, Long id, String methodName,
+		String permissionName, Long siteId, UriInfo uriInfo) {
+
+		throw new UnsupportedOperationException("This method is deprecated");
+	}
+
 	public static Map<String, String> addAction(
 		String actionName, Class clazz, Long id, String methodName,
 		String permissionName, ScopeChecker scopeChecker, Long siteId,
