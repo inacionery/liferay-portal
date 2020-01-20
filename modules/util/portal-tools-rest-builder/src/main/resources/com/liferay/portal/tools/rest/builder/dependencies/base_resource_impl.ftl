@@ -97,7 +97,7 @@ public abstract class Base${schemaName}ResourceImpl implements ${schemaName}Reso
 					resourcePermissionLocalService.updateResourcePermissions(contextCompany.getCompanyId(), 0, resourceName, String.valueOf(structuredContentId), PermissionsUtil.getModelPermissions(contextCompany.getCompanyId(), permissions, structuredContentId, resourceName, resourceActionLocalService, resourcePermissionLocalService, roleLocalService));
 				}
 
-				protected String getStructuredContentResourceName() {
+				protected String get${schemaName}ResourceName() {
 					return null;
 			<#elseif stringUtil.equals(javaMethodSignature.returnType, "java.lang.String")>
 				return StringPool.BLANK;
