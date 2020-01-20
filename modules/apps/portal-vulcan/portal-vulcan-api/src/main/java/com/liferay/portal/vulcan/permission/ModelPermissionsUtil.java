@@ -45,26 +45,25 @@ public class ModelPermissionsUtil {
 		for (Permission permission : permissions) {
 			String[] actionIds = permission.getActionIds();
 
-			if (actionIds.length == 0) {
-				List<ResourceAction> resourceActions =
-					resourceActionLocalService.getResourceActions(resourceName);
-
-				Role role = roleLocalService.getRole(
-					companyId, permission.getRoleName());
-
-				for (ResourceAction resourceAction : resourceActions) {
-					resourcePermissionLocalService.removeResourcePermission(
-						companyId, resourceName,
-						ResourceConstants.SCOPE_INDIVIDUAL,
-						String.valueOf(primKey), role.getRoleId(),
-						resourceAction.getActionId());
-				}
+			if (actionIds.length > 0) {
+				modelPermissions.addRolePermissions(
+					permission.getRoleName(), permission.getActionIds());
 
 				continue;
 			}
 
-			modelPermissions.addRolePermissions(
-				permission.getRoleName(), permission.getActionIds());
+			List<ResourceAction> resourceActions =
+				resourceActionLocalService.getResourceActions(resourceName);
+
+			Role role = roleLocalService.getRole(
+				companyId, permission.getRoleName());
+
+			for (ResourceAction resourceAction : resourceActions) {
+				resourcePermissionLocalService.removeResourcePermission(
+					companyId, resourceName, ResourceConstants.SCOPE_INDIVIDUAL,
+					String.valueOf(primKey), role.getRoleId(),
+					resourceAction.getActionId());
+			}
 		}
 
 		return modelPermissions;
