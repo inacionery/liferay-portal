@@ -86,27 +86,15 @@ public abstract class Base${schemaName}ResourceImpl implements ${schemaName}Reso
 			<#if stringUtil.equals(javaMethodSignature.returnType, "boolean")>
 				return false;
 			<#elseif stringUtil.equals(javaMethodSignature.methodName, "put" + schemaName + "Permission")>
+					PermissionChecker permissionChecker = PermissionThreadLocal.getPermissionChecker();
 
-				PermissionChecker permissionChecker =
-					PermissionThreadLocal.getPermissionChecker();
+					String resourceName = get${schemaName}ResourceName();
 
-				String resourceName = get${schemaName}ResourceName();
+					if (!permissionChecker.hasPermission(0, resourceName, 0, ActionKeys.PERMISSIONS)) {
+						return;
+					}
 
-				if (!permissionChecker.hasPermission(
-						0, resourceName, 0, ActionKeys.PERMISSIONS)) {
-
-					return;
-				}
-
-				resourcePermissionLocalService.updateResourcePermissions(
-					contextCompany.getCompanyId(), 0, resourceName,
-					String.valueOf(structuredContentId),
-					PermissionsUtil.getModelPermissions(
-						contextCompany.getCompanyId(), permissions,
-						structuredContentId, resourceName,
-						resourceActionLocalService,
-						resourcePermissionLocalService,
-						roleLocalService));
+					resourcePermissionLocalService.updateResourcePermissions(contextCompany.getCompanyId(), 0, resourceName, String.valueOf(structuredContentId), PermissionsUtil.getModelPermissions(contextCompany.getCompanyId(), permissions, structuredContentId, resourceName, resourceActionLocalService, resourcePermissionLocalService, roleLocalService));
 				}
 
 				protected String getStructuredContentResourceName() {
