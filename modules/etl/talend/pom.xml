@@ -118,7 +118,7 @@
 				<plugin>
 					<groupId>com.liferay</groupId>
 					<artifactId>com.liferay.source.formatter</artifactId>
-					<version>1.0.956</version>
+					<version>1.0.957</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
