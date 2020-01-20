@@ -90,6 +90,7 @@ import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -864,13 +865,21 @@ public class DDMFormAdminDisplayContext {
 		String serializedFormBuilderContext = ParamUtil.getString(
 			renderRequest, "serializedFormBuilderContext");
 
+		ThemeDisplay themeDisplay = formAdminRequestHelper.getThemeDisplay();
+
 		if (Validator.isNotNull(serializedFormBuilderContext)) {
-			return serializedFormBuilderContext;
+			JSONObject jsonObject = jsonFactory.createJSONObject(
+				serializedFormBuilderContext);
+
+			_escapeFormNameFromSerializedFormBuilderContext(
+				jsonObject, themeDisplay);
+			_escapeFormDescriptionFromSerializedFormBuilderContext(
+				jsonObject, themeDisplay);
+
+			return jsonObject.toString();
 		}
 
 		JSONSerializer jsonSerializer = jsonFactory.createJSONSerializer();
-
-		ThemeDisplay themeDisplay = formAdminRequestHelper.getThemeDisplay();
 
 		DDMFormBuilderContextRequest ddmFormBuilderContextRequest =
 			DDMFormBuilderContextRequest.with(
@@ -1386,6 +1395,29 @@ public class DDMFormAdminDisplayContext {
 	protected final JSONFactory jsonFactory;
 	protected final RenderRequest renderRequest;
 	protected final RenderResponse renderResponse;
+
+	private void _escapeFormDescriptionFromSerializedFormBuilderContext(
+		JSONObject serializedFormBuilderContext, ThemeDisplay themeDisplay) {
+
+		JSONObject jsonObject = serializedFormBuilderContext.getJSONObject(
+			"description");
+
+		String description = jsonObject.getString(themeDisplay.getLanguageId());
+
+		jsonObject.put(
+			themeDisplay.getLanguageId(), HtmlUtil.escape(description));
+	}
+
+	private void _escapeFormNameFromSerializedFormBuilderContext(
+		JSONObject serializedFormBuilderContext, ThemeDisplay themeDisplay) {
+
+		JSONObject jsonObject = serializedFormBuilderContext.getJSONObject(
+			"name");
+
+		String name = jsonObject.getString(themeDisplay.getLanguageId());
+
+		jsonObject.put(themeDisplay.getLanguageId(), HtmlUtil.escape(name));
+	}
 
 	private void _populateDDMDataProviderNavigationItem(
 		NavigationItem navigationItem) {
