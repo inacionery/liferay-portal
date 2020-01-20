@@ -490,7 +490,6 @@ public class InvokerFilterHelper {
 
 			ServletContext servletContext = ServletContextPool.get(
 				servletContextName);
-
 			String servletFilterName = GetterUtil.getString(
 				serviceReference.getProperty("servlet-filter-name"));
 
