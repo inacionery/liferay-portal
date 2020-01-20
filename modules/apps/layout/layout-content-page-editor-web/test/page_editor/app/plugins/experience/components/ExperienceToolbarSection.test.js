@@ -181,13 +181,18 @@ describe('ExperienceToolbarSection', () => {
 				}
 			}
 		};
+		const mockDispatch = jest.fn(a => {
+			if (typeof a === 'function') return a(mockDispatch);
+		});
+
 		const {
 			getByLabelText,
 			getByRole,
 			getByText
 		} = renderExperienceToolbarSection(
 			mockStateWithLockedExperience,
-			mockConfig
+			mockConfig,
+			mockDispatch
 		);
 
 		const dropDownButton = getByLabelText('experience');
@@ -214,7 +219,9 @@ describe('ExperienceToolbarSection', () => {
 			})
 		);
 
-		const mockDispatch = jest.fn(() => {});
+		const mockDispatch = jest.fn(a => {
+			if (typeof a === 'function') return a(mockDispatch);
+		});
 
 		const {
 			getAllByRole,
@@ -284,7 +291,9 @@ describe('ExperienceToolbarSection', () => {
 			})
 		);
 
-		const mockDispatch = jest.fn(() => {});
+		const mockDispatch = jest.fn(a => {
+			if (typeof a === 'function') return a(mockDispatch);
+		});
 
 		const {
 			getAllByRole,
@@ -363,7 +372,9 @@ describe('ExperienceToolbarSection', () => {
 				return Promise.resolve([]);
 			});
 
-		const mockDispatch = jest.fn(() => {});
+		const mockDispatch = jest.fn(a => {
+			if (typeof a === 'function') return a(mockDispatch);
+		});
 
 		const {
 			getAllByRole,
@@ -423,7 +434,9 @@ describe('ExperienceToolbarSection', () => {
 			})
 		);
 
-		const mockDispatch = jest.fn(() => {});
+		const mockDispatch = jest.fn(a => {
+			if (typeof a === 'function') return a(mockDispatch);
+		});
 
 		const {
 			getAllByRole,
@@ -500,7 +513,9 @@ describe('ExperienceToolbarSection', () => {
 		 */
 		window.confirm = jest.fn(() => true);
 
-		const mockDispatch = jest.fn(() => {});
+		const mockDispatch = jest.fn(a => {
+			if (typeof a === 'function') return a(mockDispatch);
+		});
 
 		const mockStateForDelete = {
 			...mockState,
@@ -613,7 +628,7 @@ describe('ExperienceToolbarSection', () => {
 
 		await wait(() => expect(window.confirm).toHaveBeenCalledTimes(1));
 
-		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(2));
+		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(1));
 
 		expect(serviceFetch).toHaveBeenCalledWith(
 			expect.objectContaining({}),
