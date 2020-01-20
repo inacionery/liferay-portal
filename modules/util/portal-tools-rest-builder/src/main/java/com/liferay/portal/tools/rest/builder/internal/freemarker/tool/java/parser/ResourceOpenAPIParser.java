@@ -27,7 +27,7 @@ import com.liferay.portal.tools.rest.builder.internal.freemarker.util.OpenAPIUti
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-import com.liferay.portal.vulcan.permissions.Permissions;
+import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.yaml.config.ConfigYAML;
 import com.liferay.portal.vulcan.yaml.openapi.Content;
 import com.liferay.portal.vulcan.yaml.openapi.Get;
@@ -292,7 +292,7 @@ public class ResourceOpenAPIParser {
 
 			javaMethodParameters.add(
 				new JavaMethodParameter(
-					"permissions", Permissions[].class.getName()));
+					"permission", Permission[].class.getName()));
 		}
 
 		List<Parameter> parameters = operation.getParameters();

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.vulcan.permissions;
+package com.liferay.portal.vulcan.permission;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Javier Gamarra
  */
-@GraphQLName("Permissions")
-@XmlRootElement(name = "Permissions")
-public class Permissions {
+@GraphQLName("Permission")
+@XmlRootElement(name = "Permission")
+public class Permission {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)

@@ -12,7 +12,7 @@ import javax.annotation.Generated;
 * @generated
 */
 @Generated("")
-public class Permissions {
+public class Permission {
 
 	public String[] getActionIds() {
 		return _actionIds;
@@ -33,28 +33,28 @@ public class Permissions {
 	private String[] _actionIds;
 	private String _roleName;
 
-	private static class PermissionsJSONParser<T> extends BaseJSONParser<Permissions> {
+	private static class PermissionJSONParser<T> extends BaseJSONParser<Permission> {
 
 		@Override
-		protected Permissions createDTO() {
-			return new Permissions();
+		protected Permission createDTO() {
+			return new Permission();
 		}
 
 		@Override
-		protected Permissions[] createDTOArray(int size) {
-			return new Permissions[size];
+		protected Permission[] createDTOArray(int size) {
+			return new Permission[size];
 		}
 
 		@Override
-		protected void setField(Permissions permissions, String jsonParserFieldName, Object jsonParserFieldValue) {
+		protected void setField(Permission permission, String jsonParserFieldName, Object jsonParserFieldValue) {
 			if (Objects.equals(jsonParserFieldName, "actionIds")) {
 				if (jsonParserFieldValue != null) {
-					permissions.setActionIds((String[])jsonParserFieldValue);
+					permission.setActionIds((String[])jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "roleName")) {
 				if (jsonParserFieldValue != null) {
-					permissions.setRoleName((String)jsonParserFieldValue);
+					permission.setRoleName((String)jsonParserFieldValue);
 				}
 			}
 			else {

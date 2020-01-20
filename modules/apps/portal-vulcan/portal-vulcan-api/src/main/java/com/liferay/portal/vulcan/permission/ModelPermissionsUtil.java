@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.vulcan.permissions;
+package com.liferay.portal.vulcan.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ResourceAction;
@@ -29,10 +29,10 @@ import java.util.List;
 /**
  * @author Javier Gamarra
  */
-public class PermissionsUtil {
+public class ModelPermissionsUtil {
 
-	public static ModelPermissions getModelPermissions(
-			long companyId, Permissions[] permissions, long primKey,
+	public static ModelPermissions toModelPermissions(
+			long companyId, Permission[] permissions, long primKey,
 			String resourceName,
 			ResourceActionLocalService resourceActionLocalService,
 			ResourcePermissionLocalService resourcePermissionLocalService,
@@ -42,15 +42,15 @@ public class PermissionsUtil {
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
 			new String[0], new String[0], resourceName);
 
-		for (Permissions itemPermissions : permissions) {
-			String[] actionIds = itemPermissions.getActionIds();
+		for (Permission permission : permissions) {
+			String[] actionIds = permission.getActionIds();
 
 			if (actionIds.length == 0) {
 				List<ResourceAction> resourceActions =
 					resourceActionLocalService.getResourceActions(resourceName);
 
 				Role role = roleLocalService.getRole(
-					companyId, itemPermissions.getRoleName());
+					companyId, permission.getRoleName());
 
 				for (ResourceAction resourceAction : resourceActions) {
 					resourcePermissionLocalService.removeResourcePermission(
@@ -64,7 +64,7 @@ public class PermissionsUtil {
 			}
 
 			modelPermissions.addRolePermissions(
-				itemPermissions.getRoleName(), itemPermissions.getActionIds());
+				permission.getRoleName(), permission.getActionIds());
 		}
 
 		return modelPermissions;

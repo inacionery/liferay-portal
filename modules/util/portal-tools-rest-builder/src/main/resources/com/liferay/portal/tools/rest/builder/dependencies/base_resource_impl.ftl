@@ -23,7 +23,7 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-import com.liferay.portal.vulcan.permissions.PermissionsUtil;
+import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.util.ActionUtil;
 import com.liferay.portal.vulcan.util.LocalDateTimeUtil;
 import com.liferay.portal.vulcan.util.TransformUtil;
@@ -94,7 +94,7 @@ public abstract class Base${schemaName}ResourceImpl implements ${schemaName}Reso
 						return;
 					}
 
-					resourcePermissionLocalService.updateResourcePermissions(contextCompany.getCompanyId(), 0, resourceName, String.valueOf(structuredContentId), PermissionsUtil.getModelPermissions(contextCompany.getCompanyId(), permissions, structuredContentId, resourceName, resourceActionLocalService, resourcePermissionLocalService, roleLocalService));
+					resourcePermissionLocalService.updateResourcePermissions(contextCompany.getCompanyId(), 0, resourceName, String.valueOf(structuredContentId), ModelPermissionsUtil.toModelPermissions(contextCompany.getCompanyId(), permissions, structuredContentId, resourceName, resourceActionLocalService, resourcePermissionLocalService, roleLocalService));
 				}
 
 				protected String get${schemaName}ResourceName() {
