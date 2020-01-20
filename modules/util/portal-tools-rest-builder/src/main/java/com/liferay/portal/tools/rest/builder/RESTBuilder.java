@@ -150,7 +150,7 @@ public class RESTBuilder {
 			_createClientHttpInvokerFile(context);
 			_createClientPageFile(context);
 			_createClientPaginationFile(context);
-			_createClientPermissions(context);
+			_createClientPermissionsFile(context);
 			_createClientUnsafeSupplierFile(context);
 		}
 
@@ -535,7 +535,7 @@ public class RESTBuilder {
 				_copyrightFile, "client_pagination", context));
 	}
 
-	private void _createClientPermissions(Map<String, Object> context)
+	private void _createClientPermissionsFile(Map<String, Object> context)
 		throws Exception {
 
 		StringBuilder sb = new StringBuilder();
