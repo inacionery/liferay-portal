@@ -628,7 +628,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	}
 
 	@Override
-	public boolean hasOtherAssignees(long workflowTaskId, long userId)
+	public boolean hasAssignableUsers(long companyId, long workflowTaskId)
 		throws WorkflowException {
 
 		try {
@@ -667,6 +667,19 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		catch (Exception e) {
 			throw new WorkflowException(e);
 		}
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #hasAssignableUsers(long, long)}
+	 */
+	@Deprecated
+	@Override
+	public boolean hasOtherAssignees(long workflowTaskId, long userId)
+		throws WorkflowException {
+
+		return hasAssignableUsers(
+			CompanyThreadLocal.getCompanyId(), workflowTaskId);
 	}
 
 	/**
