@@ -304,7 +304,6 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 		if (!assetVocabularies.isEmpty()) {
 			long classNameId = _classNameLocalService.getClassNameId(
 				DLFileEntryConstants.getClassName());
-
 			long defaultFileEntryTypeId =
 				DLFileEntryTypeLocalServiceUtil.getDefaultFileEntryTypeId(
 					getFolderId());
