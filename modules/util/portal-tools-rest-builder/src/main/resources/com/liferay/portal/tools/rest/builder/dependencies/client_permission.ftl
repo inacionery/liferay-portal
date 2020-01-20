@@ -37,7 +37,6 @@ public class Permission {
 		sb.append("{");
 
 		if (_actionIds != null) {
-
 			sb.append("\"actionIds\": [");
 
 			for (int i = 0; i < _actionIds.length; i++) {

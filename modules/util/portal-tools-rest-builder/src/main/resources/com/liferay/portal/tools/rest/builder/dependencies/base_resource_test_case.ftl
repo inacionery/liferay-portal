@@ -223,6 +223,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 						<#if !javaMethodParameter?is_first>
 							,
 						</#if>
+
 						<#if freeMarkerTool.isPathParameter(javaMethodParameter, javaMethodSignature.operation)>
 							<#if stringUtil.equals(javaMethodParameter.parameterName, schemaVarName + "Id")>
 								${schemaVarName}.getId()
@@ -1062,11 +1063,13 @@ public abstract class Base${schemaName}ResourceTestCase {
 							<#if freeMarkerTool.isPathParameter(javaMethodParameter, javaMethodSignature.operation) && stringUtil.equals(javaMethodParameter.parameterName, schemaVarName + "Id")>
 								${schemaVarName}.getId()
 							<#elseif stringUtil.equals(javaMethodParameter.parameterType, "[Lcom.liferay.portal.vulcan.permission.Permission;")>
-								new Permission[]{
-									new Permission() {{
-										setActionIds(new String[]{"VIEW"});
-										setRoleName("Guest");
-									}}
+								new Permission[] {
+									new Permission() {
+										{
+											setActionIds(new String[] {"VIEW"});
+											setRoleName("Guest");
+										}
+									}
 								}
 							<#else>
 								null
@@ -1093,10 +1096,12 @@ public abstract class Base${schemaName}ResourceTestCase {
 								</#if>
 						 	<#elseif stringUtil.startsWith(javaMethodParameter.parameterType, "[Lcom.liferay.portal.vulcan.permission.Permission;")>
 								new Permission[]{
-									new Permission() {{
-										setActionIds(new String[]{"-"});
-										setRoleName("-");
-									}}
+									new Permission() {
+										{
+											setActionIds(new String[] {"-"});
+											setRoleName("-");
+										}
+									}
 								}
 							<#else>
 								null
