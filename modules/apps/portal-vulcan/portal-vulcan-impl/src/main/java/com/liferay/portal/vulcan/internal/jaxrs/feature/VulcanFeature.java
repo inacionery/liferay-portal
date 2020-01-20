@@ -185,9 +185,6 @@ public class VulcanFeature implements Feature {
 	@Reference
 	private Portal _portal;
 
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
-	private ScopeChecker _scopeChecker;
-
 	@Reference
 	private ResourceActionLocalService _resourceActionLocalService;
 
@@ -196,6 +193,9 @@ public class VulcanFeature implements Feature {
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+	private ScopeChecker _scopeChecker;
 
 	@Reference
 	private SortParserProvider _sortParserProvider;
