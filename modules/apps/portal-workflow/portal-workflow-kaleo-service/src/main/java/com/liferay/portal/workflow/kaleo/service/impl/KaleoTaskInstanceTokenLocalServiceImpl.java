@@ -847,9 +847,9 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 				Collectors.toList()
 			);
 		}
-		catch (PortalException pe) {
+		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(pe, pe);
+				_log.debug(portalException, portalException);
 			}
 		}
 
@@ -870,9 +870,9 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 					searchAttributes, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 					null, serviceContext));
 		}
-		catch (PortalException pe) {
+		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(pe, pe);
+				_log.debug(portalException, portalException);
 			}
 		}
 
