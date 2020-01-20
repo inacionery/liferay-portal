@@ -14,11 +14,9 @@
 
 package com.liferay.portal.workflow.metrics.internal.messaging;
 
-import com.liferay.petra.string.CharPool;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
@@ -30,11 +28,19 @@ import com.liferay.portal.kernel.scheduler.SchedulerEntryImpl;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.Trigger;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
-import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
-import com.liferay.portal.workflow.kaleo.service.KaleoDefinitionLocalService;
+import com.liferay.portal.search.engine.adapter.search.SearchRequestExecutor;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.hits.SearchHit;
+import com.liferay.portal.search.hits.SearchHits;
+import com.liferay.portal.search.query.BooleanQuery;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.workflow.metrics.internal.search.index.ProcessWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.internal.sla.transformer.WorkflowMetricsSLADefinitionTransformer;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -79,24 +85,40 @@ public class WorkflowMetricsSLADefinitionTransformerMessageListener
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		ActionableDynamicQuery actionableDynamicQuery =
-			_kaleoDefinitionLocalService.getActionableDynamicQuery();
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
-		actionableDynamicQuery.setAddCriteriaMethod(
-			dynamicQuery -> {
-				Property activeProperty = PropertyFactoryUtil.forName("active");
+		searchSearchRequest.setIndexNames("workflow-metrics-processes");
 
-				dynamicQuery.add(activeProperty.eq(true));
-			});
-		actionableDynamicQuery.setPerformActionMethod(
-			(KaleoDefinition kaleoDefinition) ->
-				_workflowMetricsSLADefinitionTransformer.transform(
-					kaleoDefinition.getCompanyId(),
-					StringBundler.concat(
-						kaleoDefinition.getVersion(), CharPool.PERIOD, 0),
-					kaleoDefinition.getKaleoDefinitionId()));
+		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		actionableDynamicQuery.performActions();
+		searchSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(_createBooleanQuery()));
+
+		searchSearchRequest.setSize(10000);
+
+		Stream.of(
+			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)
+		).map(
+			SearchSearchResponse::getSearchHits
+		).map(
+			SearchHits::getSearchHits
+		).flatMap(
+			List::stream
+		).map(
+			SearchHit::getDocument
+		).forEach(
+			document -> {
+				try {
+					_workflowMetricsSLADefinitionTransformer.transform(
+						document.getLong("companyId"),
+						document.getString("version"),
+						document.getLong("processId"));
+				}
+				catch (PortalException portalException) {
+					_log.error(portalException, portalException);
+				}
+			}
+		);
 	}
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
@@ -104,11 +126,28 @@ public class WorkflowMetricsSLADefinitionTransformerMessageListener
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
+	private BooleanQuery _createBooleanQuery() {
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		return booleanQuery.addMustQueryClauses(
+			_queries.term("active", Boolean.TRUE),
+			_queries.term("deleted", Boolean.FALSE));
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		WorkflowMetricsSLADefinitionTransformerMessageListener.class);
+
 	@Reference
-	private KaleoDefinitionLocalService _kaleoDefinitionLocalService;
+	private ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
+
+	@Reference
+	private Queries _queries;
 
 	@Reference
 	private SchedulerEngineHelper _schedulerEngineHelper;
+
+	@Reference
+	private SearchRequestExecutor _searchRequestExecutor;
 
 	@Reference
 	private TriggerFactory _triggerFactory;
