@@ -516,6 +516,8 @@ class Sidebar extends Component {
 		if (
 			this._isCloseButton(target) ||
 			(open &&
+				!this._isControlProductMenuItem(target) &&
+				!this._isProductMenuSidebarItem(target) &&
 				!this._isSidebarElement(target) &&
 				!this._isTranslationItem(target))
 		) {
@@ -673,6 +675,10 @@ class Sidebar extends Component {
 		return closeButton.contains(node);
 	}
 
+	_isControlProductMenuItem(node) {
+		return !!dom.closest(node, '.sidenav-toggler');
+	}
+
 	_isEditMode() {
 		const {focusedField} = this.props;
 
@@ -681,6 +687,10 @@ class Sidebar extends Component {
 
 	_isModalElement(node) {
 		return dom.closest(node, '.modal');
+	}
+
+	_isProductMenuSidebarItem(node) {
+		return !!dom.closest(node, '.sidenav-menu');
 	}
 
 	_isOutsideModal(node) {
