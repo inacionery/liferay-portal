@@ -16,7 +16,12 @@ package com.liferay.portal.security.auth.verifier.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.security.access.control.AccessControlThreadLocal;
+import com.liferay.portal.kernel.security.auth.AccessControlContext;
+import com.liferay.portal.kernel.security.auth.AuthException;
+import com.liferay.portal.kernel.security.auth.verifier.AuthVerifier;
+import com.liferay.portal.kernel.security.auth.verifier.AuthVerifierResult;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -33,6 +38,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Supplier;
 
 import javax.servlet.Servlet;
@@ -183,6 +189,71 @@ public class AuthVerifierTest {
 			"auth-verifier-filter-tracker-remote-access-test");
 
 		_registerServlet(properties, RemoteAccessHttpServlet::new);
+
+		properties = new HashMapDictionary<>();
+
+		properties.put(
+			JaxrsWhiteboardConstants.JAX_RS_NAME,
+			"auth-verifier-filter-override-matched");
+		properties.put("auth.verifier.guest.allowed", true);
+		properties.put(
+			"auth-verifier-matched-test-auth-verifier-filter-helper", true);
+		properties.put(
+			"auth.verifier.auth.verifier.AuthVerifierTest$TestAuthVerifier." +
+				"urls.includes",
+			"*");
+
+		_registerServletContextHelper(
+			"auth-verifier-filter-override-matched-test", properties);
+
+		properties = new HashMapDictionary<>();
+
+		properties.put(
+			JaxrsWhiteboardConstants.JAX_RS_NAME,
+			"auth-verifier-filter-override-not-matched");
+		properties.put("auth.verifier.guest.allowed", true);
+		properties.put(
+			"auth-verifier-matched-test-auth-verifier-filter-helper", true);
+		properties.put(
+			"auth.verifier.auth.verifier.AuthVerifierTest$TestAuthVerifier." +
+				"urls.includes",
+			"/wrongPath");
+
+		_registerServletContextHelper(
+			"auth-verifier-filter-override-not-matched-test", properties);
+
+		properties = new HashMapDictionary<>();
+
+		properties.put(
+			JaxrsWhiteboardConstants.JAX_RS_NAME,
+			"auth-verifier-filter-override-missing");
+		properties.put("auth.verifier.guest.allowed", true);
+		properties.put(
+			"auth-verifier-matched-test-auth-verifier-filter-helper", true);
+
+		_registerServletContextHelper(
+			"auth-verifier-filter-override-missing-test", properties);
+
+		properties = new HashMapDictionary<>();
+
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_NAME,
+			"cxf-servlet");
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN, "/*");
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT,
+			"(auth-verifier-matched-test-auth-verifier-filter-helper=true)");
+
+		_registerServlet(properties, AuthVerifierMatchedHttpServlet::new);
+
+		properties = new HashMapDictionary<>();
+
+		properties.put(
+			"urls.includes",
+			"/o/*/authVerifierMatched,/attemptMatchRelativeToContextPath");
+
+		_registerAuthVerifier(new TestAuthVerifier(), properties);
 	}
 
 	@AfterClass
@@ -236,6 +307,69 @@ public class AuthVerifierTest {
 	}
 
 	@Test
+	public void testAuthVerifierDoesNotMatchRelativeToContextPath()
+		throws Exception {
+
+		URL url = new URL(
+			"http://localhost:8080/o" +
+				"/auth-verifier-filter-override-missing-test" +
+					"/attemptMatchRelativeToContextPath");
+
+		try (InputStream inputStream = url.openStream()) {
+			Assert.assertEquals("not-matched", StringUtil.read(inputStream));
+		}
+	}
+
+	@Test
+	public void testAuthVerifierFilterOverridesAuthVerifierURLsIncludes()
+		throws Exception {
+
+		URL url = new URL(
+			"http://localhost:8080/o" +
+				"/auth-verifier-filter-override-not-matched-test" +
+					"/authVerifierMatched");
+
+		try (InputStream inputStream = url.openStream()) {
+			Assert.assertEquals("not-matched", StringUtil.read(inputStream));
+		}
+
+		url = new URL(
+			"http://localhost:8080/o" +
+				"/auth-verifier-filter-override-matched-test" +
+					"/authVerifierNotMatched");
+
+		try (InputStream inputStream = url.openStream()) {
+			Assert.assertEquals("matched", StringUtil.read(inputStream));
+		}
+	}
+
+	@Test
+	public void testAuthVerifierMatchedWithoutAuthVerifierFilterProperties()
+		throws Exception {
+
+		URL url = new URL(
+			"http://localhost:8080/o" +
+				"/auth-verifier-filter-override-missing-test" +
+					"/authVerifierMatched");
+
+		try (InputStream inputStream = url.openStream()) {
+			Assert.assertEquals("matched", StringUtil.read(inputStream));
+		}
+	}
+
+	@Test
+	public void testAuthVerifierNotMatched() throws Exception {
+		URL url = new URL(
+			"http://localhost:8080/o" +
+				"/auth-verifier-filter-override-missing-test" +
+					"/authVerifierNotMatched");
+
+		try (InputStream inputStream = url.openStream()) {
+			Assert.assertEquals("not-matched", StringUtil.read(inputStream));
+		}
+	}
+
+	@Test
 	public void testRemoteAccess() throws Exception {
 		URL url = new URL(
 			"http://localhost:8080/o/auth-verifier-filter-tracker-remote-" +
@@ -273,6 +407,29 @@ public class AuthVerifierTest {
 			Assert.assertEquals(
 				"remote-user-set", StringUtil.read(inputStream));
 		}
+	}
+
+	public static class AuthVerifierMatchedHttpServlet extends HttpServlet {
+
+		@Override
+		protected void doGet(
+				HttpServletRequest httpServletRequest,
+				HttpServletResponse httpServletResponse)
+			throws IOException {
+
+			PrintWriter printWriter = httpServletResponse.getWriter();
+
+			boolean matched = GetterUtil.getBoolean(
+				httpServletRequest.getAttribute("MATCHED"));
+
+			if (matched) {
+				printWriter.write("matched");
+			}
+			else {
+				printWriter.write("not-matched");
+			}
+		}
+
 	}
 
 	public static class GuestAllowedHttpServlet extends HttpServlet {
@@ -326,6 +483,37 @@ public class AuthVerifierTest {
 			}
 		}
 
+	}
+
+	public static class TestAuthVerifier implements AuthVerifier {
+
+		@Override
+		public String getAuthType() {
+			return HttpServletRequest.FORM_AUTH;
+		}
+
+		@Override
+		public AuthVerifierResult verify(
+				AccessControlContext accessControlContext,
+				Properties properties)
+			throws AuthException {
+
+			HttpServletRequest httpServletRequest =
+				accessControlContext.getRequest();
+
+			httpServletRequest.setAttribute("MATCHED", Boolean.TRUE);
+
+			return null;
+		}
+
+	}
+
+	private static void _registerAuthVerifier(
+		AuthVerifier authVerifier, Dictionary<String, Object> properties) {
+
+		_serviceRegistrations.add(
+			_bundleContext.registerService(
+				AuthVerifier.class, authVerifier, properties));
 	}
 
 	private static void _registerServlet(
