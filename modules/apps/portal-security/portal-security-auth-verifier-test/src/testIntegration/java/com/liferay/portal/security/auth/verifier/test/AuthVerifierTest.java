@@ -409,6 +409,19 @@ public class AuthVerifierTest {
 		}
 	}
 
+	@Test
+	public void testServletContextRootResourceMatchedByWildcard()
+		throws Exception {
+
+		URL url = new URL(
+			"http://localhost:8080/o" +
+				"/auth-verifier-filter-override-matched-test");
+
+		try (InputStream inputStream = url.openStream()) {
+			Assert.assertEquals("matched", StringUtil.read(inputStream));
+		}
+	}
+
 	public static class AuthVerifierMatchedHttpServlet extends HttpServlet {
 
 		@Override
