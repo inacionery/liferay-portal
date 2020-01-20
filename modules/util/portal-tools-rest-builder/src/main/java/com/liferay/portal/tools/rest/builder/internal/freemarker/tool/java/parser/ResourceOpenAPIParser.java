@@ -283,9 +283,9 @@ public class ResourceOpenAPIParser {
 			return Collections.emptyList();
 		}
 
-		String operationId = operation.getOperationId();
-
 		List<JavaMethodParameter> javaMethodParameters = new ArrayList<>();
+
+		String operationId = operation.getOperationId();
 
 		if ((operationId != null) && operationId.endsWith("Permission") &&
 			requestBodyMediaTypes.isEmpty()) {
