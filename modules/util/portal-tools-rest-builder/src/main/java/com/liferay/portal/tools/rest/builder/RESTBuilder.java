@@ -885,15 +885,16 @@ public class RESTBuilder {
 
 		StringBuilder sb = new StringBuilder();
 
-		int x = s.lastIndexOf("\n", s.indexOf("application/json", index)) + 1;
+		int startIndex =
+			s.lastIndexOf("\n", s.indexOf("application/json", index)) + 1;
 
-		int endIndex = s.indexOf("\n", x);
+		int endIndex = s.indexOf("\n", startIndex);
 
 		if (endIndex < 0) {
 			endIndex = s.length();
 		}
 
-		String line = s.substring(x, endIndex);
+		String line = s.substring(startIndex, endIndex);
 
 		String leadingWhitespace = line.replaceAll("^(\\s+).+", "$1");
 
@@ -901,9 +902,9 @@ public class RESTBuilder {
 			sb.append(line);
 			sb.append("\n");
 
-			x = endIndex + 1;
+			startIndex = endIndex + 1;
 
-			line = s.substring(Math.min(x, endIndex), endIndex);
+			line = s.substring(Math.min(startIndex, endIndex), endIndex);
 		}
 
 		String oldSub = sb.toString();
