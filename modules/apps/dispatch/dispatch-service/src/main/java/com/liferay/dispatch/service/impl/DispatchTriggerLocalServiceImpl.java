@@ -271,13 +271,13 @@ public class DispatchTriggerLocalServiceImpl
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Scheduler entry created for dispatch trigger ID " +
+					"Scheduler entry created for dispatch trigger " +
 						dispatchTriggerId);
 			}
 		}
 		catch (SchedulerException se) {
 			_log.error(
-				"Unable to create scheduler entry for dispatch trigger ID " +
+				"Unable to create scheduler entry for dispatch trigger " +
 					dispatchTriggerId,
 				se);
 		}
@@ -291,7 +291,7 @@ public class DispatchTriggerLocalServiceImpl
 		}
 		catch (SchedulerException se) {
 			_log.error(
-				"Unable to delete scheduler entry for dispatch trigger ID " +
+				"Unable to delete scheduler entry for dispatch trigger " +
 					dispatchTriggerId,
 				se);
 		}
