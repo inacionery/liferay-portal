@@ -871,10 +871,8 @@ public class DDMFormAdminDisplayContext {
 			JSONObject jsonObject = jsonFactory.createJSONObject(
 				serializedFormBuilderContext);
 
-			_escapeFormNameFromSerializedFormBuilderContext(
-				jsonObject, themeDisplay);
-			_escapeFormDescriptionFromSerializedFormBuilderContext(
-				jsonObject, themeDisplay);
+			_escape(themeDisplay.getLanguageId(), "description", jsonObject);
+			_escape(themeDisplay.getLanguageId(), "name", jsonObject);
 
 			return jsonObject.toString();
 		}
@@ -1396,27 +1394,19 @@ public class DDMFormAdminDisplayContext {
 	protected final RenderRequest renderRequest;
 	protected final RenderResponse renderResponse;
 
-	private void _escapeFormDescriptionFromSerializedFormBuilderContext(
-		JSONObject serializedFormBuilderContext, ThemeDisplay themeDisplay) {
+	private void _escape(
+		String languageId, String propertyName,
+		JSONObject serializedFormBuilderContext) {
+
+		if (!serializedFormBuilderContext.has(propertyName)) {
+			return;
+		}
 
 		JSONObject jsonObject = serializedFormBuilderContext.getJSONObject(
-			"description");
-
-		String description = jsonObject.getString(themeDisplay.getLanguageId());
+			propertyName);
 
 		jsonObject.put(
-			themeDisplay.getLanguageId(), HtmlUtil.escape(description));
-	}
-
-	private void _escapeFormNameFromSerializedFormBuilderContext(
-		JSONObject serializedFormBuilderContext, ThemeDisplay themeDisplay) {
-
-		JSONObject jsonObject = serializedFormBuilderContext.getJSONObject(
-			"name");
-
-		String name = jsonObject.getString(themeDisplay.getLanguageId());
-
-		jsonObject.put(themeDisplay.getLanguageId(), HtmlUtil.escape(name));
+			languageId, HtmlUtil.escape(jsonObject.getString(languageId)));
 	}
 
 	private void _populateDDMDataProviderNavigationItem(
