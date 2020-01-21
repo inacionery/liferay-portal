@@ -121,8 +121,6 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			values.put("cssClass", "active");
 		}
 		else {
-			values.put("cssClass", StringPool.BLANK);
-
 			PortletURL portletURL = _portletURLFactory.create(
 				httpServletRequest,
 				AnalyticsReportsPortletKeys.ANALYTICS_REPORTS,
@@ -138,6 +136,8 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			}
 
 			values.put("analyticsReportsPanelURL", portletURL.toString());
+
+			values.put("cssClass", StringPool.BLANK);
 		}
 
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
