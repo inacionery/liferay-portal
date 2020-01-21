@@ -137,24 +137,26 @@
 			{/call}
 		{/if}
 
-		{call Text.render}
-			{param dataType: 'string' /}
-			{param events: [
-				'fieldEdited': $_updateValue
-			] /}
-			{param label kind="text"}
-				{msg desc=""}show-error-message{/msg}
-			{/param}
-			{param name: $name + '_errorMessage' /}
-			{param placeholder kind="text"}
-				{msg desc=""}show-error-message{/msg}
-			{/param}
-			{param readOnly: $readOnly /}
-			{param ref: 'errorMessage' /}
-			{param required: false /}
-			{param spritemap: $spritemap /}
-			{param value: $errorMessage /}
-			{param visible: $enableValidation /}
-		{/call}
+		{if $enableValidation}
+			{call Text.render}
+				{param dataType: 'string' /}
+				{param events: [
+					'fieldEdited': $_updateValue
+				] /}
+				{param label kind="text"}
+					{msg desc=""}show-error-message{/msg}
+				{/param}
+				{param name: $name + '_errorMessage' /}
+				{param placeholder kind="text"}
+					{msg desc=""}show-error-message{/msg}
+				{/param}
+				{param readOnly: $readOnly /}
+				{param ref: 'errorMessage' /}
+				{param required: false /}
+				{param spritemap: $spritemap /}
+				{param value: $errorMessage /}
+				{param visible: $enableValidation /}
+			{/call}
+		{/if}
 	</div>
 {/template}
