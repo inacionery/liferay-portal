@@ -98,8 +98,8 @@ public abstract class WorkflowMetricsSLADefinitionVersionFinderBaseImpl
 		try {
 			Class.forName(WorkflowMetricsPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

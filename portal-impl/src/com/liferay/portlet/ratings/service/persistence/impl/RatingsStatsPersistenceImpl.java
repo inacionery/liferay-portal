@@ -259,13 +259,13 @@ public class RatingsStatsPersistenceImpl
 						_finderPathWithPaginationFindByC_C, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationFindByC_C, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 		}
 
@@ -324,8 +324,8 @@ public class RatingsStatsPersistenceImpl
 			list = (List<RatingsStats>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -458,13 +458,13 @@ public class RatingsStatsPersistenceImpl
 					cacheResult(ratingsStats);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByC_C, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -539,10 +539,10 @@ public class RatingsStatsPersistenceImpl
 
 				FinderCacheUtil.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				FinderCacheUtil.removeResult(finderPath, finderArgs);
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -597,11 +597,11 @@ public class RatingsStatsPersistenceImpl
 				FinderCacheUtil.putResult(
 					_finderPathWithPaginationCountByC_C, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				FinderCacheUtil.removeResult(
 					_finderPathWithPaginationCountByC_C, finderArgs);
 
-				throw processException(e);
+				throw processException(exception);
 			}
 		}
 
@@ -648,8 +648,8 @@ public class RatingsStatsPersistenceImpl
 
 			count = (Long)q.uniqueResult();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -879,11 +879,11 @@ public class RatingsStatsPersistenceImpl
 
 			return remove(ratingsStats);
 		}
-		catch (NoSuchStatsException nsee) {
-			throw nsee;
+		catch (NoSuchStatsException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -906,8 +906,8 @@ public class RatingsStatsPersistenceImpl
 				session.delete(ratingsStats);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -982,8 +982,8 @@ public class RatingsStatsPersistenceImpl
 				ratingsStats = (RatingsStats)session.merge(ratingsStats);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -1220,12 +1220,12 @@ public class RatingsStatsPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1269,11 +1269,11 @@ public class RatingsStatsPersistenceImpl
 				FinderCacheUtil.putResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				FinderCacheUtil.removeResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);

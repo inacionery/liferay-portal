@@ -92,8 +92,8 @@ public abstract class CalendarResourceFinderBaseImpl
 		try {
 			Class.forName(CalendarPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

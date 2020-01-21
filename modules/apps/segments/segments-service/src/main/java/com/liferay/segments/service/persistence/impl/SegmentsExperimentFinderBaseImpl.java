@@ -90,8 +90,8 @@ public abstract class SegmentsExperimentFinderBaseImpl
 		try {
 			Class.forName(SegmentsPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

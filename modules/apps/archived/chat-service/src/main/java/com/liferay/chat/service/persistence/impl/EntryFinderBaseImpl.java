@@ -69,8 +69,8 @@ public abstract class EntryFinderBaseImpl extends BasePersistenceImpl<Entry> {
 		try {
 			Class.forName(ChatPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

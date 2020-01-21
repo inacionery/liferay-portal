@@ -90,8 +90,8 @@ public abstract class AssetCategoryPropertyFinderBaseImpl
 		try {
 			Class.forName(AssetPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

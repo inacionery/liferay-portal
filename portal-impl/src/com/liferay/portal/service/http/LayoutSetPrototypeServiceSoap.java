@@ -89,10 +89,10 @@ public class LayoutSetPrototypeServiceSoap {
 			return com.liferay.portal.kernel.model.LayoutSetPrototypeSoap.
 				toSoapModel(returnValue);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 
@@ -103,10 +103,10 @@ public class LayoutSetPrototypeServiceSoap {
 			LayoutSetPrototypeServiceUtil.deleteLayoutSetPrototype(
 				layoutSetPrototypeId);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 
@@ -122,10 +122,10 @@ public class LayoutSetPrototypeServiceSoap {
 			return com.liferay.portal.kernel.model.LayoutSetPrototypeSoap.
 				toSoapModel(returnValue);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 
@@ -141,10 +141,10 @@ public class LayoutSetPrototypeServiceSoap {
 			return com.liferay.portal.kernel.model.LayoutSetPrototypeSoap.
 				toSoapModel(returnValue);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 
@@ -163,10 +163,10 @@ public class LayoutSetPrototypeServiceSoap {
 			return com.liferay.portal.kernel.model.LayoutSetPrototypeSoap.
 				toSoapModels(returnValue);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 
@@ -194,10 +194,10 @@ public class LayoutSetPrototypeServiceSoap {
 			return com.liferay.portal.kernel.model.LayoutSetPrototypeSoap.
 				toSoapModel(returnValue);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 
@@ -213,10 +213,10 @@ public class LayoutSetPrototypeServiceSoap {
 			return com.liferay.portal.kernel.model.LayoutSetPrototypeSoap.
 				toSoapModel(returnValue);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 

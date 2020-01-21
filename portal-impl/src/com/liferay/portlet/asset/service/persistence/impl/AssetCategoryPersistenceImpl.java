@@ -265,12 +265,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -426,8 +426,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -632,12 +632,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -796,13 +796,13 @@ public class AssetCategoryPersistenceImpl
 					cacheResult(assetCategory);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByUUID_G, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -902,12 +902,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1109,12 +1109,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1289,8 +1289,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -1508,12 +1508,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1687,12 +1687,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1848,8 +1848,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2087,8 +2087,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2134,8 +2134,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2360,12 +2360,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2415,8 +2415,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2588,12 +2588,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2755,8 +2755,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2939,12 +2939,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3118,12 +3118,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3281,8 +3281,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -3464,12 +3464,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3654,12 +3654,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3832,8 +3832,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4087,8 +4087,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4137,8 +4137,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4375,12 +4375,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4435,8 +4435,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4620,12 +4620,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4798,8 +4798,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5052,8 +5052,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5102,8 +5102,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5410,8 +5410,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5606,13 +5606,13 @@ public class AssetCategoryPersistenceImpl
 						_finderPathWithPaginationFindByG_V, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationFindByG_V, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5695,12 +5695,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5785,13 +5785,13 @@ public class AssetCategoryPersistenceImpl
 						_finderPathWithPaginationCountByG_V, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationCountByG_V, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5846,8 +5846,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5918,8 +5918,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -6119,12 +6119,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6299,8 +6299,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -6518,12 +6518,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6717,12 +6717,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6896,8 +6896,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7091,12 +7091,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -7295,12 +7295,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -7475,8 +7475,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7694,12 +7694,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -7907,12 +7907,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8098,8 +8098,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -8367,8 +8367,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -8420,8 +8420,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -8672,12 +8672,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8739,8 +8739,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -8944,12 +8944,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -9136,8 +9136,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -9427,8 +9427,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -9480,8 +9480,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -9756,12 +9756,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -9836,8 +9836,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10042,12 +10042,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -10233,8 +10233,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10524,8 +10524,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10577,8 +10577,8 @@ public class AssetCategoryPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10922,8 +10922,8 @@ public class AssetCategoryPersistenceImpl
 			return (List<AssetCategory>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11146,13 +11146,13 @@ public class AssetCategoryPersistenceImpl
 						list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationFindByG_LikeN_V, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -11256,12 +11256,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -11367,13 +11367,13 @@ public class AssetCategoryPersistenceImpl
 						count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationCountByG_LikeN_V, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -11448,8 +11448,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11540,8 +11540,8 @@ public class AssetCategoryPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11722,13 +11722,13 @@ public class AssetCategoryPersistenceImpl
 					cacheResult(assetCategory);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByP_N_V, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -11838,12 +11838,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12031,13 +12031,13 @@ public class AssetCategoryPersistenceImpl
 					cacheResult(assetCategory);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByC_ERC, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12139,12 +12139,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12482,11 +12482,11 @@ public class AssetCategoryPersistenceImpl
 
 			return remove(assetCategory);
 		}
-		catch (NoSuchCategoryException nsee) {
-			throw nsee;
+		catch (NoSuchCategoryException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -12516,8 +12516,8 @@ public class AssetCategoryPersistenceImpl
 				session.delete(assetCategory);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -12608,8 +12608,8 @@ public class AssetCategoryPersistenceImpl
 				assetCategory = (AssetCategory)session.merge(assetCategory);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13047,8 +13047,8 @@ public class AssetCategoryPersistenceImpl
 				cacheResult(assetCategory);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13129,8 +13129,8 @@ public class AssetCategoryPersistenceImpl
 				cacheResult(assetCategory);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13266,12 +13266,12 @@ public class AssetCategoryPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -13324,13 +13324,13 @@ public class AssetCategoryPersistenceImpl
 						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathCountAll, FINDER_ARGS_EMPTY);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -13660,8 +13660,8 @@ public class AssetCategoryPersistenceImpl
 
 			setAssetEntries(pk, assetEntryPKs);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 	}
 

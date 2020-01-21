@@ -91,8 +91,8 @@ public abstract class DDLRecordSetFinderBaseImpl
 		try {
 			Class.forName(DDLPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

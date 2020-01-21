@@ -247,11 +247,11 @@ public class NestedSetsTreeEntryPersistenceImpl
 
 			return remove(nestedSetsTreeEntry);
 		}
-		catch (NoSuchNestedSetsTreeEntryException nsee) {
-			throw nsee;
+		catch (NoSuchNestedSetsTreeEntryException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -289,8 +289,8 @@ public class NestedSetsTreeEntryPersistenceImpl
 				session.delete(nestedSetsTreeEntry);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -375,8 +375,8 @@ public class NestedSetsTreeEntryPersistenceImpl
 					nestedSetsTreeEntry);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -575,12 +575,12 @@ public class NestedSetsTreeEntryPersistenceImpl
 					finderCache.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache) {
 					finderCache.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -624,11 +624,11 @@ public class NestedSetsTreeEntryPersistenceImpl
 				finderCache.putResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -677,11 +677,11 @@ public class NestedSetsTreeEntryPersistenceImpl
 				finderCache.putResult(
 					_finderPathWithPaginationCountAncestors, finderArgs, count);
 			}
-			catch (SystemException se) {
+			catch (SystemException systemException) {
 				finderCache.removeResult(
 					_finderPathWithPaginationCountAncestors, finderArgs);
 
-				throw se;
+				throw systemException;
 			}
 		}
 
@@ -708,11 +708,11 @@ public class NestedSetsTreeEntryPersistenceImpl
 					_finderPathWithPaginationCountDescendants, finderArgs,
 					count);
 			}
-			catch (SystemException se) {
+			catch (SystemException systemException) {
 				finderCache.removeResult(
 					_finderPathWithPaginationCountDescendants, finderArgs);
 
-				throw se;
+				throw systemException;
 			}
 		}
 
@@ -758,11 +758,11 @@ public class NestedSetsTreeEntryPersistenceImpl
 				finderCache.putResult(
 					_finderPathWithPaginationGetAncestors, finderArgs, list);
 			}
-			catch (SystemException se) {
+			catch (SystemException systemException) {
 				finderCache.removeResult(
 					_finderPathWithPaginationGetAncestors, finderArgs);
 
-				throw se;
+				throw systemException;
 			}
 		}
 
@@ -809,11 +809,11 @@ public class NestedSetsTreeEntryPersistenceImpl
 				finderCache.putResult(
 					_finderPathWithPaginationGetDescendants, finderArgs, list);
 			}
-			catch (SystemException se) {
+			catch (SystemException systemException) {
 				finderCache.removeResult(
 					_finderPathWithPaginationGetDescendants, finderArgs);
 
-				throw se;
+				throw systemException;
 			}
 		}
 
@@ -858,8 +858,8 @@ public class NestedSetsTreeEntryPersistenceImpl
 
 				rebuildTree(session, selectQuery, updateQuery, groupId, 0, 0);
 			}
-			catch (Exception e) {
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -892,8 +892,8 @@ public class NestedSetsTreeEntryPersistenceImpl
 
 			return (Long)q.uniqueResult();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);

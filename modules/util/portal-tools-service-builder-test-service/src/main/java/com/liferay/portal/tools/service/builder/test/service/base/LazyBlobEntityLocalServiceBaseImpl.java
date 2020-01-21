@@ -440,8 +440,8 @@ public abstract class LazyBlobEntityLocalServiceBaseImpl
 			return (LazyBlobEntityBlob1BlobModel)session.get(
 				LazyBlobEntityBlob1BlobModel.class, primaryKey);
 		}
-		catch (Exception e) {
-			throw lazyBlobEntityPersistence.processException(e);
+		catch (Exception exception) {
+			throw lazyBlobEntityPersistence.processException(exception);
 		}
 		finally {
 			lazyBlobEntityPersistence.closeSession(session);
@@ -470,8 +470,8 @@ public abstract class LazyBlobEntityLocalServiceBaseImpl
 
 			return inputStream;
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 
@@ -487,8 +487,8 @@ public abstract class LazyBlobEntityLocalServiceBaseImpl
 			return (LazyBlobEntityBlob2BlobModel)session.get(
 				LazyBlobEntityBlob2BlobModel.class, primaryKey);
 		}
-		catch (Exception e) {
-			throw lazyBlobEntityPersistence.processException(e);
+		catch (Exception exception) {
+			throw lazyBlobEntityPersistence.processException(exception);
 		}
 		finally {
 			lazyBlobEntityPersistence.closeSession(session);
@@ -517,8 +517,8 @@ public abstract class LazyBlobEntityLocalServiceBaseImpl
 
 			return inputStream;
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 
@@ -580,8 +580,8 @@ public abstract class LazyBlobEntityLocalServiceBaseImpl
 
 			sqlUpdate.update();
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 

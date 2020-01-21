@@ -258,12 +258,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -417,8 +417,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -622,12 +622,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -800,13 +800,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByUUID_G_P, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -915,12 +915,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1124,12 +1124,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1300,8 +1300,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -1517,12 +1517,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1695,12 +1695,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1853,8 +1853,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2086,8 +2086,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2132,8 +2132,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2355,12 +2355,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2410,8 +2410,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2580,12 +2580,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2738,8 +2738,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2920,12 +2920,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3095,12 +3095,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3254,8 +3254,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -3436,12 +3436,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3585,13 +3585,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByIconImageId, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3672,12 +3672,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3867,12 +3867,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4034,8 +4034,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4245,12 +4245,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4452,12 +4452,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4622,8 +4622,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4838,12 +4838,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5030,12 +5030,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5208,8 +5208,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5455,8 +5455,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5505,8 +5505,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5739,12 +5739,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5799,8 +5799,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -6000,12 +6000,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6175,8 +6175,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -6445,8 +6445,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -6495,8 +6495,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -6753,12 +6753,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6826,8 +6826,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7022,12 +7022,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -7200,8 +7200,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7448,8 +7448,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7498,8 +7498,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7732,12 +7732,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -7792,8 +7792,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -7991,12 +7991,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8172,8 +8172,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -8390,12 +8390,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8561,13 +8561,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByP_I, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8654,12 +8654,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8822,13 +8822,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByC_C, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -8915,12 +8915,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -9081,13 +9081,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByG_P_L, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -9183,12 +9183,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -9396,12 +9396,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -9586,8 +9586,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -9851,8 +9851,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -9903,8 +9903,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10222,8 +10222,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10412,13 +10412,13 @@ public class LayoutPersistenceImpl
 						_finderPathWithPaginationFindByG_P_P, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationFindByG_P_P, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 		}
 
@@ -10482,8 +10482,8 @@ public class LayoutPersistenceImpl
 
 			list = (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10575,12 +10575,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -10652,13 +10652,13 @@ public class LayoutPersistenceImpl
 						count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationCountByG_P_P, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 		}
 
@@ -10713,8 +10713,8 @@ public class LayoutPersistenceImpl
 
 			count = (Long)q.uniqueResult();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10775,8 +10775,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -10856,8 +10856,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11082,12 +11082,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -11273,8 +11273,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11560,8 +11560,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11613,8 +11613,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -11884,12 +11884,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -11964,8 +11964,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -12154,13 +12154,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByG_P_F, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12269,12 +12269,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12482,13 +12482,13 @@ public class LayoutPersistenceImpl
 					cacheResult(layout);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathFetchByG_P_SPLU, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12604,12 +12604,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -12833,12 +12833,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -13036,8 +13036,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13314,8 +13314,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13367,8 +13367,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13701,8 +13701,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -13900,13 +13900,13 @@ public class LayoutPersistenceImpl
 						list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationFindByG_P_P_H, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 		}
 
@@ -13977,8 +13977,8 @@ public class LayoutPersistenceImpl
 
 			list = (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -14080,12 +14080,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -14162,13 +14162,13 @@ public class LayoutPersistenceImpl
 						count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathWithPaginationCountByG_P_P_H, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 		}
 
@@ -14230,8 +14230,8 @@ public class LayoutPersistenceImpl
 
 			count = (Long)q.uniqueResult();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -14299,8 +14299,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -14389,8 +14389,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -14612,12 +14612,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -14817,8 +14817,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -15094,8 +15094,8 @@ public class LayoutPersistenceImpl
 
 			return (List<Layout>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -15147,8 +15147,8 @@ public class LayoutPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -15410,12 +15410,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -15484,8 +15484,8 @@ public class LayoutPersistenceImpl
 
 			return count.intValue();
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -15971,11 +15971,11 @@ public class LayoutPersistenceImpl
 
 			return remove(layout);
 		}
-		catch (NoSuchLayoutException nsee) {
-			throw nsee;
+		catch (NoSuchLayoutException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -16002,8 +16002,8 @@ public class LayoutPersistenceImpl
 				session.delete(layout);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -16090,8 +16090,8 @@ public class LayoutPersistenceImpl
 				layout = (Layout)session.merge(layout);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -16616,8 +16616,8 @@ public class LayoutPersistenceImpl
 				cacheResult(layout);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -16697,8 +16697,8 @@ public class LayoutPersistenceImpl
 				cacheResult(layout);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -16833,12 +16833,12 @@ public class LayoutPersistenceImpl
 					FinderCacheUtil.putResult(finderPath, finderArgs, list);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (useFinderCache && productionMode) {
 					FinderCacheUtil.removeResult(finderPath, finderArgs);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -16891,13 +16891,13 @@ public class LayoutPersistenceImpl
 						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (productionMode) {
 					FinderCacheUtil.removeResult(
 						_finderPathCountAll, FINDER_ARGS_EMPTY);
 				}
 
-				throw processException(e);
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);

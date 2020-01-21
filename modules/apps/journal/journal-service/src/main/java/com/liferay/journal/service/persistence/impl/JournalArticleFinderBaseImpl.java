@@ -91,8 +91,8 @@ public abstract class JournalArticleFinderBaseImpl
 		try {
 			Class.forName(JournalPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

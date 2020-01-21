@@ -91,8 +91,8 @@ public abstract class OAuth2ScopeGrantFinderBaseImpl
 		try {
 			Class.forName(OAuthTwoPersistenceConstants.class.getName());
 		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
+		catch (ClassNotFoundException classNotFoundException) {
+			throw new ExceptionInInitializerError(classNotFoundException);
 		}
 	}
 

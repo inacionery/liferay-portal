@@ -347,8 +347,8 @@ public abstract class CTSContentLocalServiceBaseImpl
 			return (CTSContentDataBlobModel)session.get(
 				CTSContentDataBlobModel.class, primaryKey);
 		}
-		catch (Exception e) {
-			throw ctsContentPersistence.processException(e);
+		catch (Exception exception) {
+			throw ctsContentPersistence.processException(exception);
 		}
 		finally {
 			ctsContentPersistence.closeSession(session);
@@ -377,8 +377,8 @@ public abstract class CTSContentLocalServiceBaseImpl
 
 			return inputStream;
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 
@@ -460,8 +460,8 @@ public abstract class CTSContentLocalServiceBaseImpl
 
 			sqlUpdate.update();
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 
