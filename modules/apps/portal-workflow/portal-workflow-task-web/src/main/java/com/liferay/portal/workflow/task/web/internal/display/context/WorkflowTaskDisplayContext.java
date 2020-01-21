@@ -79,8 +79,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
@@ -175,6 +173,14 @@ public class WorkflowTaskDisplayContext {
 		WorkflowHandler<?> workflowHandler = getWorkflowHandler(workflowTask);
 
 		return workflowHandler.getType(getTaskContentLocale());
+	}
+
+	public List<User> getAssignableUsers(WorkflowTask workflowTask)
+		throws PortalException {
+
+		return WorkflowTaskManagerUtil.getAssignableUsers(
+			_workflowTaskRequestHelper.getCompanyId(),
+			workflowTask.getWorkflowTaskId());
 	}
 
 	public String getAssignedTheTaskMessageKey(WorkflowLog workflowLog)
@@ -331,24 +337,6 @@ public class WorkflowTaskDisplayContext {
 		}
 
 		return _orderByType;
-	}
-
-	public List<User> getPooledUsers(WorkflowTask workflowTask)
-		throws PortalException {
-
-		return Stream.of(
-			WorkflowTaskManagerUtil.getPooledActors(
-				_workflowTaskRequestHelper.getCompanyId(),
-				workflowTask.getWorkflowTaskId())
-		).flatMap(
-			List::stream
-		).filter(
-			pooledActor ->
-				pooledActor.getUserId() !=
-					_workflowTaskRequestHelper.getUserId()
-		).collect(
-			Collectors.toList()
-		);
 	}
 
 	public String getPortletResource() {
@@ -676,6 +664,14 @@ public class WorkflowTaskDisplayContext {
 			_workflowTaskRequestHelper.getRequest(), "nobody");
 	}
 
+	public boolean hasAssignableUsers(WorkflowTask workflowTask)
+		throws PortalException {
+
+		return WorkflowTaskManagerUtil.hasAssignableUsers(
+			_workflowTaskRequestHelper.getCompanyId(),
+			workflowTask.getWorkflowTaskId());
+	}
+
 	public boolean hasEditPortletURL(WorkflowTask workflowTask)
 		throws PortalException {
 
@@ -686,18 +682,6 @@ public class WorkflowTaskDisplayContext {
 		}
 
 		return false;
-	}
-
-	public boolean hasOtherAssignees(WorkflowTask workflowTask)
-		throws PortalException {
-
-		if (workflowTask.isCompleted()) {
-			return false;
-		}
-
-		return WorkflowTaskManagerUtil.hasOtherAssignees(
-			workflowTask.getWorkflowTaskId(),
-			_workflowTaskRequestHelper.getUserId());
 	}
 
 	public boolean hasViewDiffsPortletURL(WorkflowTask workflowTask)
