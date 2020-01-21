@@ -290,15 +290,17 @@ public class OrganizationResourceImpl
 			return 0;
 		}
 
-		com.liferay.portal.kernel.model.Organization serviceBuilderOrganization =
-			_organizationLocalService.fetchOrganizationByReferenceCode(
-				CompanyThreadLocal.getCompanyId(), organizationId);
+		com.liferay.portal.kernel.model.Organization
+			serviceBuilderOrganization =
+				_organizationLocalService.fetchOrganizationByReferenceCode(
+					CompanyThreadLocal.getCompanyId(), organizationId);
 
 		if (serviceBuilderOrganization == null) {
 			return GetterUtil.getLong(organizationId);
 		}
 
-		return GetterUtil.getLong(serviceBuilderOrganization.getOrganizationId());
+		return GetterUtil.getLong(
+			serviceBuilderOrganization.getOrganizationId());
 	}
 
 	private Page<Organization> _getOrganizationsPage(
