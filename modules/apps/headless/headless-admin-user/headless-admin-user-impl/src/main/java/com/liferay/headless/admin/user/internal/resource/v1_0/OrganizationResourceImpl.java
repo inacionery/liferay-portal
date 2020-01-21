@@ -507,11 +507,11 @@ public class OrganizationResourceImpl
 		return 0;
 	}
 
-	private Organization _toOrganization(Object organizationId)
+	private Organization _toOrganization(String organizationId)
 		throws Exception {
 
 		return _organizationResourceDTOConverter.toDTO(
-			_getDTOConverterContext(String.valueOf(organizationId)));
+			_getDTOConverterContext(organizationId));
 	}
 
 	private OrgLabor _toOrgLabor(Service service) {
