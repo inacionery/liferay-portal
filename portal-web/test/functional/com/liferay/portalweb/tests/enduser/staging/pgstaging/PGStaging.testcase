@@ -37,10 +37,11 @@ definition {
 
 		Staging.remoteStagingSetUp(siteName = "Site Name");
 
-		JSONLayout.addWidgetToPublicLayout(
-			groupName = "Site Name",
-			layoutName = "Staging Test Page",
-			widgetName = "Documents and Media");
+		Navigator.gotoSitePage(
+			pageName = "Staging Test Page",
+			siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Documents and Media");
 
 		Navigator.gotoSitePage(
 			pageName = "Staging Test Page",
