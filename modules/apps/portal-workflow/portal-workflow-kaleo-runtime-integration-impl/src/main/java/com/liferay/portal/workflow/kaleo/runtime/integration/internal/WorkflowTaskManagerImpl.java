@@ -271,19 +271,19 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				return Collections.emptyList();
 			}
 
-
-			Set<User> users = new TreeSet<>(new UserFirstNameComparator(true));
+			Set<User> assignableUsers = new TreeSet<>(
+				new UserFirstNameComparator(true));
 
 			for (KaleoTaskAssignment calculatedKaleoTaskAssignment :
 					_getCalculatedKaleoTaskAssignments(
 						kaleoTaskInstanceToken)) {
 
-				_populateUsers(
+				_populateAssignableUsers(
 					calculatedKaleoTaskAssignment, kaleoTaskInstanceToken,
-					users);
+					assignableUsers, assignedUserId);
 			}
 
-			return ListUtil.fromCollection(users);
+			return ListUtil.fromCollection(assignableUsers);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -672,7 +672,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				for (KaleoTaskAssignment calculatedKaleoTaskAssignment :
 						calculatedKaleoTaskAssignments) {
 
-					if (_hasOtherPooledActors(
+					if (_hasAssignableUsers(
 							calculatedKaleoTaskAssignment,
 							kaleoTaskInstanceToken, userId)) {
 
@@ -1008,16 +1008,16 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		return new String[] {taskName};
 	}
 
-	private boolean _hasOtherPooledActors(
+	private boolean _hasAssignableUsers(
 			KaleoTaskAssignment kaleoTaskAssignment,
-			KaleoTaskInstanceToken kaleoTaskInstanceToken, long userId)
+			KaleoTaskInstanceToken kaleoTaskInstanceToken, long assignedUserId)
 		throws PortalException {
 
 		String assigneeClassName = kaleoTaskAssignment.getAssigneeClassName();
 		long assigneeClassPK = kaleoTaskAssignment.getAssigneeClassPK();
 
 		if (assigneeClassName.equals(User.class.getName())) {
-			if (userId == assigneeClassPK) {
+			if (assignedUserId == assigneeClassPK) {
 				return false;
 			}
 
@@ -1041,7 +1041,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 					WorkflowConstants.STATUS_APPROVED, null);
 
 				for (User user : users) {
-					if (user.getUserId() != userId) {
+					if (user.getUserId() != assignedUserId) {
 						return true;
 					}
 				}
@@ -1054,9 +1054,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			for (UserGroupRole userGroupRole : userGroupRoles) {
 				User user = userGroupRole.getUser();
 
-				if ((user != null) && user.isActive() &&
-					(user.getUserId() != userId)) {
-
+				if (user.isActive() && (user.getUserId() != assignedUserId)) {
 					return true;
 				}
 			}
@@ -1071,7 +1069,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 					userGroupGroupRole.getUserGroupId());
 
 				for (User user : userGroupUsers) {
-					if (user.isActive() && (user.getUserId() != userId)) {
+					if (user.isActive() &&
+						(user.getUserId() != assignedUserId)) {
+
 						return true;
 					}
 				}
@@ -1084,7 +1084,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 					null);
 
 			for (User user : inheritedRoleUsers) {
-				if (user.isActive() && (user.getUserId() != userId)) {
+				if (user.isActive() && (user.getUserId() != assignedUserId)) {
 					return true;
 				}
 			}
@@ -1093,19 +1093,24 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		return false;
 	}
 
-	private void _populateUsers(
+	private void _populateAssignableUsers(
 			KaleoTaskAssignment kaleoTaskAssignment,
-			KaleoTaskInstanceToken kaleoTaskInstanceToken, Set<User> users)
+			KaleoTaskInstanceToken kaleoTaskInstanceToken,
+			Set<User> assignableUsers, long assignedUserId)
 		throws PortalException {
 
 		String assigneeClassName = kaleoTaskAssignment.getAssigneeClassName();
 		long assigneeClassPK = kaleoTaskAssignment.getAssigneeClassPK();
 
 		if (assigneeClassName.equals(User.class.getName())) {
+			if (assignedUserId == assigneeClassPK) {
+				return;
+			}
+
 			User user = _userLocalService.fetchUser(assigneeClassPK);
 
 			if ((user != null) && user.isActive()) {
-				users.add(user);
+				assignableUsers.add(user);
 			}
 
 			return;
@@ -1117,10 +1122,10 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			(role.getType() == RoleConstants.TYPE_ORGANIZATION)) {
 
 			if (Objects.equals(role.getName(), RoleConstants.SITE_MEMBER)) {
-				users.addAll(
 					_userLocalService.getGroupUsers(
 						kaleoTaskInstanceToken.getGroupId(),
 						WorkflowConstants.STATUS_APPROVED, null));
+				assignableUsers.addAll(
 
 				return;
 			}
