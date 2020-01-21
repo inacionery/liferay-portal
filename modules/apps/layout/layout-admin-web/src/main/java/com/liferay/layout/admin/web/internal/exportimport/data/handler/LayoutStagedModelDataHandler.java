@@ -1425,7 +1425,7 @@ public class LayoutStagedModelDataHandler
 			Layout importedLayout)
 		throws Exception {
 
-		if (!layout.isTypeContent() && !layout.isTypeAssetDisplay()) {
+		if (!layout.isTypeAssetDisplay() && !layout.isTypeContent()) {
 			return;
 		}
 
@@ -2103,7 +2103,7 @@ public class LayoutStagedModelDataHandler
 			PortletDataContext portletDataContext, Layout layout)
 		throws PortletDataException {
 
-		if (!layout.isTypeContent() && !layout.isTypeAssetDisplay()) {
+		if (!layout.isTypeAssetDisplay() && !layout.isTypeContent()) {
 			return;
 		}
 

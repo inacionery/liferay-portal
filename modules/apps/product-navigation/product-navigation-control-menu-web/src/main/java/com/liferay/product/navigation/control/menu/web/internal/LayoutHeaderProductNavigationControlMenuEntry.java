@@ -66,7 +66,7 @@ public class LayoutHeaderProductNavigationControlMenuEntry
 
 		if (!(themeDisplay.isShowLayoutTemplatesIcon() ||
 			  themeDisplay.isShowPageSettingsIcon() ||
-			  ((layout.isTypeContent() || layout.isTypeAssetDisplay()) &&
+			  ((layout.isTypeAssetDisplay() || layout.isTypeContent()) &&
 			   LayoutPermissionUtil.contains(
 				   themeDisplay.getPermissionChecker(),
 				   themeDisplay.getLayout(),

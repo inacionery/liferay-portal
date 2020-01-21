@@ -269,8 +269,8 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			return;
 		}
 
-		if (!(sourceLayout.isTypeContent() ||
-			  sourceLayout.isTypeAssetDisplay())) {
+		if (!(sourceLayout.isTypeAssetDisplay() ||
+			  sourceLayout.isTypeContent())) {
 
 			return;
 		}

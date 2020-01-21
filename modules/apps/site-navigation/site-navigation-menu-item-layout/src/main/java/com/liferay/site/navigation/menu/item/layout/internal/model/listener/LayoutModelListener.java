@@ -217,7 +217,7 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 			typeSettingsProperties.getProperty("visible"), true);
 
 		if (layout.isHidden() || !visible ||
-			(layout.isTypeContent() && !layout.isSystem())) {
+			(!layout.isSystem() && layout.isTypeContent())) {
 
 			return false;
 		}
