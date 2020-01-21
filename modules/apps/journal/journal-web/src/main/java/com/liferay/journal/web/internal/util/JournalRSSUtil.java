@@ -628,8 +628,8 @@ public class JournalRSSUtil {
 					url = processURL(feed, url, themeDisplay, syndEntry);
 
 					content = StringBundler.concat(
-						content, "<br /><br /><a href='",
-						themeDisplay.getURLPortal(), url, "' />");
+						content, "<br /><br /><a href=\"",
+						themeDisplay.getURLPortal(), url, "\" />");
 				}
 			}
 			else if (elType.equals("image") || elType.equals("image_gallery")) {
@@ -638,8 +638,8 @@ public class JournalRSSUtil {
 				url = processURL(feed, url, themeDisplay, syndEntry);
 
 				content = StringBundler.concat(
-					content, "<br /><br /><img alt='' src='",
-					themeDisplay.getURLPortal(), url, "' />");
+					content, "<br /><br /><img alt=\"\" src=\"\"",
+					themeDisplay.getURLPortal(), url, "\"\" />");
 			}
 			else if (elType.equals("text_box")) {
 				syndContent.setType("text");
