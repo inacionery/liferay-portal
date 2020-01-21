@@ -60,7 +60,7 @@ public class AnalyticsUsersManager {
 							analyticsAdministratorRole.getRoleId(),
 							WorkflowConstants.STATUS_APPROVED);
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					if (_log.isDebugEnabled()) {
 						_log.debug(
 							"Unable to get analytics administrators count");
@@ -121,7 +121,7 @@ public class AnalyticsUsersManager {
 				return _userLocalService.getOrganizationUsersCount(
 					organizationId, WorkflowConstants.STATUS_APPROVED);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (_log.isDebugEnabled()) {
 					_log.debug("Unable to get organization users count");
 				}
@@ -151,7 +151,7 @@ public class AnalyticsUsersManager {
 				return _userLocalService.getUserGroupUsersCount(
 					userGroupId, WorkflowConstants.STATUS_APPROVED);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				if (_log.isDebugEnabled()) {
 					_log.debug("Unable to get user group users count");
 				}

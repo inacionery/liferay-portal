@@ -149,8 +149,8 @@ public class DispatchTriggerLocalServiceImpl
 				_getJobName(dispatchTriggerId),
 				_getGroupName(dispatchTriggerId), StorageType.PERSISTED);
 		}
-		catch (SchedulerException se) {
-			_log.error(se, se);
+		catch (SchedulerException schedulerException) {
+			_log.error(schedulerException, schedulerException);
 		}
 
 		return null;
@@ -163,8 +163,8 @@ public class DispatchTriggerLocalServiceImpl
 				_getJobName(dispatchTriggerId),
 				_getGroupName(dispatchTriggerId), StorageType.PERSISTED);
 		}
-		catch (SchedulerException se) {
-			_log.error(se, se);
+		catch (SchedulerException schedulerException) {
+			_log.error(schedulerException, schedulerException);
 		}
 
 		return null;
@@ -275,11 +275,11 @@ public class DispatchTriggerLocalServiceImpl
 						dispatchTriggerId);
 			}
 		}
-		catch (SchedulerException se) {
+		catch (SchedulerException schedulerException) {
 			_log.error(
 				"Unable to create scheduler entry for dispatch trigger " +
 					dispatchTriggerId,
-				se);
+				schedulerException);
 		}
 	}
 
@@ -289,11 +289,11 @@ public class DispatchTriggerLocalServiceImpl
 				_getJobName(dispatchTriggerId),
 				_getGroupName(dispatchTriggerId), StorageType.PERSISTED);
 		}
-		catch (SchedulerException se) {
+		catch (SchedulerException schedulerException) {
 			_log.error(
 				"Unable to delete scheduler entry for dispatch trigger " +
 					dispatchTriggerId,
-				se);
+				schedulerException);
 		}
 	}
 

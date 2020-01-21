@@ -267,8 +267,8 @@ public class AssetCategoriesSearchFacetDisplayBuilder implements Serializable {
 			return new AssetCategoriesSearchFacetDisplayContext(
 				PortalUtil.getHttpServletRequest(_renderRequest));
 		}
-		catch (ConfigurationException ce) {
-			throw new RuntimeException(ce);
+		catch (ConfigurationException configurationException) {
+			throw new RuntimeException(configurationException);
 		}
 	}
 
