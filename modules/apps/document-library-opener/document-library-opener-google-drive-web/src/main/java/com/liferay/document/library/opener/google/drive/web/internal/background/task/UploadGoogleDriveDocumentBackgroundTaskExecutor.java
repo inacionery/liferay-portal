@@ -153,18 +153,16 @@ public class UploadGoogleDriveDocumentBackgroundTaskExecutor
 			long companyId, long fileEntryId, long userId, boolean add)
 		throws Exception {
 
+		com.google.api.services.drive.model.File file =
+			new com.google.api.services.drive.model.File();
+
 		FileEntry fileEntry = _dlAppLocalService.getFileEntry(fileEntryId);
 
 		FileVersion fileVersion = fileEntry.getLatestFileVersion();
 
-		com.google.api.services.drive.model.File file =
-			new com.google.api.services.drive.model.File();
-
-		String googleDocsMimeType =
+		file.setMimeType(
 			DLOpenerGoogleDriveMimeTypes.getGoogleDocsMimeType(
-				fileVersion.getMimeType());
-
-		file.setMimeType(googleDocsMimeType);
+				fileVersion.getMimeType()));
 
 		file.setName(fileVersion.getTitle());
 
