@@ -552,6 +552,8 @@ definition {
 			columnNumberTo = "1",
 			portletName = "Message Boards");
 
+		Close.closeAndSelectWindow(locator1 = "Site Templates - Control Panel - ${siteName}");
+
 		ProductMenu.gotoPortlet(
 			category = "Sites",
 			panel = "Control Panel",
