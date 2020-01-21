@@ -7,3 +7,8 @@
 # Bundle Version 6.0.0
 #
 0dcfce2e948a83ccdda0a9cc3d037e7dad18f366^..aaec3c7af7ad1be33e58e7ec51075ff76c45ab06=COMMERCE-1067
+
+#
+# Bundle Version 6.0.1
+#
+aaec3c7af7ad1be33e58e7ec51075ff76c45ab06^..80c6f08abda8272af3f98f399c049f3fdf5600ee=COMMERCE-1067 LPS-84119
