@@ -230,39 +230,6 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	}
 
 	@Override
-	public List<String> getNextTransitionNames(
-			long companyId, long userId, long workflowTaskId)
-		throws WorkflowException {
-
-		try {
-			KaleoTaskInstanceToken kaleoTaskInstanceToken =
-				_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
-					workflowTaskId);
-
-			if (kaleoTaskInstanceToken.isCompleted()) {
-				return Collections.emptyList();
-			}
-
-			KaleoTask kaleoTask = kaleoTaskInstanceToken.getKaleoTask();
-
-			KaleoNode kaleoNode = kaleoTask.getKaleoNode();
-
-			return Stream.of(
-				kaleoNode.getKaleoTransitions()
-			).flatMap(
-				List::parallelStream
-			).map(
-				KaleoTransition::getName
-			).collect(
-				Collectors.toList()
-			);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
-	}
-
-	@Override
 	public List<User> getAssignableUsers(long companyId, long workflowTaskId)
 		throws WorkflowException {
 
@@ -290,6 +257,39 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			}
 
 			return ListUtil.fromCollection(assignableUsers);
+		}
+		catch (Exception e) {
+			throw new WorkflowException(e);
+		}
+	}
+
+	@Override
+	public List<String> getNextTransitionNames(
+			long companyId, long userId, long workflowTaskId)
+		throws WorkflowException {
+
+		try {
+			KaleoTaskInstanceToken kaleoTaskInstanceToken =
+				_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
+					workflowTaskId);
+
+			if (kaleoTaskInstanceToken.isCompleted()) {
+				return Collections.emptyList();
+			}
+
+			KaleoTask kaleoTask = kaleoTaskInstanceToken.getKaleoTask();
+
+			KaleoNode kaleoNode = kaleoTask.getKaleoNode();
+
+			return Stream.of(
+				kaleoNode.getKaleoTransitions()
+			).flatMap(
+				List::parallelStream
+			).map(
+				KaleoTransition::getName
+			).collect(
+				Collectors.toList()
+			);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
