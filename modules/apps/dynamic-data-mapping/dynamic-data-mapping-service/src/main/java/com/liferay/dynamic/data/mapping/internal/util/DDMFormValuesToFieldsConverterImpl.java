@@ -185,13 +185,13 @@ public class DDMFormValuesToFieldsConverterImpl
 		for (Locale availableLocales : value.getAvailableLocales()) {
 			Serializable serializable = null;
 
-			if (type.equals(FieldConstants.NUMBER) ||
-				type.equals(FieldConstants.DOUBLE)) {
-
+			if (FieldConstants.isNumericType(type)) {
 				NumberFormat numberFormat = NumberFormat.getInstance(
 					availableLocales);
 
-				if (type.equals(FieldConstants.DOUBLE)) {
+				if (type.equals(FieldConstants.DOUBLE) ||
+					type.equals(FieldConstants.FLOAT)) {
+
 					numberFormat.setMinimumFractionDigits(1);
 				}
 
@@ -203,7 +203,7 @@ public class DDMFormValuesToFieldsConverterImpl
 					serializable = FieldConstants.getSerializable(
 						type, number.toString());
 				}
-				catch (ParseException pe) {
+				catch (ParseException parseException) {
 					serializable = FieldConstants.getSerializable(
 						type, value.getString(availableLocales));
 				}

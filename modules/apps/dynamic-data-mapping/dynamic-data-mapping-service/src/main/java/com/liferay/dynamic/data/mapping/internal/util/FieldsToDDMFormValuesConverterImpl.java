@@ -216,7 +216,7 @@ public class FieldsToDDMFormValuesConverterImpl
 
 			Number number = (Number)fieldValue;
 
-			if (number instanceof Double) {
+			if (number instanceof Double || number instanceof Float) {
 				numberFormat.setMinimumFractionDigits(1);
 			}
 
