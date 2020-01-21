@@ -137,7 +137,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		Lock lock = null;
 
 		try {
-			lock = lockManager.lock(
+			lock = _lockManager.lock(
 				userId, WorkflowTask.class.getName(), workflowTaskId,
 				String.valueOf(userId), false, 1000);
 		}
@@ -196,7 +196,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			throw new WorkflowException("Unable to complete task", e);
 		}
 		finally {
-			lockManager.unlock(lock.getClassName(), lock.getKey());
+			_lockManager.unlock(lock.getClassName(), lock.getKey());
 		}
 	}
 
@@ -267,15 +267,14 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
 					workflowTaskId);
 
-			List<KaleoTaskAssignment> calculatedKaleoTaskAssignments =
-				getCalculatedKaleoTaskAssignments(kaleoTaskInstanceToken);
 
 			Set<User> users = new TreeSet<>(new UserFirstNameComparator(true));
 
 			for (KaleoTaskAssignment calculatedKaleoTaskAssignment :
-					calculatedKaleoTaskAssignments) {
+					_getCalculatedKaleoTaskAssignments(
+						kaleoTaskInstanceToken)) {
 
-				populateUsers(
+				_populateUsers(
 					calculatedKaleoTaskAssignment, kaleoTaskInstanceToken,
 					users);
 			}
@@ -494,7 +493,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 							orderByComparator, _kaleoWorkflowModelConverter),
 					serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -520,7 +519,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 							orderByComparator, _kaleoWorkflowModelConverter),
 					serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -548,7 +547,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 								_kaleoWorkflowModelConverter),
 						serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -574,7 +573,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 							orderByComparator, _kaleoWorkflowModelConverter),
 					serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -601,7 +600,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 							orderByComparator, _kaleoWorkflowModelConverter),
 					serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -632,7 +631,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 							orderByComparator, _kaleoWorkflowModelConverter),
 					serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -648,7 +647,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
 					workflowTaskId);
 
-			ExecutionContext executionContext = createExecutionContext(
+			ExecutionContext executionContext = _createExecutionContext(
 				kaleoTaskInstanceToken);
 
 			List<KaleoTaskAssignment> configuredKaleoTaskAssignments =
@@ -659,13 +658,13 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 					configuredKaleoTaskAssignments) {
 
 				Collection<KaleoTaskAssignment> calculatedKaleoTaskAssignments =
-					getKaleoTaskAssignments(
+					_getKaleoTaskAssignments(
 						configuredKaleoTaskAssignment, executionContext);
 
 				for (KaleoTaskAssignment calculatedKaleoTaskAssignment :
 						calculatedKaleoTaskAssignments) {
 
-					if (hasOtherPooledActors(
+					if (_hasOtherPooledActors(
 							calculatedKaleoTaskAssignment,
 							kaleoTaskInstanceToken, userId)) {
 
@@ -709,8 +708,8 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return search(
-			companyId, userId, null, getTaskNames(keywords),
-			getAssetTypes(keywords), null, null, null, null, completed,
+			companyId, userId, null, _getTaskNames(keywords),
+			_getAssetTypes(keywords), null, null, null, null, completed,
 			searchByUserRoles, null, false, start, end, orderByComparator);
 	}
 
@@ -731,8 +730,8 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return search(
-			companyId, userId, null, getTaskNames(taskName),
-			getAssetTypes(assetType), assetPrimaryKeys, null, dueDateGT,
+			companyId, userId, null, _getTaskNames(taskName),
+			_getAssetTypes(assetType), assetPrimaryKeys, null, dueDateGT,
 			dueDateLT, completed, searchByUserRoles, null, andOperator, start,
 			end, orderByComparator);
 	}
@@ -754,7 +753,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return search(
-			companyId, userId, assetTitle, getTaskNames(taskName), assetTypes,
+			companyId, userId, assetTitle, _getTaskNames(taskName), assetTypes,
 			assetPrimaryKeys, null, dueDateGT, dueDateLT, completed,
 			searchByUserRoles, null, andOperator, start, end,
 			orderByComparator);
@@ -775,7 +774,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return search(
-			companyId, userId, keywords, getTaskNames(keywords), assetTypes,
+			companyId, userId, keywords, _getTaskNames(keywords), assetTypes,
 			null, null, null, null, completed, searchByUserRoles, null, false,
 			start, end, orderByComparator);
 	}
@@ -807,7 +806,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 							orderByComparator, _kaleoWorkflowModelConverter),
 					serviceContext);
 
-			return toWorkflowTasks(kaleoTaskInstanceTokens);
+			return _toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -827,8 +826,8 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return searchCount(
-			companyId, userId, null, getTaskNames(keywords),
-			getAssetTypes(keywords), null, null, null, null, completed,
+			companyId, userId, null, _getTaskNames(keywords),
+			_getAssetTypes(keywords), null, null, null, null, completed,
 			searchByUserRoles, null, false);
 	}
 
@@ -846,8 +845,8 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return searchCount(
-			companyId, userId, null, getTaskNames(taskName),
-			getAssetTypes(assetType), assetPrimaryKeys, null, dueDateGT,
+			companyId, userId, null, _getTaskNames(taskName),
+			_getAssetTypes(assetType), assetPrimaryKeys, null, dueDateGT,
 			dueDateLT, completed, searchByUserRoles, null, andOperator);
 	}
 
@@ -866,7 +865,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return searchCount(
-			companyId, userId, assetTitle, getTaskNames(taskName), assetTypes,
+			companyId, userId, assetTitle, _getTaskNames(taskName), assetTypes,
 			assetPrimaryKeys, null, dueDateGT, dueDateLT, completed,
 			searchByUserRoles, null, andOperator);
 	}
@@ -884,7 +883,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		throws WorkflowException {
 
 		return searchCount(
-			companyId, userId, keywords, getTaskNames(keywords), assetTypes,
+			companyId, userId, keywords, _getTaskNames(keywords), assetTypes,
 			null, null, null, null, completed, searchByUserRoles, null, false);
 	}
 
@@ -929,7 +928,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			workflowTaskId, comment, dueDate, serviceContext);
 	}
 
-	protected ExecutionContext createExecutionContext(
+	private ExecutionContext _createExecutionContext(
 			KaleoTaskInstanceToken kaleoTaskInstanceToken)
 		throws PortalException {
 
@@ -947,7 +946,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			kaleoInstanceToken, workflowContext, workflowContextServiceContext);
 	}
 
-	protected String[] getAssetTypes(String assetType) {
+	private String[] _getAssetTypes(String assetType) {
 		if (Validator.isNull(assetType)) {
 			return null;
 		}
@@ -955,14 +954,14 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		return new String[] {assetType};
 	}
 
-	protected List<KaleoTaskAssignment> getCalculatedKaleoTaskAssignments(
+	private List<KaleoTaskAssignment> _getCalculatedKaleoTaskAssignments(
 			KaleoTaskInstanceToken kaleoTaskInstanceToken)
 		throws PortalException {
 
 		List<KaleoTaskAssignment> calculatedKaleoTaskAssignments =
 			new ArrayList<>();
 
-		ExecutionContext executionContext = createExecutionContext(
+		ExecutionContext executionContext = _createExecutionContext(
 			kaleoTaskInstanceToken);
 
 		List<KaleoTaskAssignment> configuredKaleoTaskAssignments =
@@ -973,14 +972,14 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				configuredKaleoTaskAssignments) {
 
 			calculatedKaleoTaskAssignments.addAll(
-				getKaleoTaskAssignments(
+				_getKaleoTaskAssignments(
 					configuredKaleoTaskAssignment, executionContext));
 		}
 
 		return calculatedKaleoTaskAssignments;
 	}
 
-	protected Collection<KaleoTaskAssignment> getKaleoTaskAssignments(
+	private Collection<KaleoTaskAssignment> _getKaleoTaskAssignments(
 			KaleoTaskAssignment kaleoTaskAssignment,
 			ExecutionContext executionContext)
 		throws PortalException {
@@ -993,7 +992,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			kaleoTaskAssignment, executionContext);
 	}
 
-	protected String[] getTaskNames(String taskName) {
+	private String[] _getTaskNames(String taskName) {
 		if (Validator.isNull(taskName)) {
 			return null;
 		}
@@ -1001,7 +1000,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		return new String[] {taskName};
 	}
 
-	protected boolean hasOtherPooledActors(
+	private boolean _hasOtherPooledActors(
 			KaleoTaskAssignment kaleoTaskAssignment,
 			KaleoTaskInstanceToken kaleoTaskInstanceToken, long userId)
 		throws PortalException {
@@ -1086,7 +1085,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		return false;
 	}
 
-	protected void populateUsers(
+	private void _populateUsers(
 			KaleoTaskAssignment kaleoTaskAssignment,
 			KaleoTaskInstanceToken kaleoTaskInstanceToken, Set<User> users)
 		throws PortalException {
@@ -1160,7 +1159,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		}
 	}
 
-	protected List<WorkflowTask> toWorkflowTasks(
+	private List<WorkflowTask> _toWorkflowTasks(
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens)
 		throws PortalException {
 
@@ -1182,11 +1181,13 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 		return workflowTasks;
 	}
 
-	@Reference
-	protected LockManager lockManager;
 
 	@Reference
 	private KaleoSignaler _kaleoSignaler;
+
+	@Reference
+	private KaleoTaskAssignmentInstanceLocalService
+		_kaleoTaskAssignmentInstanceLocalService;
 
 	@Reference
 	private KaleoTaskAssignmentLocalService _kaleoTaskAssignmentLocalService;
@@ -1197,6 +1198,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 
 	@Reference
 	private KaleoWorkflowModelConverter _kaleoWorkflowModelConverter;
+
+	@Reference
+	private LockManager _lockManager;
 
 	@Reference
 	private RoleLocalService _roleLocalService;
