@@ -154,7 +154,7 @@ public class OrganizationResourceImpl
 				ServiceContextFactory.getInstance(contextHttpServletRequest));
 
 		return _organizationResourceDTOConverter.toDTO(
-			_getDtoConverterContext(String.valueOf(serviceBuilderOrganization)),
+			_getDTOConverterContext(String.valueOf(serviceBuilderOrganization)),
 			serviceBuilderOrganization);
 	}
 
@@ -166,13 +166,11 @@ public class OrganizationResourceImpl
 		com.liferay.portal.kernel.model.Organization
 			serviceBuilderOrganization =
 				_organizationResourceDTOConverter.getObject(organizationId);
-
 		long countryId = _getCountryId(organization);
-
 		Group group = serviceBuilderOrganization.getGroup();
 
 		return _organizationResourceDTOConverter.toDTO(
-			_getDtoConverterContext(organizationId),
+			_getDTOConverterContext(organizationId),
 			_organizationService.updateOrganization(
 				serviceBuilderOrganization.getOrganizationId(),
 				_getDefaultParentOrganizationId(organization),
@@ -262,7 +260,7 @@ public class OrganizationResourceImpl
 		);
 	}
 
-	private DefaultDTOConverterContext _getDtoConverterContext(
+	private DefaultDTOConverterContext _getDTOConverterContext(
 		String organizationId) {
 
 		return new DefaultDTOConverterContext(
@@ -513,7 +511,7 @@ public class OrganizationResourceImpl
 		throws Exception {
 
 		return _organizationResourceDTOConverter.toDTO(
-			_getDtoConverterContext(String.valueOf(organizationId)));
+			_getDTOConverterContext(String.valueOf(organizationId)));
 	}
 
 	private OrgLabor _toOrgLabor(Service service) {
