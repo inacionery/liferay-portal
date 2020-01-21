@@ -5922,11 +5922,11 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 					return true;
 				}
 			}
-			else if (!key.equals("usersGroups") && !key.equals("usersOrgs") &&
+			else if (!key.equals(Field.GROUP_ID) &&
+					 !key.equals("usersGroups") && !key.equals("usersOrgs") &&
 					 !key.equals("usersOrgsCount") &&
 					 !key.equals("usersRoles") && !key.equals("usersTeams") &&
-					 !key.equals("usersUserGroups") &&
-					 !key.equals(Field.GROUP_ID)) {
+					 !key.equals("usersUserGroups")) {
 
 				return true;
 			}
