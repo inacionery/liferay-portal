@@ -77,12 +77,12 @@ public class UserSearchRequestBuilder {
 				sortOrder = SortOrder.DESC;
 			}
 
-			FieldSort sort = _sorts.field(
+			FieldSort fieldSort = _sorts.field(
 				_sortFieldBuilder.getSortField(
 					User.class.getName(), _sortField),
 				sortOrder);
 
-			searchRequestBuilder.sorts(sort);
+			searchRequestBuilder.sorts(fieldSort);
 		}
 
 		return searchRequestBuilder.build();

@@ -313,12 +313,12 @@ public class AccountEntryLocalServiceImpl
 				sortOrder = SortOrder.DESC;
 			}
 
-			FieldSort sort = _sorts.field(
+			FieldSort fieldSort = _sorts.field(
 				_sortFieldBuilder.getSortField(
 					AccountEntry.class.getName(), orderByField),
 				sortOrder);
 
-			searchRequestBuilder.sorts(sort);
+			searchRequestBuilder.sorts(fieldSort);
 		}
 
 		return searchRequestBuilder.build();
