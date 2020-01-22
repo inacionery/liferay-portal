@@ -7,3 +7,8 @@
 # Bundle Version 7.0.1
 #
 fdb102ad6b23f1d9ff8d0c0cfe4aea30cfff0f0a^..450acf43a593409c0a4aebdaad79ff98c041eb31=LPS-105380
+
+#
+# Bundle Version 7.0.2
+#
+450acf43a593409c0a4aebdaad79ff98c041eb31^..0c691cfdfdf2563f00b88feb50a79541e13464fb=LPS-105380 LPS-107321
