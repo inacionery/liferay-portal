@@ -594,7 +594,6 @@ public class AccountEntryLocalServiceTest {
 
 		Assert.assertEquals(
 			expectedAccountEntries.size(), baseModelSearchResult.getLength());
-
 		Assert.assertTrue(
 			expectedAccountEntries.containsAll(
 				baseModelSearchResult.getBaseModels()));
