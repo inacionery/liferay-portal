@@ -24,15 +24,10 @@ const Item = taskItem => {
 	);
 	const [checked, setChecked] = useState(false);
 
-	useEffect(() => {
-		setChecked(selectedItems.find(item => item.id === id) !== undefined);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedItems]);
-
 	const {
 		assetTitle,
 		assetType,
-		assigneeUsers,
+		assigneeUsers = [],
 		creatorUser,
 		dateCreated,
 		id,
@@ -40,11 +35,17 @@ const Item = taskItem => {
 		taskNames = []
 	} = taskItem;
 
+	useEffect(() => {
+		setChecked(selectedItems.find(item => item.id === id) !== undefined);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedItems]);
+
 	const completed = status === 'Completed';
+	const assignees = assigneeUsers
+		.map(assigneeUser => assigneeUser.name)
+		.join(', ');
 	const formattedAssignees = !completed
-		? assigneeUsers && assigneeUsers.length
-			? assigneeUsers.map(assigneeUser => assigneeUser.name).join(', ')
-			: Liferay.Language.get('unassigned')
+		? assignees || Liferay.Language.get('unassigned')
 		: Liferay.Language.get('not-available');
 
 	const handleCheck = ({target}) => {
@@ -107,20 +108,26 @@ const Item = taskItem => {
 			</ClayTable.Cell>
 
 			<ClayTable.Cell style={{paddingRight: '0rem'}}>
-				<QuickActionMenu taskItem={taskItem} />
+				<QuickActionMenu completed={completed} taskItem={taskItem} />
 			</ClayTable.Cell>
 		</ClayTable.Row>
 	);
 };
 
-const QuickActionMenu = ({taskItem}) => {
-	const {setSingleModal} = useContext(ModalContext);
+const QuickActionMenu = ({completed, taskItem}) => {
+	const {bulkModal, setBulkModal, setSingleModal} = useContext(ModalContext);
 	const handleClickReassigneeTask = useCallback(
 		() => {
-			setSingleModal({
-				selectedItem: taskItem,
-				visible: true
-			});
+			if (!completed && taskItem.taskNames.length > 1) {
+				setBulkModal({...bulkModal, visible: true});
+
+				setSingleModal({selectedItem: taskItem});
+			} else {
+				setSingleModal({
+					selectedItem: taskItem,
+					visible: true
+				});
+			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[taskItem]
