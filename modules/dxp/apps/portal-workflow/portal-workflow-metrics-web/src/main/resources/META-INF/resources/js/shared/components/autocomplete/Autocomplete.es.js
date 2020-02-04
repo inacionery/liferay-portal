@@ -27,14 +27,32 @@ const Autocomplete = ({
 	promises
 }) => {
 	const [dropDownItems, setDropDownItems] = useState([]);
-	const [dropDownVisible, setDropDownVisible] = useState(() => false);
-	const [value, setValue] = useState(() => '');
-	const handleChange = useCallback(value => {
-		setValue(() => value);
-		setDropDownVisible(() => value.length > 0);
+	const [value, setValue] = useState('');
+	const [dropdownVisible, setDropdownVisible] = useState(false);
+	const [selectedValue, setSelectedValue] = useState();
 
+	const handleChange = useCallback(
+		value => {
+			if (selectedValue) {
+				onSelect();
+				setSelectedValue();
+			}
+			setValue(value);
+			setDropdownVisible(() => value.length > 0);
+
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		[selectedValue]
+	);
+
+	const handleSelect = useCallback(
+		({id, name}) => {
+			onSelect({id});
+			setSelectedValue(name);
+		},
+		[onSelect]
+	);
 
 	useEffect(() => {
 		setDropDownItems(items);
@@ -57,6 +75,14 @@ const Autocomplete = ({
 	useEffect(() => {
 		setValue(defaultValue);
 	}, [defaultValue]);
+
+	useEffect(() => {
+		if (disabled) {
+			setValue('');
+			setDropdownVisible(false);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [disabled]);
 
 	return (
 		<PromisesResolver promises={promises}>
@@ -81,11 +107,11 @@ const Autocomplete = ({
 				</ClayInput.Group>
 
 				<Autocomplete.DropDown
-					active={dropDownVisible}
+					active={dropdownVisible}
 					items={dropDownItems}
 					match={value}
-					onSelect={onSelect}
-					setActive={setDropDownVisible}
+					onSelect={handleSelect}
+					setActive={setDropdownVisible}
 					setValue={setValue}
 				/>
 			</ClayAutocomplete>
