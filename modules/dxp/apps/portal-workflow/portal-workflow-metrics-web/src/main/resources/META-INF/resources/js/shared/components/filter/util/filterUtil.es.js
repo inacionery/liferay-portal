@@ -20,6 +20,20 @@ const asFilterObject = (items, key, name, pinned) => ({
 	pinned
 });
 
+const buildFilterItem = data => {
+	if (typeof data === 'string') {
+		return {
+			active: true,
+			key: data
+		};
+	}
+
+	return {
+		...data,
+		active: true
+	};
+};
+
 const buildFilterItems = (items, selectedKeys) => {
 	return items.map((item, index) => {
 		const key = item.key || String(item.id);
@@ -33,28 +47,25 @@ const buildFilterItems = (items, selectedKeys) => {
 	});
 };
 
+const getFilterKeys = (items = []) => items.map(({key}) => key);
+
 const getFiltersParam = queryString => {
 	const queryParams = parse(queryString);
 
 	return queryParams.filters || {};
 };
 
-const getFilterResults = (
-	filterKeys,
-	filterPinnedValue,
-	filterTitles,
-	filterValues
-) => {
+const getFilterResults = (prefixedKeys, pinnedValues, titles, values) => {
 	const filterResults = [];
 
-	filterKeys.forEach((filterKey, index) => {
-		if (filterValues[filterKey]) {
+	prefixedKeys.forEach((prefixedKey, index) => {
+		if (values[prefixedKey]) {
 			filterResults.push(
 				asFilterObject(
-					filterValues[filterKey],
-					filterKey,
-					filterTitles[index],
-					filterPinnedValue[index]
+					values[prefixedKey],
+					prefixedKey,
+					titles[index],
+					pinnedValues[index]
 				)
 			);
 		}
@@ -63,12 +74,14 @@ const getFilterResults = (
 	return filterResults;
 };
 
-const getFilterValues = (filterKey, filtersParam) => {
-	let filterValues = filtersParam[filterKey] || [];
+const getFilterValues = filterState => {
+	const filterValues = {};
 
-	if (!Array.isArray(filterValues)) {
-		filterValues = [filterValues];
-	}
+	Object.keys(filterState).forEach(key => {
+		if (filterState[key]) {
+			filterValues[key] = getFilterKeys(filterState[key]);
+		}
+	});
 
 	return filterValues;
 };
@@ -139,7 +152,7 @@ const removeItem = (filterKey, itemToRemove, queryString) => {
 
 	const filtersParam = queryParams.filters || {};
 
-	const filterValues = getFilterValues(filterKey, filtersParam);
+	const filterValues = filtersParam[filterKey];
 
 	filtersParam[filterKey] = filterValues.filter(
 		filterValue => filterValue != itemToRemove.key
@@ -169,7 +182,9 @@ const replaceHistory = (filterQuery, routerProps) => {
 
 export {
 	asFilterObject,
+	buildFilterItem,
 	buildFilterItems,
+	getFilterKeys,
 	getFiltersParam,
 	getFilterResults,
 	getFilterValues,
