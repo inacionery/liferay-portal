@@ -20,7 +20,9 @@ import React, {
 	useEffect,
 	useLayoutEffect,
 	useState,
-	useRef
+	useRef,
+	useCallback,
+	useMemo
 } from 'react';
 
 import {BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR} from '../../config/constants/backgroundImageFragmentEntryProcessor';
@@ -36,103 +38,17 @@ import selectPrefixedSegmentsExperienceId from '../../selectors/selectPrefixedSe
 import InfoItemService from '../../services/InfoItemService';
 import {useDispatch, useSelector} from '../../store/index';
 import updateEditableValues from '../../thunks/updateEditableValues';
-import {
-	useSelectItem,
-	useHoverItem,
-	useIsActive,
-	useActiveItemId
-} from '../Controls';
+import {useIsActive, useActiveItemId} from '../Controls';
 import FloatingToolbar from '../FloatingToolbar';
 import UnsafeHTML from '../UnsafeHTML';
 import EditableDecoration from './EditableDecoration';
 
-const editableIsMappedToInfoItem = editableValue =>
-	editableValue &&
-	editableValue.classNameId &&
-	editableValue.classPK &&
-	editableValue.fieldId;
-
-const getMappingValue = ({classNameId, classPK, config, fieldId}) =>
-	InfoItemService.getAssetFieldValue({
-		classNameId,
-		classPK,
-		config,
-		fieldId,
-		onNetworkStatus: () => {}
-	}).then(response => {
-		const {fieldValue = ''} = response;
-
-		return fieldValue;
-	});
-
-const resolveEditableValue = (
-	state,
-	config,
-	fragmentEntryLinkId,
-	editableId,
-	processorType
-) => {
-	const editableValue = selectEditableValue(
-		state,
-		fragmentEntryLinkId,
-		editableId,
-		processorType
-	);
-
-	let valuePromise;
-
-	if (editableIsMappedToInfoItem(editableValue)) {
-		valuePromise = getMappingValue({
-			classNameId: editableValue.classNameId,
-			classPK: editableValue.classPK,
-			config,
-			fieldId: editableValue.fieldId
-		});
-	} else {
-		valuePromise = Promise.resolve(
-			selectEditableValueContent(
-				state,
-				config,
-				fragmentEntryLinkId,
-				editableId,
-				processorType
-			)
-		);
-	}
-
-	let configPromise;
-
-	if (editableIsMappedToInfoItem(editableValue.config)) {
-		configPromise = getMappingValue({
-			classNameId: editableValue.config.classNameId,
-			classPK: editableValue.config.classPK,
-			config,
-			fieldId: editableValue.config.fieldId
-		}).then(href => {
-			return {...editableValue.config, href};
-		});
-	} else {
-		configPromise = Promise.resolve(
-			selectEditableValueConfig(
-				state,
-				fragmentEntryLinkId,
-				editableId,
-				processorType
-			)
-		);
-	}
-
-	return Promise.all([valuePromise, configPromise]);
-};
-
 function FragmentContent({fragmentEntryLink, itemId}, ref) {
 	const config = useContext(ConfigContext);
 	const dispatch = useDispatch();
-	const hoverItem = useHoverItem();
 	const activeItemId = useActiveItemId();
 	const isActive = useIsActive();
 	const isMounted = useIsMounted();
-	const selectItem = useSelectItem();
 	const state = useSelector(state => state);
 
 	const defaultContent = fragmentEntryLink.content.value.content;
@@ -147,13 +63,32 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 		return editableId.join('-');
 	};
 
-	const getEditableUniqueId = editableId =>
-		`${fragmentEntryLinkId}-${editableId}`;
+	const getEditableUniqueId = useCallback(
+		editableId => `${fragmentEntryLinkId}-${editableId}`,
+		[fragmentEntryLinkId]
+	);
 
-	const siblingEditableIsActive = id =>
-		editablesIds
-			.filter(editableId => editableId !== id)
-			.some(siblingId => isActive(getEditableUniqueId(siblingId)));
+	const canUpdateLayoutContent = useSelector(
+		({permissions}) =>
+			!permissions.LOCKED_SEGMENTS_EXPERIMENT &&
+			permissions.UPDATE_LAYOUT_CONTENT
+	);
+
+	const showEditableDecoration = useMemo(
+		() =>
+			canUpdateLayoutContent
+				? [itemId, ...editablesIds.map(getEditableUniqueId)].some(
+						isActive
+				  )
+				: true,
+		[
+			canUpdateLayoutContent,
+			editablesIds,
+			getEditableUniqueId,
+			itemId,
+			isActive
+		]
+	);
 
 	useLayoutEffect(() => {
 		setEditablesIds(
@@ -261,75 +196,29 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 		};
 	}, [state, config, defaultContent, fragmentEntryLinkId, isMounted]);
 
-	const onClick = event => {
-		const editableElement = closest(event.target, 'lfr-editable');
-
-		if (editableElement) {
-			if (isActive(getEditableUniqueId(editableElement.id))) {
-				event.stopPropagation();
-
-				initProcessor({
-					config,
-					editableConfig: selectEditableValueConfig(
-						state,
-						fragmentEntryLinkId,
-						editableElement.id,
-						EDITABLE_FRAGMENT_ENTRY_PROCESSOR
-					),
-					editableType: editableElement.getAttribute('type'),
-					element: editableElement,
-					processorType: EDITABLE_FRAGMENT_ENTRY_PROCESSOR
-				});
-			}
-
-			if (
-				isActive(itemId) ||
-				siblingEditableIsActive(editableElement.id)
-			) {
-				event.stopPropagation();
-
-				selectItem(getEditableUniqueId(editableElement.id));
-			}
-		}
-	};
-
-	const onMouseOver = event => {
-		const editableElement = closest(event.target, 'lfr-editable');
-
-		if (editableElement) {
-			if (
-				(isActive(itemId) ||
-					siblingEditableIsActive(editableElement.id)) &&
-				editableElement
-			) {
-				event.stopPropagation();
-
-				hoverItem(getEditableUniqueId(editableElement.id));
-			}
-		}
-	};
-
-	const initProcessor = ({
-		config,
-		editableConfig,
-		editableType,
-		element,
-		processorType
-	}) => {
+	const initProcessor = editableElement => {
+		const editableId = editableElement.id;
+		const editableType = editableElement.getAttribute('type');
 		const processor = Processors[editableType] || Processors.fallback;
+		const processorType = EDITABLE_FRAGMENT_ENTRY_PROCESSOR;
 
-		const id =
-			processorType === EDITABLE_FRAGMENT_ENTRY_PROCESSOR
-				? element.id
-				: element.dataset.lfrBackgroundImageId;
+		const editableConfig = selectEditableValueConfig(
+			state,
+			fragmentEntryLinkId,
+			editableId,
+			processorType
+		);
 
 		processor.createEditor(
-			element,
+			editableElement,
 			value => {
-				processor.render(element, value, editableConfig);
+				processor.render(editableElement, value, editableConfig);
 
 				const {editableValues} = fragmentEntryLink;
-				const editableValue = editableValues[processorType][id];
+				const editableValue =
+					editableValues[EDITABLE_FRAGMENT_ENTRY_PROCESSOR][
+						editableId
+					];
 				const prefixedSegmentsExperienceId = selectPrefixedSegmentsExperienceId(
 					state
 				);
@@ -339,7 +228,8 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 						...editableValue[prefixedSegmentsExperienceId],
 						[state.languageId]: value
 					};
-				} else {
+				}
+				else {
 					editableValue[state.languageId] = value;
 				}
 
@@ -352,7 +242,7 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 					})
 				);
 			},
-			() => processor.destroyEditor(element, editableConfig),
+			() => processor.destroyEditor(editableElement, editableConfig),
 			config
 		);
 	};
@@ -368,8 +258,6 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 			<UnsafeHTML
 				className="page-editor__fragment"
 				markup={content}
-				onClick={onClick}
-				onMouseOver={onMouseOver}
 				ref={ref}
 			/>
 
@@ -413,24 +301,104 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 					);
 				})}
 
-			{(isActive(itemId) ||
-				editablesIds.some(editableId =>
-					isActive(getEditableUniqueId(editableId))
-				)) &&
+			{showEditableDecoration &&
 				editablesIds.map(editableId => (
 					<EditableDecoration
 						editableId={editableId}
-						editableUniqueId={getEditableUniqueId(editableId)}
-						key={getEditableUniqueId(editableId)}
+						fragmentEntryLinkId={fragmentEntryLinkId}
+						itemId={getEditableUniqueId(editableId)}
+						key={editableId}
+						onEditableDoubleClick={initProcessor}
 						parentItemId={itemId}
 						parentRef={ref}
-						siblingsIds={editablesIds
-							.filter(siblingId => siblingId !== editableId)
-							.map(siblingId => getEditableUniqueId(siblingId))}
-					></EditableDecoration>
+						siblingsItemIds={editablesIds.map(siblingId =>
+							getEditableUniqueId(siblingId)
+						)}
+					/>
 				))}
 		</>
 	);
 }
 
 export default React.forwardRef(FragmentContent);
+
+const editableIsMappedToInfoItem = editableValue =>
+	editableValue &&
+	editableValue.classNameId &&
+	editableValue.classPK &&
+	editableValue.fieldId;
+
+const getMappingValue = ({classNameId, classPK, config, fieldId}) =>
+	InfoItemService.getAssetFieldValue({
+		classNameId,
+		classPK,
+		config,
+		fieldId,
+		onNetworkStatus: () => {}
+	}).then(response => {
+		const {fieldValue = ''} = response;
+
+		return fieldValue;
+	});
+
+const resolveEditableValue = (
+	state,
+	config,
+	fragmentEntryLinkId,
+	editableId,
+	processorType
+) => {
+	const editableValue = selectEditableValue(
+		state,
+		fragmentEntryLinkId,
+		editableId,
+		processorType
+	);
+
+	let valuePromise;
+
+	if (editableIsMappedToInfoItem(editableValue)) {
+		valuePromise = getMappingValue({
+			classNameId: editableValue.classNameId,
+			classPK: editableValue.classPK,
+			config,
+			fieldId: editableValue.fieldId
+		});
+	}
+	else {
+		valuePromise = Promise.resolve(
+			selectEditableValueContent(
+				state,
+				config,
+				fragmentEntryLinkId,
+				editableId,
+				processorType
+			)
+		);
+	}
+
+	let configPromise;
+
+	if (editableIsMappedToInfoItem(editableValue.config)) {
+		configPromise = getMappingValue({
+			classNameId: editableValue.config.classNameId,
+			classPK: editableValue.config.classPK,
+			config,
+			fieldId: editableValue.config.fieldId
+		}).then(href => {
+			return {...editableValue.config, href};
+		});
+	}
+	else {
+		configPromise = Promise.resolve(
+			selectEditableValueConfig(
+				state,
+				fragmentEntryLinkId,
+				editableId,
+				processorType
+			)
+		);
+	}
+
+	return Promise.all([valuePromise, configPromise]);
+};

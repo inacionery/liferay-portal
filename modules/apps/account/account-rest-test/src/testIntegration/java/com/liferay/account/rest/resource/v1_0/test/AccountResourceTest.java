@@ -20,6 +20,8 @@ import com.liferay.account.rest.client.dto.v1_0.Account;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -29,6 +31,7 @@ import com.liferay.portal.test.rule.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.runner.RunWith;
 
 /**
@@ -37,19 +40,10 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AccountResourceTest extends BaseAccountResourceTestCase {
 
+	@After
 	@Override
 	public void tearDown() throws Exception {
-		super.tearDown();
-
-		for (AccountEntry accountEntry : _accountEntries) {
-			AccountEntry curAccountEntry =
-				_accountEntryLocalService.fetchAccountEntry(
-					accountEntry.getAccountEntryId());
-
-			if (curAccountEntry != null) {
-				_accountEntryLocalService.deleteAccountEntry(curAccountEntry);
-			}
-		}
+		_deleteAccountEntries(_accountEntries);
 	}
 
 	@Override
@@ -77,6 +71,13 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 	@Override
 	protected Account testGraphQLAccount_addAccount() throws Exception {
 		return _addAccount();
+	}
+
+	@Override
+	protected Account testPostAccount_addAccount(Account account)
+		throws Exception {
+
+		return _addAccount(account);
 	}
 
 	private Account _addAccount() throws Exception {
@@ -115,6 +116,19 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		return accountEntry;
 	}
 
+	private void _deleteAccountEntries(List<AccountEntry> accountEntries) {
+		for (AccountEntry accountEntry : accountEntries) {
+			try {
+				_accountEntryLocalService.deleteAccountEntry(accountEntry);
+			}
+			catch (Exception exception) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(exception, exception);
+				}
+			}
+		}
+	}
+
 	private Account _toAccount(AccountEntry accountEntry) throws Exception {
 		return new Account() {
 			{
@@ -127,6 +141,9 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 			}
 		};
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		AccountResourceTest.class);
 
 	private final List<AccountEntry> _accountEntries = new ArrayList<>();
 

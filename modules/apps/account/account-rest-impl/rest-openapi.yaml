@@ -27,7 +27,6 @@ components:
                     format: int64
                     type: integer
                 status:
-                    readOnly: true
                     type: integer
             type: object
 info:
@@ -82,6 +81,31 @@ paths:
                                 type: array
                     description:
                         ""
+            tags: ["Account"]
+        post:
+            description:
+                Creates a new account
+            operationId: postAccount
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Account"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Account"
+            responses:
+                201:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Account"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Account"
+                    # @review
+                    description:
+                        "Account successfully created"
             tags: ["Account"]
     "/accounts/{accountId}":
         delete:

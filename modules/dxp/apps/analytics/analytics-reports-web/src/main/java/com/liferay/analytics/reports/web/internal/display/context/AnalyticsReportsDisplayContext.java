@@ -65,6 +65,28 @@ public class AnalyticsReportsDisplayContext {
 			HashMapBuilder.<String, Object>put(
 				"endpoints",
 				HashMapBuilder.<String, Object>put(
+					"getAnalyticsReportsHistoricalReadsURL",
+					() -> {
+						ResourceURL resourceURL =
+							_renderResponse.createResourceURL();
+
+						resourceURL.setResourceID(
+							"/analytics_reports/get_historical_reads");
+
+						return resourceURL.toString();
+					}
+				).put(
+					"getAnalyticsReportsHistoricalViewsURL",
+					() -> {
+						ResourceURL resourceURL =
+							_renderResponse.createResourceURL();
+
+						resourceURL.setResourceID(
+							"/analytics_reports/get_historical_views");
+
+						return resourceURL.toString();
+					}
+				).put(
 					"getAnalyticsReportsTotalReadsURL",
 					() -> {
 						ResourceURL resourceURL =

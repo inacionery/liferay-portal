@@ -30,6 +30,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
@@ -102,8 +103,7 @@ public class BatchEngineImportTaskExecutorImpl
 
 		_batchEngineTaskItemDelegateExecutorFactory =
 			new BatchEngineTaskItemDelegateExecutorFactory(
-				_batchEngineTaskMethodRegistry, null, null, null,
-				_userLocalService);
+				_batchEngineTaskMethodRegistry, null, null, null);
 	}
 
 	private void _commitItems(
@@ -141,8 +141,11 @@ public class BatchEngineImportTaskExecutorImpl
 				batchEngineTaskItemDelegateExecutor =
 					_batchEngineTaskItemDelegateExecutorFactory.create(
 						batchEngineImportTask.getClassName(),
+						_companyLocalService.getCompany(
+							batchEngineImportTask.getCompanyId()),
 						batchEngineImportTask.getParameters(),
-						batchEngineImportTask.getUserId())) {
+						_userLocalService.getUser(
+							batchEngineImportTask.getUserId()))) {
 
 			List<Object> items = new ArrayList<>();
 
@@ -219,6 +222,9 @@ public class BatchEngineImportTaskExecutorImpl
 
 	@Reference
 	private BatchEngineTaskMethodRegistry _batchEngineTaskMethodRegistry;
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;
