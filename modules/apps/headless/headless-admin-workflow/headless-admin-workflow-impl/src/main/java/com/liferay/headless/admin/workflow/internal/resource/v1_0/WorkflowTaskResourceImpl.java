@@ -224,19 +224,26 @@ public class WorkflowTaskResourceImpl extends BaseWorkflowTaskResourceImpl {
 	@Override
 	public Page<WorkflowTask> getWorkflowTasksPage(
 			Boolean andOperator, Long[] assetPrimaryKeys, String assetTitle,
-			String[] assetTypes, Long[] assigneeUserIds, Boolean completed,
-			Date dateDueEnd, Date dateDueStart, Boolean searchByUserRoles,
-			String[] taskNames, Long workflowDefinitionId,
-			Long[] workflowInstanceIds, Pagination pagination, Sort[] sorts)
+			String[] assetTypes, Long[] assigneeIds, Boolean completed,
+			Date dateDueEnd, Date dateDueStart, Boolean searchByRoles,
+			Boolean searchByUserRoles, String[] taskNames,
+			Long workflowDefinitionId, Long[] workflowInstanceIds,
+			Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		String assigneeClassName = null;
+
+		if (GetterUtil.getBoolean(searchByRoles)) {
+			assigneeClassName = Role.class.getName();
+		}
 
 		return Page.of(
 			transform(
 				_workflowTaskManager.search(
 					contextCompany.getCompanyId(), contextUser.getUserId(),
 					assetTitle, taskNames, assetTypes, assetPrimaryKeys,
-					assigneeUserIds, dateDueStart, dateDueEnd, completed,
-					searchByUserRoles, workflowDefinitionId,
+					assigneeClassName, assigneeIds, dateDueStart, dateDueEnd,
+					completed, searchByUserRoles, workflowDefinitionId,
 					workflowInstanceIds,
 					GetterUtil.getBoolean(andOperator, true),
 					pagination.getStartPosition(), pagination.getEndPosition(),
@@ -246,9 +253,9 @@ public class WorkflowTaskResourceImpl extends BaseWorkflowTaskResourceImpl {
 			_workflowTaskManager.searchCount(
 				contextCompany.getCompanyId(), contextUser.getUserId(),
 				assetTitle, taskNames, assetTypes, assetPrimaryKeys,
-				assigneeUserIds, dateDueStart, dateDueEnd, completed,
-				searchByUserRoles, workflowDefinitionId, workflowInstanceIds,
-				GetterUtil.getBoolean(andOperator, true)));
+				assigneeClassName, assigneeIds, dateDueStart, dateDueEnd,
+				completed, searchByUserRoles, workflowDefinitionId,
+				workflowInstanceIds, GetterUtil.getBoolean(andOperator, true)));
 	}
 
 	@Override
