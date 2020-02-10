@@ -70,7 +70,8 @@ const useCustomTimeRange = (filterKey, prefixKey = '', withoutRouteParams) => {
 				};
 
 				replaceHistory(stringify(query), routerProps);
-			} else {
+			}
+			else {
 				dispatch({...filterState, ...newValue});
 			}
 		}
