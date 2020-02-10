@@ -93,7 +93,7 @@ describe('The SingleReassignModalTable component should', () => {
 							slaStatus: 'Overdue',
 							status: 'Completed'
 						}}
-					></SingleReassignModal.Table>
+					/>
 				</ModalContext.Provider>
 			</MockRouter>
 		);
@@ -126,7 +126,7 @@ describe('The SingleReassignModalTable component should', () => {
 							status: 'Completed',
 							taskNames: ['Update']
 						}}
-					></SingleReassignModal.Table>
+					/>
 				</ModalContext.Provider>
 			</MockRouter>
 		);
@@ -246,7 +246,7 @@ describe('The AssigneeInput component should', () => {
 					}}
 					setReassignedTasks={setReassignMock}
 					taskId={39347}
-				></Table.AssigneeInput>
+				/>
 			</MockRouter>
 		);
 		const autocompleteInput = getByTestId('autocompleteInput');
@@ -272,7 +272,7 @@ describe('The AssigneeInput component should', () => {
 					}}
 					setReassignedTasks={setReassignMock}
 					taskId={39347}
-				></Table.AssigneeInput>
+				/>
 			</MockRouter>
 		);
 		expect(clientMock.get).toHaveBeenCalled();
