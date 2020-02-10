@@ -73,7 +73,7 @@ describe('The SingleReassignModal component should', () => {
 	beforeAll(() => {
 		const renderResult = render(
 			<MockRouter client={clientMock}>
-				<SingleReassignModal></SingleReassignModal>
+				<SingleReassignModal />
 			</MockRouter>,
 			{
 				wrapper: ContainerMock
