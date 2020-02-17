@@ -16,12 +16,28 @@ package com.liferay.portal.workflow.metrics.internal.search.index;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalRunMode;
+import com.liferay.portal.search.engine.adapter.document.BulkDocumentRequest;
+import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
+import com.liferay.portal.search.hits.SearchHit;
+import com.liferay.portal.search.hits.SearchHits;
+import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.workflow.metrics.internal.sla.processor.WorkflowMetricsSLATaskResult;
 import com.liferay.portal.workflow.metrics.sla.processor.WorkflowMetricsSLAStatus;
 
 import java.sql.Timestamp;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Inácio Nery
@@ -76,10 +92,14 @@ public class SLATaskResultWorkflowMetricsIndexer
 			workflowMetricsSLATaskResult.isInstanceCompleted());
 		document.addKeyword(
 			"instanceId", workflowMetricsSLATaskResult.getInstanceId());
-		document.addDateSortable(
-			"lastCheckDate",
-			Timestamp.valueOf(
-				workflowMetricsSLATaskResult.getLastCheckLocalDateTime()));
+
+		if (workflowMetricsSLATaskResult.getLastCheckLocalDateTime() != null) {
+			document.addDateSortable(
+				"lastCheckDate",
+				Timestamp.valueOf(
+					workflowMetricsSLATaskResult.getLastCheckLocalDateTime()));
+		}
+
 		document.addKeyword("onTime", workflowMetricsSLATaskResult.isOnTime());
 		document.addKeyword(
 			"processId", workflowMetricsSLATaskResult.getProcessId());
@@ -90,7 +110,9 @@ public class SLATaskResultWorkflowMetricsIndexer
 		WorkflowMetricsSLAStatus workflowMetricsSLAStatus =
 			workflowMetricsSLATaskResult.getWorkflowMetricsSLAStatus();
 
-		document.addKeyword("status", workflowMetricsSLAStatus.name());
+		if (workflowMetricsSLAStatus != null) {
+			document.addKeyword("status", workflowMetricsSLAStatus.name());
+		}
 
 		document.addKeyword("taskId", workflowMetricsSLATaskResult.getTaskId());
 		document.addKeyword(
@@ -113,6 +135,92 @@ public class SLATaskResultWorkflowMetricsIndexer
 
 	@Override
 	public void reindex(long companyId) {
+		_creatDefaultDocuments(companyId);
+	}
+
+	protected Document creatDefaultDocument(
+		long companyId, long processId, long taskId, String taskName) {
+
+		WorkflowMetricsSLATaskResult workflowMetricsSLATaskResult =
+			new WorkflowMetricsSLATaskResult();
+
+		workflowMetricsSLATaskResult.setCompanyId(companyId);
+		workflowMetricsSLATaskResult.setProcessId(processId);
+		workflowMetricsSLATaskResult.setTaskId(taskId);
+		workflowMetricsSLATaskResult.setTaskName(taskName);
+
+		return createDocument(workflowMetricsSLATaskResult);
+	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
+	protected volatile NodeWorkflowMetricsIndexer nodeWorkflowMetricsIndexer;
+
+	private void _creatDefaultDocuments(long companyId) {
+		if ((searchEngineAdapter == null) ||
+			(nodeWorkflowMetricsIndexer == null)) {
+
+			return;
+		}
+
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		searchSearchRequest.setIndexNames(
+			nodeWorkflowMetricsIndexer.getIndexName());
+
+		BooleanQuery booleanQuery = queries.booleanQuery();
+
+		booleanQuery.addFilterQueryClauses(
+			queries.term("companyId", companyId),
+			queries.term("deleted", Boolean.FALSE));
+
+		searchSearchRequest.setQuery(booleanQuery);
+
+		searchSearchRequest.setSize(10000);
+
+		SearchSearchResponse searchSearchResponse = searchEngineAdapter.execute(
+			searchSearchRequest);
+
+		SearchHits searchHits = searchSearchResponse.getSearchHits();
+
+		if (searchHits.getTotalHits() == 0) {
+			return;
+		}
+
+		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
+
+		Stream.of(
+			searchHits.getSearchHits()
+		).flatMap(
+			List::stream
+		).map(
+			SearchHit::getDocument
+		).map(
+			document -> creatDefaultDocument(
+				companyId, document.getLong("processId"),
+				document.getLong("nodeId"), document.getString("name"))
+		).map(
+			document -> new IndexDocumentRequest(getIndexName(), document) {
+				{
+					setType(getIndexType());
+				}
+			}
+		).forEach(
+			bulkDocumentRequest::addBulkableDocumentRequest
+		);
+
+		if (ListUtil.isNotEmpty(
+				bulkDocumentRequest.getBulkableDocumentRequests())) {
+
+			if (PortalRunMode.isTestMode()) {
+				bulkDocumentRequest.setRefresh(true);
+			}
+
+			searchEngineAdapter.execute(bulkDocumentRequest);
+		}
 	}
 
 }
