@@ -45,11 +45,7 @@ export default class MultiSelect extends React.Component {
 	addTag(tagId) {
 		const {onChangeTags, selectedTagsId} = this.props;
 
-		this.setState(
-			{
-				searchKey: '',
-				verticalIndex: -1
-			},
+		this.clearSearch(
 			() => {
 				if (onChangeTags) {
 					onChangeTags(selectedTagsId.concat([tagId]));
@@ -75,6 +71,13 @@ export default class MultiSelect extends React.Component {
 			verticalIndex: -1
 		});
 	}
+	
+	clearSearch(callback) {
+		this.setState({
+			searchKey: '',
+			verticalIndex: -1
+		}, callback);
+	}
 
 	get dataFiltered() {
 		const {data, fieldId = 'id', selectedTagsId} = this.props;
@@ -97,6 +100,7 @@ export default class MultiSelect extends React.Component {
 
 	handleClickOutside(event) {
 		if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+			this.clearSearch();
 			this.hideDropList();
 		}
 	}
