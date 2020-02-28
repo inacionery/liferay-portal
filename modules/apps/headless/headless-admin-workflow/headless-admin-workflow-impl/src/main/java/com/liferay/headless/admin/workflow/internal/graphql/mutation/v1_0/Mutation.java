@@ -22,8 +22,11 @@ import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTask;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToMe;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToRole;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToUser;
+import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignableUsers;
+import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskIds;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowInstanceResource;
+import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskAssignableUsersResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
@@ -69,6 +72,15 @@ public class Mutation {
 
 		_workflowTaskResourceComponentServiceObjects =
 			workflowTaskResourceComponentServiceObjects;
+	}
+
+	public static void
+		setWorkflowTaskAssignableUsersResourceComponentServiceObjects(
+			ComponentServiceObjects<WorkflowTaskAssignableUsersResource>
+				workflowTaskAssignableUsersResourceComponentServiceObjects) {
+
+		_workflowTaskAssignableUsersResourceComponentServiceObjects =
+			workflowTaskAssignableUsersResourceComponentServiceObjects;
 	}
 
 	@GraphQLField
@@ -294,6 +306,19 @@ public class Mutation {
 					workflowTaskId, workflowTaskAssignToMe));
 	}
 
+	@GraphQLField
+	public WorkflowTaskAssignableUsers createWorkflowTaskAssignableUser(
+			@GraphQLName("workflowTaskIds") WorkflowTaskIds workflowTaskIds)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_workflowTaskAssignableUsersResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			workflowTaskAssignableUsersResource ->
+				workflowTaskAssignableUsersResource.
+					postWorkflowTaskAssignableUser(workflowTaskIds));
+	}
+
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R
 			_applyComponentServiceObjects(
 				ComponentServiceObjects<T> componentServiceObjects,
@@ -373,12 +398,30 @@ public class Mutation {
 		workflowTaskResource.setContextUser(_user);
 	}
 
+	private void _populateResourceContext(
+			WorkflowTaskAssignableUsersResource
+				workflowTaskAssignableUsersResource)
+		throws Exception {
+
+		workflowTaskAssignableUsersResource.setContextAcceptLanguage(
+			_acceptLanguage);
+		workflowTaskAssignableUsersResource.setContextCompany(_company);
+		workflowTaskAssignableUsersResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		workflowTaskAssignableUsersResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		workflowTaskAssignableUsersResource.setContextUriInfo(_uriInfo);
+		workflowTaskAssignableUsersResource.setContextUser(_user);
+	}
+
 	private static ComponentServiceObjects<WorkflowDefinitionResource>
 		_workflowDefinitionResourceComponentServiceObjects;
 	private static ComponentServiceObjects<WorkflowInstanceResource>
 		_workflowInstanceResourceComponentServiceObjects;
 	private static ComponentServiceObjects<WorkflowTaskResource>
 		_workflowTaskResourceComponentServiceObjects;
+	private static ComponentServiceObjects<WorkflowTaskAssignableUsersResource>
+		_workflowTaskAssignableUsersResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;

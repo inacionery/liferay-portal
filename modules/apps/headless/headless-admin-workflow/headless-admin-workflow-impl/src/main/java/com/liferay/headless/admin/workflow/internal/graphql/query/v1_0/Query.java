@@ -21,14 +21,12 @@ import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowInstance;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowLog;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTask;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToUser;
-import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignableUsers;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskTransitions;
 import com.liferay.headless.admin.workflow.resource.v1_0.AssigneeResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.TransitionResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowInstanceResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowLogResource;
-import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskAssignableUsersResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskTransitionsResource;
 import com.liferay.petra.function.UnsafeConsumer;
@@ -108,15 +106,6 @@ public class Query {
 
 		_workflowTaskResourceComponentServiceObjects =
 			workflowTaskResourceComponentServiceObjects;
-	}
-
-	public static void
-		setWorkflowTaskAssignableUsersResourceComponentServiceObjects(
-			ComponentServiceObjects<WorkflowTaskAssignableUsersResource>
-				workflowTaskAssignableUsersResourceComponentServiceObjects) {
-
-		_workflowTaskAssignableUsersResourceComponentServiceObjects =
-			workflowTaskAssignableUsersResourceComponentServiceObjects;
 	}
 
 	public static void
@@ -583,24 +572,6 @@ public class Query {
 			workflowTaskResource ->
 				workflowTaskResource.getWorkflowTaskHasAssignableUsers(
 					workflowTaskId));
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workflowTaskAssignableUser(workflowTaskIds: ___){workflowTaskAssignableUsers}}"}' -u 'test@liferay.com:test'
-	 */
-	@GraphQLField
-	public WorkflowTaskAssignableUsers workflowTaskAssignableUser(
-			@GraphQLName("workflowTaskIds") Long[] workflowTaskIds)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_workflowTaskAssignableUsersResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			workflowTaskAssignableUsersResource ->
-				workflowTaskAssignableUsersResource.
-					getWorkflowTaskAssignableUser(workflowTaskIds));
 	}
 
 	/**
@@ -1110,40 +1081,6 @@ public class Query {
 
 	}
 
-	@GraphQLName("WorkflowTaskAssignableUsersPage")
-	public class WorkflowTaskAssignableUsersPage {
-
-		public WorkflowTaskAssignableUsersPage(
-			Page workflowTaskAssignableUsersPage) {
-
-			actions = workflowTaskAssignableUsersPage.getActions();
-			items = workflowTaskAssignableUsersPage.getItems();
-			lastPage = workflowTaskAssignableUsersPage.getLastPage();
-			page = workflowTaskAssignableUsersPage.getPage();
-			pageSize = workflowTaskAssignableUsersPage.getPageSize();
-			totalCount = workflowTaskAssignableUsersPage.getTotalCount();
-		}
-
-		@GraphQLField
-		protected Map<String, Map> actions;
-
-		@GraphQLField
-		protected java.util.Collection<WorkflowTaskAssignableUsers> items;
-
-		@GraphQLField
-		protected long lastPage;
-
-		@GraphQLField
-		protected long page;
-
-		@GraphQLField
-		protected long pageSize;
-
-		@GraphQLField
-		protected long totalCount;
-
-	}
-
 	@GraphQLName("WorkflowTaskTransitionsPage")
 	public class WorkflowTaskTransitionsPage {
 
@@ -1271,22 +1208,6 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
-			WorkflowTaskAssignableUsersResource
-				workflowTaskAssignableUsersResource)
-		throws Exception {
-
-		workflowTaskAssignableUsersResource.setContextAcceptLanguage(
-			_acceptLanguage);
-		workflowTaskAssignableUsersResource.setContextCompany(_company);
-		workflowTaskAssignableUsersResource.setContextHttpServletRequest(
-			_httpServletRequest);
-		workflowTaskAssignableUsersResource.setContextHttpServletResponse(
-			_httpServletResponse);
-		workflowTaskAssignableUsersResource.setContextUriInfo(_uriInfo);
-		workflowTaskAssignableUsersResource.setContextUser(_user);
-	}
-
-	private void _populateResourceContext(
 			WorkflowTaskTransitionsResource workflowTaskTransitionsResource)
 		throws Exception {
 
@@ -1313,8 +1234,6 @@ public class Query {
 		_workflowLogResourceComponentServiceObjects;
 	private static ComponentServiceObjects<WorkflowTaskResource>
 		_workflowTaskResourceComponentServiceObjects;
-	private static ComponentServiceObjects<WorkflowTaskAssignableUsersResource>
-		_workflowTaskAssignableUsersResourceComponentServiceObjects;
 	private static ComponentServiceObjects<WorkflowTaskTransitionsResource>
 		_workflowTaskTransitionsResourceComponentServiceObjects;
 
