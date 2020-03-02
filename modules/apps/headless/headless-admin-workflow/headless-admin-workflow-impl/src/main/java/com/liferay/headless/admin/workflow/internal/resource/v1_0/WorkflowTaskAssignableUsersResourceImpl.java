@@ -48,7 +48,7 @@ public class WorkflowTaskAssignableUsersResourceImpl
 
 	@Override
 	public WorkflowTaskAssignableUsers postWorkflowTaskAssignableUser(
-		WorkflowTaskIds workflowTaskIds)
+			WorkflowTaskIds workflowTaskIds)
 		throws Exception {
 
 		return new WorkflowTaskAssignableUsers() {

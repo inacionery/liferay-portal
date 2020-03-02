@@ -12,7 +12,7 @@
 import React, {useContext, useMemo, useState} from 'react';
 
 import PromisesResolver from '../../../../../shared/components/promises-resolver/PromisesResolver.es';
-import {usePost} from "../../../../../shared/hooks/usePost.es";
+import {usePost} from '../../../../../shared/hooks/usePost.es';
 import {ModalContext} from '../../ModalContext.es';
 import {Body} from './BulkReassignSelectAssigneesStepBody.es';
 import {Header} from './BulkReassignSelectAssigneesStepHeader.es';

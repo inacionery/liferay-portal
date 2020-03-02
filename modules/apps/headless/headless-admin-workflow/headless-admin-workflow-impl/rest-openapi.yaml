@@ -465,14 +465,6 @@ components:
                     format: int64
                     type: integer
             type: object
-        WorkflowTaskIds:
-            properties:
-                workflowTaskIds:
-                    items:
-                        format: int64
-                        type: integer
-                    type: array
-            type: object
         WorkflowTaskAssignableUsers:
             properties:
                 workflowTaskAssignableUsers:
@@ -485,6 +477,32 @@ components:
                             workflowTaskId:
                                 format: int64
                                 type: integer
+                        type: object
+                    type: array
+            type: object
+        WorkflowTaskIds:
+            properties:
+                workflowTaskIds:
+                    items:
+                        format: int64
+                        type: integer
+                    type: array
+            type: object
+        WorkflowTaskTransitions:
+            properties:
+                workflowTaskTransitions:
+                    items:
+                        properties:
+                            transitions:
+                                items:
+                                    $ref: "#/components/schemas/Transition"
+                                type: array
+                            workflowDefinitionVersion:
+                                type: string
+                            workflowTaskLabel:
+                                type: string
+                            workflowTaskName:
+                                type: string
                         type: object
                     type: array
             type: object
@@ -531,24 +549,6 @@ components:
                     items:
                         format: int64
                         type: integer
-                    type: array
-            type: object
-        WorkflowTaskTransitions:
-            properties:
-                workflowTaskTransitions:
-                    items:
-                        properties:
-                            transitions:
-                                items:
-                                    $ref: "#/components/schemas/Transition"
-                                type: array
-                            workflowDefinitionVersion:
-                                type: string
-                            workflowTaskLabel:
-                                type: string
-                            workflowTaskName:
-                                type: string
-                        type: object
                     type: array
             type: object
 info:
