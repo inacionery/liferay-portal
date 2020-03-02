@@ -40,7 +40,6 @@ import com.liferay.portal.vulcan.graphql.annotation.GraphQLTypeExtension;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -380,45 +379,6 @@ public class Query {
 					getWorkflowInstanceWorkflowTasksAssignedToUserPage(
 						workflowInstanceId, assigneeId, completed,
 						Pagination.of(page, pageSize))));
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workflowTasks(andOperator: ___, assetPrimaryKeys: ___, assetTitle: ___, assetTypes: ___, assigneeIds: ___, completed: ___, dateDueEnd: ___, dateDueStart: ___, page: ___, pageSize: ___, searchByRoles: ___, searchByUserRoles: ___, sorts: ___, taskNames: ___, workflowDefinitionId: ___, workflowInstanceIds: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
-	 */
-	@GraphQLField
-	public WorkflowTaskPage workflowTasks(
-			@GraphQLName("andOperator") Boolean andOperator,
-			@GraphQLName("assetPrimaryKeys") Long[] assetPrimaryKeys,
-			@GraphQLName("assetTitle") String assetTitle,
-			@GraphQLName("assetTypes") String[] assetTypes,
-			@GraphQLName("assigneeIds") Long[] assigneeIds,
-			@GraphQLName("completed") Boolean completed,
-			@GraphQLName("dateDueEnd") Date dateDueEnd,
-			@GraphQLName("dateDueStart") Date dateDueStart,
-			@GraphQLName("searchByRoles") Boolean searchByRoles,
-			@GraphQLName("searchByUserRoles") Boolean searchByUserRoles,
-			@GraphQLName("taskNames") String[] taskNames,
-			@GraphQLName("workflowDefinitionId") Long workflowDefinitionId,
-			@GraphQLName("workflowInstanceIds") Long[] workflowInstanceIds,
-			@GraphQLName("pageSize") int pageSize,
-			@GraphQLName("page") int page,
-			@GraphQLName("sort") String sortsString)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_workflowTaskResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			workflowTaskResource -> new WorkflowTaskPage(
-				workflowTaskResource.getWorkflowTasksPage(
-					andOperator, assetPrimaryKeys, assetTitle, assetTypes,
-					assigneeIds, completed, dateDueEnd, dateDueStart,
-					searchByRoles, searchByUserRoles, taskNames,
-					workflowDefinitionId, workflowInstanceIds,
-					Pagination.of(page, pageSize),
-					_sortsBiFunction.apply(
-						workflowTaskResource, sortsString))));
 	}
 
 	/**

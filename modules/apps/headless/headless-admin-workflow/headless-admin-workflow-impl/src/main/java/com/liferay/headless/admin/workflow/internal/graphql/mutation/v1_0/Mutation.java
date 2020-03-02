@@ -24,6 +24,7 @@ import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToRole;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToUser;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignableUsers;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskIds;
+import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTasksBulkSelection;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowInstanceResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskAssignableUsersResource;
@@ -33,6 +34,8 @@ import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
 
 import javax.annotation.Generated;
 
@@ -198,6 +201,30 @@ public class Mutation {
 			workflowInstanceResource ->
 				workflowInstanceResource.postWorkflowInstanceChangeTransition(
 					workflowInstanceId, changeTransition));
+	}
+
+	@GraphQLField
+	public java.util.Collection<WorkflowTask> createWorkflowTasksPage(
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString,
+			@GraphQLName("workflowTasksBulkSelection")
+				WorkflowTasksBulkSelection workflowTasksBulkSelection)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_workflowTaskResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			workflowTaskResource -> {
+				Page paginationPage =
+					workflowTaskResource.postWorkflowTasksPage(
+						Pagination.of(page, pageSize),
+						_sortsBiFunction.apply(
+							workflowTaskResource, sortsString),
+						workflowTasksBulkSelection);
+
+				return paginationPage.getItems();
+			});
 	}
 
 	@GraphQLField
