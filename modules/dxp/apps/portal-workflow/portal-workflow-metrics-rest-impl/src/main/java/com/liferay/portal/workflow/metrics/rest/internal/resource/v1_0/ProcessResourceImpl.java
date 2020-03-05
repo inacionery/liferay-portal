@@ -15,8 +15,6 @@
 package com.liferay.portal.workflow.metrics.rest.internal.resource.v1_0;
 
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.exception.NoSuchModelException;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.search.engine.adapter.search.SearchRequestExecutor;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
@@ -28,6 +26,7 @@ import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.workflow.metrics.index.ProcessWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Process;
+import com.liferay.portal.workflow.metrics.rest.exception.v1_0.NoSuchProcessException;
 import com.liferay.portal.workflow.metrics.rest.internal.dto.v1_0.util.ProcessUtil;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.ProcessResource;
 
@@ -81,7 +80,7 @@ public class ProcessResourceImpl extends BaseProcessResourceImpl {
 				document, contextAcceptLanguage.getPreferredLocale())
 		).orElseThrow(
 			() ->
-				new NoSuchModelException(
+				new NoSuchProcessException(
 					"No Process exists with the id " + processId)
 				
 		);

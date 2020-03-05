@@ -394,12 +394,12 @@ public abstract class BaseInstanceResourceTestCase {
 		assertHttpResponseStatusCode(
 			204,
 			instanceResource.patchProcessInstanceHttpResponse(
-				null, instance.getId(), instance));
+				instance.getProcessId(), instance.getId(), instance));
 
 		assertHttpResponseStatusCode(
 			404,
 			instanceResource.patchProcessInstanceHttpResponse(
-				null, 0L, instance));
+				instance.getProcessId(), 0L, instance));
 	}
 
 	protected Instance testPatchProcessInstance_addInstance() throws Exception {
@@ -415,12 +415,12 @@ public abstract class BaseInstanceResourceTestCase {
 		assertHttpResponseStatusCode(
 			204,
 			instanceResource.patchProcessInstanceCompleteHttpResponse(
-				null, instance.getId(), instance));
+				instance.getProcessId(), instance.getId(), instance));
 
 		assertHttpResponseStatusCode(
 			404,
 			instanceResource.patchProcessInstanceCompleteHttpResponse(
-				null, 0L, instance));
+				instance.getProcessId(), 0L, instance));
 	}
 
 	protected Instance testPatchProcessInstanceComplete_addInstance()

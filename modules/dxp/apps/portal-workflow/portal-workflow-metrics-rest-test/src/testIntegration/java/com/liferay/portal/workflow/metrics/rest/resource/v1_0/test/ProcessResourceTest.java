@@ -84,6 +84,11 @@ public class ProcessResourceTest extends BaseProcessResourceTestCase {
 	}
 
 	@Override
+	public void testGetProcess() throws Exception {
+		super.testGetProcess();
+	}
+
+	@Override
 	@Test
 	public void testGetProcessTitle() throws Exception {
 		Process process = randomProcess();
@@ -122,23 +127,12 @@ public class ProcessResourceTest extends BaseProcessResourceTestCase {
 
 		return process;
 	}
-	
+
 	@Override
 	protected Process testDeleteProcess_addProcess() throws Exception {
 		return testGetProcess_addProcess();
 	}
 
-	@Override
-	protected Process testPostProcess_addProcess(Process process) throws Exception {
-
-		return testGetProcessesPage_addProcess(process);
-	}
-	
-	@Override
-	protected Process testPutProcess_addProcess() throws Exception {
-		return testGetProcess_addProcess();
-	}
-	
 	@Override
 	protected Process testGetProcess_addProcess() throws Exception {
 		return testGetProcessesPage_addProcess(randomProcess());
@@ -155,14 +149,20 @@ public class ProcessResourceTest extends BaseProcessResourceTestCase {
 		return process;
 	}
 
-	
 	@Override
-	public void testGetProcess() throws Exception {
-		super.testGetProcess();
+	protected Process testGraphQLProcess_addProcess() throws Exception {
+		return testGetProcess_addProcess();
 	}
 
 	@Override
-	protected Process testGraphQLProcess_addProcess() throws Exception {
+	protected Process testPostProcess_addProcess(Process process)
+		throws Exception {
+
+		return testGetProcessesPage_addProcess(process);
+	}
+
+	@Override
+	protected Process testPutProcess_addProcess() throws Exception {
 		return testGetProcess_addProcess();
 	}
 
@@ -174,28 +174,28 @@ public class ProcessResourceTest extends BaseProcessResourceTestCase {
 	}
 
 	@Inject
-	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
-
-	@Inject
-	private static InstanceWorkflowMetricsIndexer _instanceWorkflowMetricsIndexer;
-	
-	@Inject
-	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
-	
-	@Inject
-	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
-
-
-	@Inject
 	private static DocumentBuilderFactory _documentBuilderFactory;
 
 	private static Document[] _documents;
+
+	@Inject
+	private static InstanceWorkflowMetricsIndexer
+		_instanceWorkflowMetricsIndexer;
+
+	@Inject
+	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
+
+	@Inject
+	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
 
 	@Inject
 	private static Queries _queries;
 
 	@Inject(blocking = false, filter = "search.engine.impl=Elasticsearch")
 	private static SearchEngineAdapter _searchEngineAdapter;
+
+	@Inject
+	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
 
 	private static WorkflowMetricsRESTTestHelper _workflowMetricsRESTTestHelper;
 

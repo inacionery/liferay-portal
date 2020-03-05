@@ -59,7 +59,10 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 	public static void setUpClass() throws Exception {
 		BaseInstanceResourceTestCase.setUpClass();
 
-		_workflowMetricsRESTTestHelper = new WorkflowMetricsRESTTestHelper(_documentBuilderFactory, _instanceWorkflowMetricsIndexer, _nodeWorkflowMetricsIndexer, _processWorkflowMetricsIndexer, _queries, _searchEngineAdapter, _taskWorkflowMetricsIndexer);
+		_workflowMetricsRESTTestHelper = new WorkflowMetricsRESTTestHelper(
+			_documentBuilderFactory, _instanceWorkflowMetricsIndexer,
+			_nodeWorkflowMetricsIndexer, _processWorkflowMetricsIndexer,
+			_queries, _searchEngineAdapter, _taskWorkflowMetricsIndexer);
 	}
 
 	@Before
@@ -145,19 +148,16 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 	}
 
 	@Override
+	protected Instance testDeleteProcessInstance_addInstance()
+		throws Exception {
+
+		return testGetProcessInstance_addInstance();
+	}
+
+	@Override
 	protected Instance testGetProcessInstance_addInstance() throws Exception {
 		return testGetProcessInstancesPage_addInstance(
 			_process.getId(), randomInstance());
-	}
-	
-	@Override
-	protected Instance testDeleteProcessInstance_addInstance() throws Exception {
-		return testGetProcessInstance_addInstance();
-	}
-	
-	@Override
-	protected Instance testPatchProcessInstance_addInstance() throws Exception {
-		return testGetProcessInstance_addInstance();
 	}
 
 	@Override
@@ -190,6 +190,11 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 		return testGetProcessInstance_addInstance();
 	}
 
+	@Override
+	protected Instance testPatchProcessInstance_addInstance() throws Exception {
+		return testGetProcessInstance_addInstance();
+	}
+
 	private void _deleteInstances() throws Exception {
 		for (Instance instance : _instances) {
 			_workflowMetricsRESTTestHelper.deleteInstance(
@@ -198,7 +203,7 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 	}
 
 	private void _testGetProcessInstancesPage(
-			Long[] assigneeUserIds, String[] statuses,
+			Long[] assigneeIds, String[] statuses,
 			UnsafeTriConsumer<Instance, Instance, Page<Instance>, Exception>
 				unsafeTriConsumer)
 		throws Exception {
@@ -225,33 +230,33 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 		testGetProcessInstancesPage_addInstance(_process.getId(), instance2);
 
 		Page<Instance> page = instanceResource.getProcessInstancesPage(
-			_process.getId(), assigneeUserIds, null, null, null, statuses, null,
+			_process.getId(), assigneeIds, null, null, null, statuses, null,
 			Pagination.of(1, 2));
 
 		unsafeTriConsumer.accept(instance1, instance2, page);
 	}
 
-	
-	@Inject
-	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
-
-	@Inject
-	private static InstanceWorkflowMetricsIndexer _instanceWorkflowMetricsIndexer;
-	
-	@Inject
-	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
-	
-	@Inject
-	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
-
 	@Inject
 	private static DocumentBuilderFactory _documentBuilderFactory;
+
+	@Inject
+	private static InstanceWorkflowMetricsIndexer
+		_instanceWorkflowMetricsIndexer;
+
+	@Inject
+	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
+
+	@Inject
+	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
 
 	@Inject
 	private static Queries _queries;
 
 	@Inject(blocking = false, filter = "search.engine.impl=Elasticsearch")
 	private static SearchEngineAdapter _searchEngineAdapter;
+
+	@Inject
+	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
 
 	private static WorkflowMetricsRESTTestHelper _workflowMetricsRESTTestHelper;
 

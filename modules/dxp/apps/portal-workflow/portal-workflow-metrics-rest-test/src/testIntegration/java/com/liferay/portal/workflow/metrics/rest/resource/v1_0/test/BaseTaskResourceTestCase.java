@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-import com.liferay.petra.function.UnsafeTriConsumer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -38,7 +37,6 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
@@ -47,19 +45,15 @@ import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Task;
 import com.liferay.portal.workflow.metrics.rest.client.http.HttpInvoker;
 import com.liferay.portal.workflow.metrics.rest.client.pagination.Page;
-import com.liferay.portal.workflow.metrics.rest.client.pagination.Pagination;
 import com.liferay.portal.workflow.metrics.rest.client.resource.v1_0.TaskResource;
 import com.liferay.portal.workflow.metrics.rest.client.serdes.v1_0.TaskSerDes;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import java.text.DateFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +65,6 @@ import javax.annotation.Generated;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -203,7 +196,7 @@ public abstract class BaseTaskResourceTestCase {
 	@Test
 	public void testGetProcessTasksPage() throws Exception {
 		Page<Task> page = taskResource.getProcessTasksPage(
-			testGetProcessTasksPage_getProcessId(), Pagination.of(1, 2), null);
+			testGetProcessTasksPage_getProcessId());
 
 		Assert.assertEquals(0, page.getTotalCount());
 
@@ -215,8 +208,7 @@ public abstract class BaseTaskResourceTestCase {
 			Task irrelevantTask = testGetProcessTasksPage_addTask(
 				irrelevantProcessId, randomIrrelevantTask());
 
-			page = taskResource.getProcessTasksPage(
-				irrelevantProcessId, Pagination.of(1, 2), null);
+			page = taskResource.getProcessTasksPage(irrelevantProcessId);
 
 			Assert.assertEquals(1, page.getTotalCount());
 
@@ -229,141 +221,13 @@ public abstract class BaseTaskResourceTestCase {
 
 		Task task2 = testGetProcessTasksPage_addTask(processId, randomTask());
 
-		page = taskResource.getProcessTasksPage(
-			processId, Pagination.of(1, 2), null);
+		page = taskResource.getProcessTasksPage(processId);
 
 		Assert.assertEquals(2, page.getTotalCount());
 
 		assertEqualsIgnoringOrder(
 			Arrays.asList(task1, task2), (List<Task>)page.getItems());
 		assertValid(page);
-	}
-
-	@Test
-	public void testGetProcessTasksPageWithPagination() throws Exception {
-		Long processId = testGetProcessTasksPage_getProcessId();
-
-		Task task1 = testGetProcessTasksPage_addTask(processId, randomTask());
-
-		Task task2 = testGetProcessTasksPage_addTask(processId, randomTask());
-
-		Task task3 = testGetProcessTasksPage_addTask(processId, randomTask());
-
-		Page<Task> page1 = taskResource.getProcessTasksPage(
-			processId, Pagination.of(1, 2), null);
-
-		List<Task> tasks1 = (List<Task>)page1.getItems();
-
-		Assert.assertEquals(tasks1.toString(), 2, tasks1.size());
-
-		Page<Task> page2 = taskResource.getProcessTasksPage(
-			processId, Pagination.of(2, 2), null);
-
-		Assert.assertEquals(3, page2.getTotalCount());
-
-		List<Task> tasks2 = (List<Task>)page2.getItems();
-
-		Assert.assertEquals(tasks2.toString(), 1, tasks2.size());
-
-		Page<Task> page3 = taskResource.getProcessTasksPage(
-			processId, Pagination.of(1, 3), null);
-
-		assertEqualsIgnoringOrder(
-			Arrays.asList(task1, task2, task3), (List<Task>)page3.getItems());
-	}
-
-	@Test
-	public void testGetProcessTasksPageWithSortDateTime() throws Exception {
-		testGetProcessTasksPageWithSort(
-			EntityField.Type.DATE_TIME,
-			(entityField, task1, task2) -> {
-				BeanUtils.setProperty(
-					task1, entityField.getName(),
-					DateUtils.addMinutes(new Date(), -2));
-			});
-	}
-
-	@Test
-	public void testGetProcessTasksPageWithSortInteger() throws Exception {
-		testGetProcessTasksPageWithSort(
-			EntityField.Type.INTEGER,
-			(entityField, task1, task2) -> {
-				BeanUtils.setProperty(task1, entityField.getName(), 0);
-				BeanUtils.setProperty(task2, entityField.getName(), 1);
-			});
-	}
-
-	@Test
-	public void testGetProcessTasksPageWithSortString() throws Exception {
-		testGetProcessTasksPageWithSort(
-			EntityField.Type.STRING,
-			(entityField, task1, task2) -> {
-				Class<?> clazz = task1.getClass();
-
-				Method method = clazz.getMethod(
-					"get" +
-						StringUtil.upperCaseFirstLetter(entityField.getName()));
-
-				Class<?> returnType = method.getReturnType();
-
-				if (returnType.isAssignableFrom(Map.class)) {
-					BeanUtils.setProperty(
-						task1, entityField.getName(),
-						Collections.singletonMap("Aaa", "Aaa"));
-					BeanUtils.setProperty(
-						task2, entityField.getName(),
-						Collections.singletonMap("Bbb", "Bbb"));
-				}
-				else {
-					BeanUtils.setProperty(
-						task1, entityField.getName(),
-						"Aaa" + RandomTestUtil.randomString());
-					BeanUtils.setProperty(
-						task2, entityField.getName(),
-						"Bbb" + RandomTestUtil.randomString());
-				}
-			});
-	}
-
-	protected void testGetProcessTasksPageWithSort(
-			EntityField.Type type,
-			UnsafeTriConsumer<EntityField, Task, Task, Exception>
-				unsafeTriConsumer)
-		throws Exception {
-
-		List<EntityField> entityFields = getEntityFields(type);
-
-		if (entityFields.isEmpty()) {
-			return;
-		}
-
-		Long processId = testGetProcessTasksPage_getProcessId();
-
-		Task task1 = randomTask();
-		Task task2 = randomTask();
-
-		for (EntityField entityField : entityFields) {
-			unsafeTriConsumer.accept(entityField, task1, task2);
-		}
-
-		task1 = testGetProcessTasksPage_addTask(processId, task1);
-
-		task2 = testGetProcessTasksPage_addTask(processId, task2);
-
-		for (EntityField entityField : entityFields) {
-			Page<Task> ascPage = taskResource.getProcessTasksPage(
-				processId, Pagination.of(1, 2), entityField.getName() + ":asc");
-
-			assertEquals(
-				Arrays.asList(task1, task2), (List<Task>)ascPage.getItems());
-
-			Page<Task> descPage = taskResource.getProcessTasksPage(
-				processId, Pagination.of(1, 2),
-				entityField.getName() + ":desc");
-
-			assertEquals(
-				Arrays.asList(task2, task1), (List<Task>)descPage.getItems());
-		}
 	}
 
 	protected Task testGetProcessTasksPage_addTask(Long processId, Task task)
@@ -475,10 +339,12 @@ public abstract class BaseTaskResourceTestCase {
 		assertHttpResponseStatusCode(
 			204,
 			taskResource.patchProcessTaskHttpResponse(
-				null, task.getId(), task));
+				task.getProcessId(), task.getId(), task));
 
 		assertHttpResponseStatusCode(
-			404, taskResource.patchProcessTaskHttpResponse(null, 0L, task));
+			404,
+			taskResource.patchProcessTaskHttpResponse(
+				task.getProcessId(), 0L, task));
 	}
 
 	protected Task testPatchProcessTask_addTask() throws Exception {
@@ -494,11 +360,12 @@ public abstract class BaseTaskResourceTestCase {
 		assertHttpResponseStatusCode(
 			204,
 			taskResource.patchProcessTaskCompleteHttpResponse(
-				null, task.getId(), task));
+				task.getProcessId(), task.getId(), task));
 
 		assertHttpResponseStatusCode(
 			404,
-			taskResource.patchProcessTaskCompleteHttpResponse(null, 0L, task));
+			taskResource.patchProcessTaskCompleteHttpResponse(
+				task.getProcessId(), 0L, task));
 	}
 
 	protected Task testPatchProcessTaskComplete_addTask() throws Exception {

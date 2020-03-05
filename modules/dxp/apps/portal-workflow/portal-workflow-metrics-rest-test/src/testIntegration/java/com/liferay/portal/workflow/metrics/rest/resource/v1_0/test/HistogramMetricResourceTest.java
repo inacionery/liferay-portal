@@ -39,6 +39,7 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -330,25 +331,26 @@ public class HistogramMetricResourceTest
 	}
 
 	@Inject
-	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
+	private static DocumentBuilderFactory _documentBuilderFactory;
 
 	@Inject
-	private static InstanceWorkflowMetricsIndexer _instanceWorkflowMetricsIndexer;
-	
+	private static InstanceWorkflowMetricsIndexer
+		_instanceWorkflowMetricsIndexer;
+
 	@Inject
 	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
-	
-	@Inject
-	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
 
 	@Inject
-	private static DocumentBuilderFactory _documentBuilderFactory;
+	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
 
 	@Inject
 	private static Queries _queries;
 
 	@Inject(blocking = false, filter = "search.engine.impl=Elasticsearch")
 	private static SearchEngineAdapter _searchEngineAdapter;
+
+	@Inject
+	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
 
 	private static WorkflowMetricsRESTTestHelper _workflowMetricsRESTTestHelper;
 

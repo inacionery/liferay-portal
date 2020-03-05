@@ -449,23 +449,17 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {processTasks(page: ___, pageSize: ___, processId: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {processTasks(processId: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
-	public TaskPage processTasks(
-			@GraphQLName("processId") Long processId,
-			@GraphQLName("pageSize") int pageSize,
-			@GraphQLName("page") int page,
-			@GraphQLName("sort") String sortsString)
+	public TaskPage processTasks(@GraphQLName("processId") Long processId)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_taskResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			taskResource -> new TaskPage(
-				taskResource.getProcessTasksPage(
-					processId, Pagination.of(page, pageSize),
-					_sortsBiFunction.apply(taskResource, sortsString))));
+				taskResource.getProcessTasksPage(processId)));
 	}
 
 	/**
@@ -622,19 +616,12 @@ public class Query {
 		}
 
 		@GraphQLField
-		public TaskPage tasks(
-				@GraphQLName("pageSize") int pageSize,
-				@GraphQLName("page") int page,
-				@GraphQLName("sort") String sortsString)
-			throws Exception {
-
+		public TaskPage tasks() throws Exception {
 			return _applyComponentServiceObjects(
 				_taskResourceComponentServiceObjects,
 				Query.this::_populateResourceContext,
 				taskResource -> new TaskPage(
-					taskResource.getProcessTasksPage(
-						_process.getId(), Pagination.of(page, pageSize),
-						_sortsBiFunction.apply(taskResource, sortsString))));
+					taskResource.getProcessTasksPage(_process.getId())));
 		}
 
 		private Process _process;

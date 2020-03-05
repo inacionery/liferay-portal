@@ -15,7 +15,6 @@
 package com.liferay.portal.workflow.metrics.rest.internal.resource.v1_0;
 
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.search.aggregation.AggregationResult;
 import com.liferay.portal.search.aggregation.Aggregations;
@@ -30,9 +29,9 @@ import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.vulcan.pagination.Page;
-import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.workflow.metrics.index.TaskWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Task;
+import com.liferay.portal.workflow.metrics.rest.exception.v1_0.NoSuchTaskException;
 import com.liferay.portal.workflow.metrics.rest.internal.dto.v1_0.util.TaskUtil;
 import com.liferay.portal.workflow.metrics.rest.internal.resource.helper.ResourceHelper;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.TaskResource;
@@ -95,14 +94,15 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 				ResourceBundleUtil.getModuleAndPortalResourceBundle(
 					contextAcceptLanguage.getPreferredLocale(),
 					InstanceResourceImpl.class))
-		).orElseGet(
-			() -> null
-		);
+			).orElseThrow(
+				() ->
+					new NoSuchTaskException(
+						"No Task exists with the id " + taskId)
+			);
 	}
 
 	@Override
-	public Page<Task> getProcessTasksPage(
-			Long processId, Pagination pagination, Sort[] sorts)
+	public Page<Task> getProcessTasksPage(Long processId)
 		throws Exception {
 
 		return Page.of(_getTasks(processId));
@@ -111,6 +111,8 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 	@Override
 	public void patchProcessTask(Long processId, Long taskId, Task task)
 		throws Exception {
+
+		getProcessTask(processId, taskId);
 
 		_taskWorkflowMetricsIndexer.update(
 			contextCompany.getCompanyId(), Optional.of(task.getAssigneeId()),
@@ -121,6 +123,8 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 	public void patchProcessTaskComplete(Long processId, Long taskId, Task task)
 		throws Exception {
 
+		getProcessTask(processId, taskId);
+
 		_taskWorkflowMetricsIndexer.complete(
 			contextCompany.getCompanyId(), task.getCompletionUserId(),
 			task.getDateCompletion(), task.getDateModified(),
@@ -130,10 +134,12 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 	@Override
 	public Task postProcessTask(Long processId, Task task) throws Exception {
 		return TaskUtil.toTask(
-			_taskWorkflowMetricsIndexer.update(
-				contextCompany.getCompanyId(),
-				Optional.of(task.getAssigneeId()),
-				task.getDateModified(), task.getId(), contextUser.getUserId()),
+			_taskWorkflowMetricsIndexer.add(
+				contextCompany.getCompanyId(), task.getNodeId(),
+				task.getClassName(), task.getClassPK(), task.getDateCreated(),
+				task.getDateModified(), task.getInstanceId(), task.getName(),
+				processId, task.getProcessVersion(), task.getId(),
+				contextUser.getUserId()),
 			_language,
 			ResourceBundleUtil.getModuleAndPortalResourceBundle(
 				contextAcceptLanguage.getPreferredLocale(),

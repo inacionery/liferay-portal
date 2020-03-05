@@ -1100,6 +1100,8 @@ public abstract class Base${schemaName}ResourceTestCase {
 						<#list javaMethodSignature.javaMethodParameters as javaMethodParameter>
 							<#if freeMarkerTool.isPathParameter(javaMethodParameter, javaMethodSignature.operation) && stringUtil.equals(javaMethodParameter.parameterName, schemaVarName + "Id")>
 								${schemaVarName}.getId()
+							<#elseif freeMarkerTool.isPathParameter(javaMethodParameter, javaMethodSignature.operation) && properties?keys?seq_contains(javaMethodParameter.parameterName)>
+								${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}()
 							<#elseif stringUtil.equals(javaMethodParameter.parameterName, "siteId")>
 								testGroup.getGroupId()
 							<#elseif stringUtil.equals(javaMethodParameter.parameterName, schemaVarName)>
@@ -1136,6 +1138,8 @@ public abstract class Base${schemaName}ResourceTestCase {
 								<#else>
 									null
 								</#if>
+							<#elseif freeMarkerTool.isPathParameter(javaMethodParameter, javaMethodSignature.operation) && properties?keys?seq_contains(javaMethodParameter.parameterName)>
+								${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}()
 							<#elseif stringUtil.equals(javaMethodParameter.parameterName, "siteId")>
 								testGroup.getGroupId()
 							<#elseif stringUtil.equals(javaMethodParameter.parameterName, schemaVarName)>

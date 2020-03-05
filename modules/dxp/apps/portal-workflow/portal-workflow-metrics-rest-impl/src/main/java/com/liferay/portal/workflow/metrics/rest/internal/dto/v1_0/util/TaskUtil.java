@@ -43,6 +43,7 @@ public class TaskUtil {
 				dateCreated = _parseDate(document.getDate("createDate"));
 				dateModified = _parseDate(document.getDate("modifiedDate"));
 				duration = document.getLong("duration");
+				id = document.getLong("taskId");
 				instanceId = document.getLong("instanceId");
 				label = language.get(
 					resourceBundle, document.getString("name"));

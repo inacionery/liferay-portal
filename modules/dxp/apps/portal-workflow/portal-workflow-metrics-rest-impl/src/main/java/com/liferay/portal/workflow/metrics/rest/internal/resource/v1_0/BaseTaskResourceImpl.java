@@ -64,7 +64,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -87,21 +86,13 @@ public abstract class BaseTaskResourceImpl
 	 */
 	@Override
 	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "processId"),
-			@Parameter(in = ParameterIn.QUERY, name = "page"),
-			@Parameter(in = ParameterIn.QUERY, name = "pageSize"),
-			@Parameter(in = ParameterIn.QUERY, name = "sort")
-		}
-	)
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "processId")})
 	@Path("/processes/{processId}/tasks")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Task")})
 	public Page<Task> getProcessTasksPage(
 			@NotNull @Parameter(hidden = true) @PathParam("processId") Long
-				processId,
-			@Context Pagination pagination, @Context Sort[] sorts)
+				processId)
 		throws Exception {
 
 		return Page.of(Collections.emptyList());
@@ -308,8 +299,7 @@ public abstract class BaseTaskResourceImpl
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		return getProcessTasksPage(
-			(Long)parameters.get("processId"), pagination, sorts);
+		return getProcessTasksPage((Long)parameters.get("processId"));
 	}
 
 	@Override

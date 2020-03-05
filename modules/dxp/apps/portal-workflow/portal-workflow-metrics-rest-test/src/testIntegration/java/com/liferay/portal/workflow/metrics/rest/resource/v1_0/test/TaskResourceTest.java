@@ -15,7 +15,24 @@
 package com.liferay.portal.workflow.metrics.rest.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.search.document.DocumentBuilderFactory;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.workflow.metrics.index.InstanceWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.index.NodeWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.index.ProcessWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.index.TaskWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Instance;
+import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Process;
+import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Task;
+import com.liferay.portal.workflow.metrics.rest.resource.v1_0.test.helper.WorkflowMetricsRESTTestHelper;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -23,4 +40,119 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class TaskResourceTest extends BaseTaskResourceTestCase {
+	
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		BaseTaskResourceTestCase.setUpClass();
+
+		_workflowMetricsRESTTestHelper = new WorkflowMetricsRESTTestHelper(
+			_documentBuilderFactory, _instanceWorkflowMetricsIndexer,
+			_nodeWorkflowMetricsIndexer, _processWorkflowMetricsIndexer,
+			_queries, _searchEngineAdapter, _taskWorkflowMetricsIndexer);
+	}
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		_process = _workflowMetricsRESTTestHelper.addProcess(
+			testGroup.getCompanyId());
+
+		_instance = _workflowMetricsRESTTestHelper.addInstance(
+			testGroup.getCompanyId(), false, _process.getId());
+	}
+
+	@After
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+
+		if (_process != null) {
+			_workflowMetricsRESTTestHelper.deleteProcess(
+				testGroup.getCompanyId(), _process);
+		}
+
+		if (_instance != null) {
+			_workflowMetricsRESTTestHelper.deleteInstance(
+				testGroup.getCompanyId(), _instance);
+		}
+
+	}
+	
+	@Override
+	protected Task testPatchProcessTask_addTask() throws Exception {
+		return testGetProcessTask_addTask();
+	}
+
+	@Override
+	protected Task testGetProcessTask_addTask() throws Exception {
+		return _workflowMetricsRESTTestHelper.addTask(
+			0, testGroup.getCompanyId(), _instance);
+	}
+
+	@Override
+	protected Task testDeleteProcessTask_addTask() throws Exception {
+		return testGetProcessTask_addTask();
+	}
+
+	@Override
+	protected Long testGetProcessTasksPage_getProcessId() throws Exception {
+		return _process.getId();
+	}
+
+	@Override
+	protected String[] getAdditionalAssertFieldNames() {
+		return new String[] {"name"};
+	}
+	
+	@Override
+	protected Task testPatchProcessTaskComplete_addTask() throws Exception {
+		return _workflowMetricsRESTTestHelper.addTask(
+			testGroup.getCompanyId(), _instance, randomPatchTask());
+	}
+
+	@Override
+	protected Task randomTask() throws Exception {
+		Task task = super.randomTask();
+
+		task.setInstanceId(_instance.getId());
+		task.setProcessId(_process.getId());
+		task.setProcessVersion(_process.getVersion());
+
+		return task;
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetProcessTask() throws Exception {
+	}
+
+	@Inject
+	private static DocumentBuilderFactory _documentBuilderFactory;
+
+	@Inject
+	private static InstanceWorkflowMetricsIndexer
+		_instanceWorkflowMetricsIndexer;
+
+	@Inject
+	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
+
+	@Inject
+	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
+
+	@Inject
+	private static Queries _queries;
+
+	@Inject(blocking = false, filter = "search.engine.impl=Elasticsearch")
+	private static SearchEngineAdapter _searchEngineAdapter;
+
+	@Inject
+	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
+
+	private static WorkflowMetricsRESTTestHelper _workflowMetricsRESTTestHelper;
+	
+	private Process _process;
+	private Instance _instance;
 }

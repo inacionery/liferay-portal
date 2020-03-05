@@ -68,6 +68,7 @@ import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Creator;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Instance;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.SLAResult;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Transition;
+import com.liferay.portal.workflow.metrics.rest.exception.v1_0.NoSuchInstanceException;
 import com.liferay.portal.workflow.metrics.rest.internal.resource.helper.ResourceHelper;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.InstanceResource;
 import com.liferay.portal.workflow.metrics.service.WorkflowMetricsSLADefinitionLocalService;
@@ -209,20 +210,20 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 			}
 		).orElseThrow(
 			() ->
-				new NoSuchModelException(
+				new NoSuchInstanceException(
 					"No Instance exists with the id " + instanceId)
 		);
 	}
 
 	@Override
 	public Page<Instance> getProcessInstancesPage(
-			Long processId, Long[] assigneeUserIds, Date dateEnd,
+			Long processId, Long[] assigneeIds, Date dateEnd,
 			Date dateStart, String[] slaStatuses, String[] statuses,
 			String[] taskKeys, Pagination pagination)
 		throws Exception {
 
 		SearchSearchResponse searchSearchResponse = _getSearchSearchResponse(
-			assigneeUserIds, dateEnd, dateStart, processId, slaStatuses,
+			assigneeIds, dateEnd, dateStart, processId, slaStatuses,
 			statuses, taskKeys);
 
 		int instanceCount = _getInstanceCount(searchSearchResponse);
@@ -230,7 +231,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		if (instanceCount > 0) {
 			return Page.of(
 				_getInstances(
-					assigneeUserIds, dateEnd, dateStart,
+					assigneeIds, dateEnd, dateStart,
 					searchSearchResponse.getCount(), pagination, processId,
 					slaStatuses, statuses, taskKeys),
 				pagination, instanceCount);
@@ -279,11 +280,11 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private BooleanQuery _createAssigneeUserIdsExistsBooleanQuery(
-		Long[] assigneeUserIds) {
+		Long[] assigneeIds) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		if (ArrayUtil.contains(assigneeUserIds, -1L)) {
+		if (ArrayUtil.contains(assigneeIds, -1L)) {
 			booleanQuery.addMustNotQueryClauses(_queries.exists("assigneeId"));
 		}
 
@@ -291,7 +292,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private BooleanQuery _createAssigneeUserIdsTermsBooleanQuery(
-		Long[] assigneeUserIds) {
+		Long[] assigneeIds) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
@@ -299,9 +300,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 		termsQuery.addValues(
 			Stream.of(
-				assigneeUserIds
+				assigneeIds
 			).filter(
-				assigneeUserId -> assigneeUserId > 0
+				assigneeId -> assigneeId > 0
 			).map(
 				String::valueOf
 			).toArray(
@@ -312,7 +313,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private BooleanQuery _createBooleanQuery(
-		Long[] assigneeUserIds, long processId, String[] statuses) {
+		Long[] assigneeIds, long processId, String[] statuses) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
@@ -337,7 +338,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		tokensBooleanQuery.addFilterQueryClauses(
 			_queries.term("_index", "workflow-metrics-tasks"));
 		tokensBooleanQuery.addMustQueryClauses(
-			_createTasksBooleanQuery(assigneeUserIds, processId));
+			_createTasksBooleanQuery(assigneeIds, processId));
 
 		return booleanQuery.addShouldQueryClauses(
 			instancesBooleanQuery, slaInstanceResultsBooleanQuery,
@@ -483,16 +484,16 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private BooleanQuery _createTasksBooleanQuery(
-		Long[] assigneeUserIds, long processId) {
+		Long[] assigneeIds, long processId) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
 		booleanQuery.addMustNotQueryClauses(_queries.term("taskId", 0));
 
-		if (assigneeUserIds.length > 0) {
+		if (assigneeIds.length > 0) {
 			booleanQuery.addShouldQueryClauses(
-				_createAssigneeUserIdsExistsBooleanQuery(assigneeUserIds),
-				_createAssigneeUserIdsTermsBooleanQuery(assigneeUserIds));
+				_createAssigneeUserIdsExistsBooleanQuery(assigneeIds),
+				_createAssigneeUserIdsTermsBooleanQuery(assigneeIds));
 		}
 
 		return booleanQuery.addMustQueryClauses(
@@ -537,7 +538,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private List<Instance> _getInstances(
-		Long[] assigneeUserIds, Date dateEnd, Date dateStart,
+		Long[] assigneeIds, Date dateEnd, Date dateStart,
 		long instanceCount, Pagination pagination, long processId,
 		String[] slaStatuses, String[] statuses, String[] taskKeys) {
 
@@ -579,7 +580,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 			onTimeFilterAggregation, overdueFilterAggregation,
 			taskNameTermsAggregation, _aggregations.topHits("topHits"),
 			_resourceHelper.creatInstanceCountScriptedMetricAggregation(
-				ListUtil.fromArray(assigneeUserIds), dateEnd, dateStart,
+				ListUtil.fromArray(assigneeIds), dateEnd, dateStart,
 				ListUtil.fromArray(slaStatuses), ListUtil.fromArray(statuses),
 				ListUtil.fromArray(taskKeys)));
 
@@ -597,7 +598,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 			"workflow-metrics-sla-instance-results", "workflow-metrics-tasks");
 
 		searchSearchRequest.setQuery(
-			_createBooleanQuery(assigneeUserIds, processId, statuses));
+			_createBooleanQuery(assigneeIds, processId, statuses));
 
 		return Stream.of(
 			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)
@@ -653,21 +654,21 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private SearchSearchResponse _getSearchSearchResponse(
-		Long[] assigneeUserIds, Date dateEnd, Date dateStart, long processId,
+		Long[] assigneeIds, Date dateEnd, Date dateStart, long processId,
 		String[] slaStatuses, String[] statuses, String[] taskKeys) {
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
 		searchSearchRequest.addAggregation(
 			_resourceHelper.creatInstanceCountScriptedMetricAggregation(
-				ListUtil.fromArray(assigneeUserIds), dateEnd, dateStart,
+				ListUtil.fromArray(assigneeIds), dateEnd, dateStart,
 				ListUtil.fromArray(slaStatuses), ListUtil.fromArray(statuses),
 				ListUtil.fromArray(taskKeys)));
 		searchSearchRequest.setIndexNames(
 			"workflow-metrics-instances",
 			"workflow-metrics-sla-instance-results", "workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
-			_createBooleanQuery(assigneeUserIds, processId, statuses));
+			_createBooleanQuery(assigneeIds, processId, statuses));
 
 		return _searchRequestExecutor.executeSearchRequest(searchSearchRequest);
 	}
@@ -751,13 +752,13 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private void _setAssignees(Bucket bucket, Instance instance) {
-		List<Assignee> assigneeUsers = _getAssigneeUsers(bucket);
+		List<Assignee> assignees = _getAssigneeUsers(bucket);
 
-		if (ListUtil.isNull(assigneeUsers)) {
+		if (ListUtil.isNull(assignees)) {
 			return;
 		}
 
-		instance.setAssignees(assigneeUsers.toArray(new Assignee[0]));
+		instance.setAssignees(assignees.toArray(new Assignee[0]));
 	}
 
 	private void _setSLAResults(Bucket bucket, Instance instance) {
