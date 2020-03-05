@@ -40,6 +40,7 @@ import com.liferay.portal.workflow.metrics.rest.resource.v1_0.TaskResource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,9 +69,9 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 	public Task getProcessTask(Long processId, Long taskId) throws Exception {
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
-		searchSearchRequest.setIndexNames("workflow-metrics-tokens");
+		searchSearchRequest.setIndexNames("workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
-			_createTokensBooleanQuery(
+			_createTasksBooleanQuery(
 				processId, taskId,
 				_resourceHelper.getLatestProcessVersion(
 					contextCompany.getCompanyId(), processId)));
@@ -112,7 +113,7 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 		throws Exception {
 
 		_taskWorkflowMetricsIndexer.update(
-			contextCompany.getCompanyId(), task.getAssigneeId(),
+			contextCompany.getCompanyId(), Optional.of(task.getAssigneeId()),
 			task.getDateModified(), task.getId(), contextUser.getUserId());
 	}
 
@@ -130,7 +131,8 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 	public Task postProcessTask(Long processId, Task task) throws Exception {
 		return TaskUtil.toTask(
 			_taskWorkflowMetricsIndexer.update(
-				contextCompany.getCompanyId(), task.getAssigneeId(),
+				contextCompany.getCompanyId(),
+				Optional.of(task.getAssigneeId()),
 				task.getDateModified(), task.getId(), contextUser.getUserId()),
 			_language,
 			ResourceBundleUtil.getModuleAndPortalResourceBundle(
@@ -169,7 +171,7 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 			_createBooleanQuery(processId, version));
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		long processId, long taskId, String version) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
@@ -181,7 +183,7 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 			_queries.term("taskId", taskId), _queries.term("version", version));
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		long processId, String version) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
@@ -203,9 +205,9 @@ public class TaskResourceImpl extends BaseTaskResourceImpl {
 
 		searchSearchRequest.addAggregation(termsAggregation);
 
-		searchSearchRequest.setIndexNames("workflow-metrics-tokens");
+		searchSearchRequest.setIndexNames("workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
-			_createTokensBooleanQuery(
+			_createTasksBooleanQuery(
 				processId,
 				_resourceHelper.getLatestProcessVersion(
 					contextCompany.getCompanyId(), processId)));

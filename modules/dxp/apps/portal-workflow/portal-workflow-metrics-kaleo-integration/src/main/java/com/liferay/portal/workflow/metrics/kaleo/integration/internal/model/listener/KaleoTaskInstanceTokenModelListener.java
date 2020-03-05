@@ -29,6 +29,7 @@ import com.liferay.portal.workflow.metrics.index.TaskWorkflowMetricsIndexer;
 import java.time.Duration;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -116,7 +117,8 @@ public class KaleoTaskInstanceTokenModelListener
 
 				_taskWorkflowMetricsIndexer.update(
 					kaleoTaskInstanceToken.getCompanyId(),
-					kaleoTaskAssignmentInstance.getAssigneeClassPK(),
+					Optional.of(
+						kaleoTaskAssignmentInstance.getAssigneeClassPK()),
 					kaleoTaskInstanceToken.getModifiedDate(),
 					kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
 					kaleoTaskInstanceToken.getUserId());

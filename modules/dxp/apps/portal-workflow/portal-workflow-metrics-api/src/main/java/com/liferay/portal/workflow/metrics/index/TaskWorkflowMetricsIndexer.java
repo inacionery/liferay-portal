@@ -17,6 +17,7 @@ package com.liferay.portal.workflow.metrics.index;
 import com.liferay.portal.search.document.Document;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * @author Rafael Praxedes
@@ -42,7 +43,7 @@ public interface TaskWorkflowMetricsIndexer {
 	public void delete(long companyId, long taskId);
 
 	public Document update(
-		long companyId, Long assigneeId, Date modifiedDate, long taskId,
+		long companyId, Optional<Long> assigneeId, Date modifiedDate, long taskId,
 		long userId);
 
 }

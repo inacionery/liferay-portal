@@ -99,7 +99,6 @@ public class AssigneeMetricResourceTest
 
 		_deleteSLATaskResults();
 		_deleteTasks();
-		_deleteTokens();
 	}
 
 	@Override
@@ -109,7 +108,6 @@ public class AssigneeMetricResourceTest
 
 		_deleteSLATaskResults();
 		_deleteTasks();
-		_deleteTokens();
 
 		AssigneeMetric assigneeMetric1 = randomAssigneeMetric();
 
@@ -603,17 +601,10 @@ public class AssigneeMetricResourceTest
 	}
 
 	private void _deleteTasks() throws Exception {
-		for (Task task : _tasks) {
-			_workflowMetricsRESTTestHelper.deleteTask(
-				testGroup.getCompanyId(), _process.getId(), task);
-		}
+		_workflowMetricsRESTTestHelper.deleteTasks(
+			testGroup.getCompanyId(), _process.getId());
 
 		_tasks.clear();
-	}
-
-	private void _deleteTokens() throws Exception {
-		_workflowMetricsRESTTestHelper.deleteTokens(
-			testGroup.getCompanyId(), _process.getId());
 	}
 
 	private AssigneeMetric _randomAssigneeMetric(Role role) throws Exception {

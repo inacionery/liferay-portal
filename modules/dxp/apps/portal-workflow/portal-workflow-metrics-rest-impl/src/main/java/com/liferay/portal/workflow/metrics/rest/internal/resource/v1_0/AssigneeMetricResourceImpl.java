@@ -160,9 +160,9 @@ public class AssigneeMetricResourceImpl
 		BooleanQuery tokensBooleanQuery = _queries.booleanQuery();
 
 		tokensBooleanQuery.addFilterQueryClauses(
-			_queries.term("_index", "workflow-metrics-tokens"));
+			_queries.term("_index", "workflow-metrics-tasks"));
 		tokensBooleanQuery.addMustQueryClauses(
-			_createTokensBooleanQuery(
+			_createTasksBooleanQuery(
 				completed, dateEnd, dateStart, processId, taskKeys, userIds));
 
 		return booleanQuery.addShouldQueryClauses(
@@ -199,7 +199,7 @@ public class AssigneeMetricResourceImpl
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
 		booleanQuery.addFilterQueryClauses(
-			_queries.term("_index", "workflow-metrics-tokens"));
+			_queries.term("_index", "workflow-metrics-tasks"));
 
 		return booleanQuery.addMustNotQueryClauses(_queries.term("taskId", 0));
 	}
@@ -244,7 +244,7 @@ public class AssigneeMetricResourceImpl
 			_queries.term("processId", processId));
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		boolean completed, Date dateEnd, Date dateStart, long processId,
 		String[] taskKeys, Set<Long> userIds) {
 
@@ -331,7 +331,7 @@ public class AssigneeMetricResourceImpl
 		searchSearchRequest.addAggregation(termsAggregation);
 
 		searchSearchRequest.setIndexNames(
-			"workflow-metrics-sla-task-results", "workflow-metrics-tokens");
+			"workflow-metrics-sla-task-results", "workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
 			_createBooleanQuery(
 				completed, dateEnd, dateStart, processId, taskKeys, userIds));
@@ -364,9 +364,9 @@ public class AssigneeMetricResourceImpl
 		searchSearchRequest.addAggregation(
 			_aggregations.cardinality(
 				"assigneeId", completed ? "completionUserId" : "assigneeId"));
-		searchSearchRequest.setIndexNames("workflow-metrics-tokens");
+		searchSearchRequest.setIndexNames("workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
-			_createTokensBooleanQuery(
+			_createTasksBooleanQuery(
 				completed, dateEnd, dateStart, processId, taskKeys, userIds));
 
 		return Stream.of(

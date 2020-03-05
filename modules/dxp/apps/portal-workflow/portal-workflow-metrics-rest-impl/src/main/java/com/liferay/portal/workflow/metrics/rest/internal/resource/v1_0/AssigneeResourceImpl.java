@@ -65,8 +65,8 @@ public class AssigneeResourceImpl extends BaseAssigneeResourceImpl {
 
 		searchSearchRequest.addAggregation(termsAggregation);
 
-		searchSearchRequest.setIndexNames("workflow-metrics-tokens");
-		searchSearchRequest.setQuery(_createTokensBooleanQuery(processId));
+		searchSearchRequest.setIndexNames("workflow-metrics-tasks");
+		searchSearchRequest.setQuery(_createTasksBooleanQuery(processId));
 
 		return Page.of(
 			Stream.of(
@@ -95,7 +95,7 @@ public class AssigneeResourceImpl extends BaseAssigneeResourceImpl {
 			));
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(long processId) {
+	private BooleanQuery _createTasksBooleanQuery(long processId) {
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
 		booleanQuery.addMustNotQueryClauses(_queries.term("taskId", "0"));

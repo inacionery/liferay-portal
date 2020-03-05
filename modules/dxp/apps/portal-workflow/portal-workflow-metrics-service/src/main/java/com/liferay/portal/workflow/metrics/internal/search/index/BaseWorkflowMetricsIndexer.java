@@ -47,7 +47,6 @@ import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.document.BulkDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.DeleteByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
-import com.liferay.portal.search.engine.adapter.document.UpdateByQueryDocumentRequest;
 import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
 import com.liferay.portal.search.engine.adapter.index.IndicesExistsIndexRequest;
@@ -223,6 +222,9 @@ public abstract class BaseWorkflowMetricsIndexer {
 		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
 			getIndexName(), document);
 
+		System.out.println(
+			"PortalRunMode.isTestMode() = " + PortalRunMode.isTestMode());
+
 		if (PortalRunMode.isTestMode()) {
 			indexDocumentRequest.setRefresh(true);
 		}
@@ -233,14 +235,12 @@ public abstract class BaseWorkflowMetricsIndexer {
 
 		System.out.println(
 			StringBundler.concat(
-				Thread.currentThread().getName(),
-				CharPool.COMMA, CharPool.SPACE,
-				"getIndexName() = ",
-				getIndexName(),
-				CharPool.COMMA, CharPool.SPACE,
+				Thread.currentThread(
+				).getName(),
+				CharPool.COMMA, CharPool.SPACE, "getIndexName() = ",
+				getIndexName(), CharPool.COMMA, CharPool.SPACE,
 				"addDocument() with fields",
-				MapUtil.toString(document.getFields())
-		));
+				MapUtil.toString(document.getFields())));
 	}
 
 	protected String digest(Serializable... parts) {
@@ -330,6 +330,7 @@ public abstract class BaseWorkflowMetricsIndexer {
 
 	protected void updateDocuments(Map<String, Object> fieldsMap, Query query) {
 		System.out.println("entrei updateDocuments");
+
 		if (searchEngineAdapter == null) {
 			return;
 		}
@@ -349,27 +350,25 @@ public abstract class BaseWorkflowMetricsIndexer {
 
 		System.out.println(
 			StringBundler.concat(
-				Thread.currentThread().getName(),
-				CharPool.COMMA, CharPool.SPACE,
-				"getIndexName() = ",
-				getIndexName(),
-				CharPool.COMMA, CharPool.SPACE,
+				Thread.currentThread(
+				).getName(),
+				CharPool.COMMA, CharPool.SPACE, "getIndexName() = ",
+				getIndexName(), CharPool.COMMA, CharPool.SPACE,
 				"searchHits.getTotalHits() = " + searchHits.getTotalHits(),
 				CharPool.COMMA, CharPool.SPACE,
-				"searchHits.getSearchHits().size() = " + searchHits.getSearchHits().size(),
-				CharPool.COMMA, CharPool.SPACE,
-				"query = ",
-				searchSearchResponse.getSearchRequestString()
-				)
-			);
+				"searchHits.getSearchHits().size() = " +
+					searchHits.getSearchHits(
+					).size(),
+				CharPool.COMMA, CharPool.SPACE, "query = ",
+				searchSearchResponse.getSearchRequestString()));
 
 		if (searchHits.getTotalHits() == 0) {
 			return;
 		}
 
-//		UpdateByQueryDocumentRequest updateByQueryDocumentRequest =
-//			new UpdateByQueryDocumentRequest(
-//				query, scriptJSONObject, getIndexName());
+		//		UpdateByQueryDocumentRequest updateByQueryDocumentRequest =
+		//			new UpdateByQueryDocumentRequest(
+		//				query, scriptJSONObject, getIndexName());
 
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
@@ -405,6 +404,9 @@ public abstract class BaseWorkflowMetricsIndexer {
 
 		if (ListUtil.isNotEmpty(
 				bulkDocumentRequest.getBulkableDocumentRequests())) {
+
+			System.out.println(
+				"PortalRunMode.isTestMode() = " + PortalRunMode.isTestMode());
 
 			if (PortalRunMode.isTestMode()) {
 				bulkDocumentRequest.setRefresh(true);
@@ -469,7 +471,12 @@ public abstract class BaseWorkflowMetricsIndexer {
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
 			getIndexName(), document.getString(Field.UID), document);
 
-		updateDocumentRequest.setRefresh(true);
+		System.out.println(
+			"PortalRunMode.isTestMode() = " + PortalRunMode.isTestMode());
+
+		if (PortalRunMode.isTestMode()) {
+			updateDocumentRequest.setRefresh(true);
+		}
 
 		updateDocumentRequest.setType(getIndexType());
 
@@ -477,14 +484,12 @@ public abstract class BaseWorkflowMetricsIndexer {
 
 		System.out.println(
 			StringBundler.concat(
-				Thread.currentThread().getName(),
-				CharPool.COMMA, CharPool.SPACE,
-				"getIndexName() = ",
-				getIndexName(),
-				CharPool.COMMA, CharPool.SPACE,
+				Thread.currentThread(
+				).getName(),
+				CharPool.COMMA, CharPool.SPACE, "getIndexName() = ",
+				getIndexName(), CharPool.COMMA, CharPool.SPACE,
 				"updateDocument() with fields",
-				MapUtil.toString(document.getFields())
-		));
+				MapUtil.toString(document.getFields())));
 	}
 
 	private static final boolean _INDEX_ON_STARTUP = GetterUtil.getBoolean(

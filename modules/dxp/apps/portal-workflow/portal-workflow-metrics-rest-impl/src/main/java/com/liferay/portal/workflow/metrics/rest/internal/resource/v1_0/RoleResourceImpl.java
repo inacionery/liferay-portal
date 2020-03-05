@@ -63,7 +63,7 @@ public class RoleResourceImpl extends BaseRoleResourceImpl {
 		return Page.of(_getRoles(GetterUtil.getBoolean(completed), processId));
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		boolean completed, long processId) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
@@ -88,9 +88,9 @@ public class RoleResourceImpl extends BaseRoleResourceImpl {
 
 		searchSearchRequest.addAggregation(termsAggregation);
 
-		searchSearchRequest.setIndexNames("workflow-metrics-tokens");
+		searchSearchRequest.setIndexNames("workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
-			_createTokensBooleanQuery(completed, processId));
+			_createTasksBooleanQuery(completed, processId));
 
 		return Stream.of(
 			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)

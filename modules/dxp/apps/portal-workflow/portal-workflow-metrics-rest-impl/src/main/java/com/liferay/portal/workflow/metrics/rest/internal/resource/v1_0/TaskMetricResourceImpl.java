@@ -137,9 +137,9 @@ public class TaskMetricResourceImpl
 		BooleanQuery tokensBooleanQuery = _queries.booleanQuery();
 
 		tokensBooleanQuery.addFilterQueryClauses(
-			_queries.term("_index", "workflow-metrics-tokens"));
+			_queries.term("_index", "workflow-metrics-tasks"));
 		tokensBooleanQuery.addMustQueryClauses(
-			_createTokensBooleanQuery(
+			_createTasksBooleanQuery(
 				completed, dateEnd, dateStart, processId, taskNames));
 
 		return filterBooleanQuery.addFilterQueryClauses(
@@ -281,7 +281,7 @@ public class TaskMetricResourceImpl
 		};
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		boolean completed, Date dateEnd, Date dateStart, long processId,
 		Set<String> taskNames) {
 
@@ -313,7 +313,7 @@ public class TaskMetricResourceImpl
 			_queries.term("processId", processId));
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		boolean completed, String key, long processId, String version) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
@@ -337,9 +337,9 @@ public class TaskMetricResourceImpl
 
 		searchSearchRequest.addAggregation(termsAggregation);
 
-		searchSearchRequest.setIndexNames("workflow-metrics-tokens");
+		searchSearchRequest.setIndexNames("workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
-			_createTokensBooleanQuery(completed, key, processId, version));
+			_createTasksBooleanQuery(completed, key, processId, version));
 
 		SearchSearchResponse searchSearchResponse =
 			_searchRequestExecutor.executeSearchRequest(searchSearchRequest);
@@ -432,7 +432,7 @@ public class TaskMetricResourceImpl
 			_resourceHelper.createBreachedScriptedMetricAggregation());
 
 		FilterAggregation countFilterAggregation = _aggregations.filter(
-			"countFilter", _resourceHelper.createTokensBooleanQuery(completed));
+			"countFilter", _resourceHelper.createTasksBooleanQuery(completed));
 
 		countFilterAggregation.addChildrenAggregations(
 			_aggregations.avg("durationAvg", "duration"),
@@ -470,7 +470,7 @@ public class TaskMetricResourceImpl
 		searchSearchRequest.addAggregation(termsAggregation);
 
 		searchSearchRequest.setIndexNames(
-			"workflow-metrics-tokens", "workflow-metrics-sla-task-results");
+			"workflow-metrics-tasks", "workflow-metrics-sla-task-results");
 		searchSearchRequest.setQuery(
 			_createBooleanQuery(
 				completed, dateEnd, dateStart, processId, tasksMap.keySet()));

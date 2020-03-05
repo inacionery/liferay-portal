@@ -153,7 +153,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 		searchSearchRequest.setIndexNames(
 			"workflow-metrics-instances",
-			"workflow-metrics-sla-instance-results", "workflow-metrics-tokens");
+			"workflow-metrics-sla-instance-results", "workflow-metrics-tasks");
 
 		BooleanQuery booleanQuery = _createBooleanQuery(
 			new Long[0], processId, new String[0]);
@@ -335,9 +335,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		BooleanQuery tokensBooleanQuery = _queries.booleanQuery();
 
 		tokensBooleanQuery.addFilterQueryClauses(
-			_queries.term("_index", "workflow-metrics-tokens"));
+			_queries.term("_index", "workflow-metrics-tasks"));
 		tokensBooleanQuery.addMustQueryClauses(
-			_createTokensBooleanQuery(assigneeUserIds, processId));
+			_createTasksBooleanQuery(assigneeUserIds, processId));
 
 		return booleanQuery.addShouldQueryClauses(
 			instancesBooleanQuery, slaInstanceResultsBooleanQuery,
@@ -482,7 +482,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		};
 	}
 
-	private BooleanQuery _createTokensBooleanQuery(
+	private BooleanQuery _createTasksBooleanQuery(
 		Long[] assigneeUserIds, long processId) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
@@ -594,7 +594,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 		searchSearchRequest.setIndexNames(
 			"workflow-metrics-instances",
-			"workflow-metrics-sla-instance-results", "workflow-metrics-tokens");
+			"workflow-metrics-sla-instance-results", "workflow-metrics-tasks");
 
 		searchSearchRequest.setQuery(
 			_createBooleanQuery(assigneeUserIds, processId, statuses));
@@ -665,7 +665,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 				ListUtil.fromArray(taskKeys)));
 		searchSearchRequest.setIndexNames(
 			"workflow-metrics-instances",
-			"workflow-metrics-sla-instance-results", "workflow-metrics-tokens");
+			"workflow-metrics-sla-instance-results", "workflow-metrics-tasks");
 		searchSearchRequest.setQuery(
 			_createBooleanQuery(assigneeUserIds, processId, statuses));
 

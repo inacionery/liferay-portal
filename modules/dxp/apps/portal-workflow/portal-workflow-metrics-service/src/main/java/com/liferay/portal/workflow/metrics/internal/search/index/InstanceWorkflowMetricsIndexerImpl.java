@@ -246,7 +246,7 @@ public class InstanceWorkflowMetricsIndexerImpl
 					).build(),
 					booleanQuery);
 
-				_tokenWorkflowMetricsIndexer.updateDocuments(
+				_taskWorkflowMetricsIndexerImpl.updateDocuments(
 					HashMapBuilder.<String, Object>put(
 						"instanceCompleted", Boolean.TRUE
 					).build(),
@@ -254,13 +254,12 @@ public class InstanceWorkflowMetricsIndexerImpl
 
 				System.out.println(
 					StringBundler.concat(
-						Thread.currentThread().getName(),
+						Thread.currentThread(
+						).getName(),
 						CharPool.COMMA, CharPool.SPACE,
 						"complete tokens with instanceId ",
-						document.getLong("instanceId"),
-						" and companyId ",
-						document.getLong("companyId")
-				));
+						document.getLong("instanceId"), " and companyId ",
+						document.getLong("companyId")));
 			});
 
 		return document;
@@ -454,6 +453,6 @@ public class InstanceWorkflowMetricsIndexerImpl
 		_slaTaskResultWorkflowMetricsIndexer;
 
 	@Reference
-	private TokenWorkflowMetricsIndexer _tokenWorkflowMetricsIndexer;
+	private TaskWorkflowMetricsIndexerImpl _taskWorkflowMetricsIndexerImpl;
 
 }

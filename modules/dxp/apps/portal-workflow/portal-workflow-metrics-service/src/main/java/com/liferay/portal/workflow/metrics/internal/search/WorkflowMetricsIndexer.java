@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.workflow.metrics.internal.search.index.InstanceWorkflowMetricsIndexerImpl;
 import com.liferay.portal.workflow.metrics.internal.search.index.NodeWorkflowMetricsIndexerImpl;
 import com.liferay.portal.workflow.metrics.internal.search.index.ProcessWorkflowMetricsIndexerImpl;
-import com.liferay.portal.workflow.metrics.internal.search.index.TokenWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.internal.search.index.TaskWorkflowMetricsIndexerImpl;
 
 import java.util.Locale;
 
@@ -83,17 +83,17 @@ public class WorkflowMetricsIndexer extends BaseIndexer<Object> {
 		_instanceWorkflowMetricsIndexerImpl.deleteIndex(companyId);
 		_nodeWorkflowMetricsIndexerImpl.deleteIndex(companyId);
 		_processWorkflowMetricsIndexerImpl.deleteIndex(companyId);
-		_tokenWorkflowMetricsIndexerImpl.deleteIndex(companyId);
+		_taskWorkflowMetricsIndexerImpl.deleteIndex(companyId);
 
 		_instanceWorkflowMetricsIndexerImpl.createIndex();
 		_nodeWorkflowMetricsIndexerImpl.createIndex();
 		_processWorkflowMetricsIndexerImpl.createIndex();
-		_tokenWorkflowMetricsIndexerImpl.createIndex();
+		_taskWorkflowMetricsIndexerImpl.createIndex();
 
 		_instanceWorkflowMetricsIndexerImpl.reindex(companyId);
 		_nodeWorkflowMetricsIndexerImpl.reindex(companyId);
 		_processWorkflowMetricsIndexerImpl.reindex(companyId);
-		_tokenWorkflowMetricsIndexerImpl.reindex(companyId);
+		_taskWorkflowMetricsIndexerImpl.reindex(companyId);
 	}
 
 	@Reference
@@ -108,6 +108,6 @@ public class WorkflowMetricsIndexer extends BaseIndexer<Object> {
 		_processWorkflowMetricsIndexerImpl;
 
 	@Reference
-	private TokenWorkflowMetricsIndexer _tokenWorkflowMetricsIndexerImpl;
+	private TaskWorkflowMetricsIndexerImpl _taskWorkflowMetricsIndexerImpl;
 
 }

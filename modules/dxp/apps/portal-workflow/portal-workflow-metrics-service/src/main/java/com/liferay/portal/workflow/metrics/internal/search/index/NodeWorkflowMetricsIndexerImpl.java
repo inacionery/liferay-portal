@@ -145,7 +145,7 @@ public class NodeWorkflowMetricsIndexerImpl
 
 			bulkDocumentRequest.addBulkableDocumentRequest(
 				new IndexDocumentRequest(
-					_tokenWorkflowMetricsIndexer.getIndexName(),
+					_taskWorkflowMetricsIndexerImpl.getIndexName(),
 					_createWorkflowMetricsTaskDocument(
 						document.getLong("companyId"),
 						document.getLong("processId"),
@@ -153,7 +153,7 @@ public class NodeWorkflowMetricsIndexerImpl
 						document.getString("version"))) {
 
 					{
-						setType(_tokenWorkflowMetricsIndexer.getIndexType());
+						setType(_taskWorkflowMetricsIndexerImpl.getIndexType());
 					}
 				});
 		}
@@ -296,6 +296,6 @@ public class NodeWorkflowMetricsIndexerImpl
 		_slaTaskResultWorkflowMetricsIndexer;
 
 	@Reference
-	private TokenWorkflowMetricsIndexer _tokenWorkflowMetricsIndexer;
+	private TaskWorkflowMetricsIndexerImpl _taskWorkflowMetricsIndexerImpl;
 
 }

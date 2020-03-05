@@ -477,7 +477,7 @@ public class WorkflowMetricsRESTTestHelper {
 				overdueInstanceCount--;
 			}
 
-			addToken(
+			addTask(
 				assigneeId, companyId, taskMetric.getDurationAvg(),
 				instance.getCompleted(), instance.getId(), processId,
 				node.getId(), task.getId(), task.getName());
@@ -490,17 +490,17 @@ public class WorkflowMetricsRESTTestHelper {
 		return taskMetric;
 	}
 
-	public void addToken(long assigneeId, long companyId, Instance instance)
+	public void addTask(long assigneeId, long companyId, Instance instance)
 		throws Exception {
 
-		addToken(
+		addTask(
 			assigneeId, companyId,  0L, instance.getCompleted(),
 			instance.getId(), instance.getProcessId(),
 			RandomTestUtil.randomLong(), RandomTestUtil.randomLong(),
 			RandomTestUtil.randomString());
 	}
 
-	public void addToken(
+	public void addTask(
 			long assigneeId, long companyId, long durationAvg,
 			boolean instanceCompleted, long instanceId, long processId,
 			long nodeId, long taskId, String name)
@@ -512,7 +512,7 @@ public class WorkflowMetricsRESTTestHelper {
 
 		if (assigneeId != 0) {
 			_taskWorkflowMetricsIndexer.update(
-				companyId, assigneeId, new Date(), taskId, 0);
+				companyId, Optional.of(assigneeId), new Date(), taskId, 0);
 		}
 
 		if (instanceCompleted) {
@@ -526,7 +526,7 @@ public class WorkflowMetricsRESTTestHelper {
 		}
 
 		_retryAssertCount(
-			"workflow-metrics-tokens", "assigneeId", assigneeId, "companyId",
+			"workflow-metrics-tasks", "assigneeId", assigneeId, "companyId",
 			companyId, "deleted", false, "instanceCompleted", instanceCompleted,
 			"instanceId", instanceId, "processId", processId, "nodeId", nodeId,
 			"name", name, "taskId", taskId);
@@ -587,9 +587,9 @@ public class WorkflowMetricsRESTTestHelper {
 			"name", task.getName(), "processId", processId);
 	}
 
-	public void deleteTokens(long companyId, long processId) throws Exception {
+	public void deleteTasks(long companyId, long processId) throws Exception {
 		_deleteDocuments(
-			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "companyId",
+			"workflow-metrics-tasks", "WorkflowMetricsTaskType", "companyId",
 			companyId, "processId", processId);
 	}
 

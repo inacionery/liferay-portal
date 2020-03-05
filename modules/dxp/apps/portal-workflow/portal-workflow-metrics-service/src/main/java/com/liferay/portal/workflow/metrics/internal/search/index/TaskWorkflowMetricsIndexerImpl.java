@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -49,10 +50,10 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	service = {
-		TaskWorkflowMetricsIndexer.class, TokenWorkflowMetricsIndexer.class
+		TaskWorkflowMetricsIndexer.class, TaskWorkflowMetricsIndexerImpl.class
 	}
 )
-public class TokenWorkflowMetricsIndexer
+public class TaskWorkflowMetricsIndexerImpl
 	extends BaseWorkflowMetricsIndexer implements TaskWorkflowMetricsIndexer {
 
 	@Override
@@ -60,8 +61,8 @@ public class TokenWorkflowMetricsIndexer
 		long companyId, long nodeId, long assigneeId, String className,
 		long classPK, boolean completed, long completionUserId,
 		Date completionDate, Date createDate, Date modifiedDate,
-		long instanceId, boolean instanceCompleted, String name,
-		long processId, String processVersion, long taskId, long userId) {
+		long instanceId, boolean instanceCompleted, String name, long processId,
+		String processVersion, long taskId, long userId) {
 
 		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
 
@@ -199,10 +200,6 @@ public class TokenWorkflowMetricsIndexer
 			"completionDate", formatDate(completionDate)
 		).setLong(
 			"completionUserId", completionUserId
-		).setValue(
-			"deleted", false
-		).setLong(
-			"duration", duration
 		).setLong(
 			"duration", duration
 		).setDate(
@@ -242,14 +239,14 @@ public class TokenWorkflowMetricsIndexer
 					BooleanQuery booleanQuery = queries.booleanQuery();
 
 					booleanQuery.addMustQueryClauses(
-						queries.term("companyId",document.getLong("companyId")),
+						queries.term(
+							"companyId", document.getLong("companyId")),
 						queries.term("taskId", document.getLong("taskId")));
 
 					_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
 						fieldsMap, booleanQuery);
 				}
 			});
-
 
 		return document;
 	}
@@ -266,12 +263,12 @@ public class TokenWorkflowMetricsIndexer
 
 	@Override
 	public String getIndexName() {
-		return "workflow-metrics-tokens";
+		return "workflow-metrics-tasks";
 	}
 
 	@Override
 	public String getIndexType() {
-		return "WorkflowMetricsTokenType";
+		return "WorkflowMetricsTaskType";
 	}
 
 	@Override
@@ -370,16 +367,17 @@ public class TokenWorkflowMetricsIndexer
 
 	@Override
 	public Document update(
-		long companyId, Long assigneeId, Date modifiedDate, long taskId,
-		long userId) {
+		long companyId, Optional<Long> assigneeIdOptional, Date modifiedDate,
+		long taskId, long userId) {
 
 		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
 
-		documentBuilder.setString(
-			Field.UID, digest(companyId, taskId)
-		).setLong(
-			"assigneeId", assigneeId
-		).setLong(
+		documentBuilder.setString(Field.UID, digest(companyId, taskId));
+
+		assigneeIdOptional.ifPresent(
+			assigneeId -> documentBuilder.setLong("assigneeId", assigneeId));
+
+		documentBuilder.setLong(
 			"companyId", companyId
 		).setDate(
 			"modifiedDate", formatDate(modifiedDate)
@@ -399,16 +397,16 @@ public class TokenWorkflowMetricsIndexer
 					BooleanQuery booleanQuery = queries.booleanQuery();
 
 					booleanQuery.addMustQueryClauses(
-						queries.term("companyId", document.getLong("companyId")),
+						queries.term(
+							"companyId", document.getLong("companyId")),
 						queries.term("taskId", document.getLong("taskId")));
 
 					_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
 						HashMapBuilder.<String, Object>put(
-							"assigneeId",
-							document.getLong("assigneeId")).build(),
+							"assigneeId", document.getLong("assigneeId")
+						).build(),
 						booleanQuery);
 				}
-
 			});
 
 		return document;
