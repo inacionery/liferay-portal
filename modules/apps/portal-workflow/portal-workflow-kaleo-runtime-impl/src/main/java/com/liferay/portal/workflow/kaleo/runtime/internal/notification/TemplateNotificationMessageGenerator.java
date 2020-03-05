@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.template.StringTemplateResource;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.workflow.kaleo.KaleoWorkflowModelConverter;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
@@ -90,11 +91,7 @@ public class TemplateNotificationMessageGenerator
 			populateContextVariables(template, executionContext);
 
 			if (_log.isDebugEnabled()) {
-				template.forEach(
-					(key, value) -> _log.debug(
-						StringBundler.concat(
-							key, CharPool.SPACE, CharPool.OPEN_PARENTHESIS,
-							value.getClass(), CharPool.CLOSE_PARENTHESIS)));
+				_log.debug(MapUtil.toString(template));
 			}
 
 			StringWriter stringWriter = new StringWriter();

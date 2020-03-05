@@ -19,7 +19,7 @@ import {Body} from './WorkloadByStepCardBody.es';
 const WorkloadByStepCard = ({processId, routeParams}) => {
 	const {data, fetchData} = useFetch({
 		params: routeParams,
-		url: `/processes/${processId}/tasks`,
+		url: `/processes/${processId}/tasks/metrics`,
 	});
 
 	const promises = useMemo(() => [fetchData()], [fetchData]);

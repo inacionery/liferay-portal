@@ -64,7 +64,7 @@ const PerformanceByStepCard = ({routeParams}) => {
 			sort: 'durationAvg:desc',
 			...timeRange,
 		},
-		url: `/processes/${processId}/tasks`,
+		url: `/processes/${processId}/tasks/metrics`,
 	});
 
 	const promises = useMemo(() => [fetchData()], [fetchData]);

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.liferay.petra.function.UnsafeTriConsumer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -182,8 +183,10 @@ public abstract class BaseTaskResourceTestCase {
 
 		Task task = randomTask();
 
-		task.setKey(regex);
+		task.setClassName(regex);
+		task.setLabel(regex);
 		task.setName(regex);
+		task.setProcessVersion(regex);
 
 		String json = TaskSerDes.toJSON(task);
 
@@ -191,16 +194,16 @@ public abstract class BaseTaskResourceTestCase {
 
 		task = TaskSerDes.toDTO(json);
 
-		Assert.assertEquals(regex, task.getKey());
+		Assert.assertEquals(regex, task.getClassName());
+		Assert.assertEquals(regex, task.getLabel());
 		Assert.assertEquals(regex, task.getName());
+		Assert.assertEquals(regex, task.getProcessVersion());
 	}
 
 	@Test
 	public void testGetProcessTasksPage() throws Exception {
 		Page<Task> page = taskResource.getProcessTasksPage(
-			testGetProcessTasksPage_getProcessId(), null,
-			RandomTestUtil.nextDate(), RandomTestUtil.nextDate(),
-			RandomTestUtil.randomString(), Pagination.of(1, 2), null);
+			testGetProcessTasksPage_getProcessId(), Pagination.of(1, 2), null);
 
 		Assert.assertEquals(0, page.getTotalCount());
 
@@ -213,8 +216,7 @@ public abstract class BaseTaskResourceTestCase {
 				irrelevantProcessId, randomIrrelevantTask());
 
 			page = taskResource.getProcessTasksPage(
-				irrelevantProcessId, null, null, null, null,
-				Pagination.of(1, 2), null);
+				irrelevantProcessId, Pagination.of(1, 2), null);
 
 			Assert.assertEquals(1, page.getTotalCount());
 
@@ -228,7 +230,7 @@ public abstract class BaseTaskResourceTestCase {
 		Task task2 = testGetProcessTasksPage_addTask(processId, randomTask());
 
 		page = taskResource.getProcessTasksPage(
-			processId, null, null, null, null, Pagination.of(1, 2), null);
+			processId, Pagination.of(1, 2), null);
 
 		Assert.assertEquals(2, page.getTotalCount());
 
@@ -248,14 +250,14 @@ public abstract class BaseTaskResourceTestCase {
 		Task task3 = testGetProcessTasksPage_addTask(processId, randomTask());
 
 		Page<Task> page1 = taskResource.getProcessTasksPage(
-			processId, null, null, null, null, Pagination.of(1, 2), null);
+			processId, Pagination.of(1, 2), null);
 
 		List<Task> tasks1 = (List<Task>)page1.getItems();
 
 		Assert.assertEquals(tasks1.toString(), 2, tasks1.size());
 
 		Page<Task> page2 = taskResource.getProcessTasksPage(
-			processId, null, null, null, null, Pagination.of(2, 2), null);
+			processId, Pagination.of(2, 2), null);
 
 		Assert.assertEquals(3, page2.getTotalCount());
 
@@ -264,7 +266,7 @@ public abstract class BaseTaskResourceTestCase {
 		Assert.assertEquals(tasks2.toString(), 1, tasks2.size());
 
 		Page<Task> page3 = taskResource.getProcessTasksPage(
-			processId, null, null, null, null, Pagination.of(1, 3), null);
+			processId, Pagination.of(1, 3), null);
 
 		assertEqualsIgnoringOrder(
 			Arrays.asList(task1, task2, task3), (List<Task>)page3.getItems());
@@ -350,14 +352,13 @@ public abstract class BaseTaskResourceTestCase {
 
 		for (EntityField entityField : entityFields) {
 			Page<Task> ascPage = taskResource.getProcessTasksPage(
-				processId, null, null, null, null, Pagination.of(1, 2),
-				entityField.getName() + ":asc");
+				processId, Pagination.of(1, 2), entityField.getName() + ":asc");
 
 			assertEquals(
 				Arrays.asList(task1, task2), (List<Task>)ascPage.getItems());
 
 			Page<Task> descPage = taskResource.getProcessTasksPage(
-				processId, null, null, null, null, Pagination.of(1, 2),
+				processId, Pagination.of(1, 2),
 				entityField.getName() + ":desc");
 
 			assertEquals(
@@ -368,8 +369,7 @@ public abstract class BaseTaskResourceTestCase {
 	protected Task testGetProcessTasksPage_addTask(Long processId, Task task)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return taskResource.postProcessTask(processId, task);
 	}
 
 	protected Long testGetProcessTasksPage_getProcessId() throws Exception {
@@ -381,6 +381,134 @@ public abstract class BaseTaskResourceTestCase {
 		throws Exception {
 
 		return null;
+	}
+
+	@Test
+	public void testPostProcessTask() throws Exception {
+		Task randomTask = randomTask();
+
+		Task postTask = testPostProcessTask_addTask(randomTask);
+
+		assertEquals(randomTask, postTask);
+		assertValid(postTask);
+	}
+
+	protected Task testPostProcessTask_addTask(Task task) throws Exception {
+		return taskResource.postProcessTask(
+			testGetProcessTasksPage_getProcessId(), task);
+	}
+
+	@Test
+	public void testDeleteProcessTask() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Task task = testDeleteProcessTask_addTask();
+
+		assertHttpResponseStatusCode(
+			204,
+			taskResource.deleteProcessTaskHttpResponse(
+				task.getProcessId(), task.getId()));
+
+		assertHttpResponseStatusCode(
+			404,
+			taskResource.getProcessTaskHttpResponse(
+				task.getProcessId(), task.getId()));
+
+		assertHttpResponseStatusCode(
+			404,
+			taskResource.getProcessTaskHttpResponse(task.getProcessId(), 0L));
+	}
+
+	protected Task testDeleteProcessTask_addTask() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGetProcessTask() throws Exception {
+		Task postTask = testGetProcessTask_addTask();
+
+		Task getTask = taskResource.getProcessTask(
+			postTask.getProcessId(), postTask.getId());
+
+		assertEquals(postTask, getTask);
+		assertValid(getTask);
+	}
+
+	protected Task testGetProcessTask_addTask() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetProcessTask() throws Exception {
+		Task task = testGraphQLTask_addTask();
+
+		List<GraphQLField> graphQLFields = getGraphQLFields();
+
+		GraphQLField graphQLField = new GraphQLField(
+			"query",
+			new GraphQLField(
+				"processTask",
+				new HashMap<String, Object>() {
+					{
+						put("processId", task.getProcessId());
+						put("taskId", task.getId());
+					}
+				},
+				graphQLFields.toArray(new GraphQLField[0])));
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+			invoke(graphQLField.toString()));
+
+		JSONObject dataJSONObject = jsonObject.getJSONObject("data");
+
+		Assert.assertTrue(
+			equalsJSONObject(
+				task, dataJSONObject.getJSONObject("processTask")));
+	}
+
+	@Test
+	public void testPatchProcessTask() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Task task = testPatchProcessTask_addTask();
+
+		assertHttpResponseStatusCode(
+			204,
+			taskResource.patchProcessTaskHttpResponse(
+				null, task.getId(), task));
+
+		assertHttpResponseStatusCode(
+			404, taskResource.patchProcessTaskHttpResponse(null, 0L, task));
+	}
+
+	protected Task testPatchProcessTask_addTask() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPatchProcessTaskComplete() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Task task = testPatchProcessTaskComplete_addTask();
+
+		assertHttpResponseStatusCode(
+			204,
+			taskResource.patchProcessTaskCompleteHttpResponse(
+				null, task.getId(), task));
+
+		assertHttpResponseStatusCode(
+			404,
+			taskResource.patchProcessTaskCompleteHttpResponse(null, 0L, task));
+	}
+
+	protected Task testPatchProcessTaskComplete_addTask() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected Task testGraphQLTask_addTask() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	protected void assertHttpResponseStatusCode(
@@ -449,47 +577,87 @@ public abstract class BaseTaskResourceTestCase {
 	protected void assertValid(Task task) {
 		boolean valid = true;
 
+		if (task.getDateCreated() == null) {
+			valid = false;
+		}
+
+		if (task.getDateModified() == null) {
+			valid = false;
+		}
+
+		if (task.getId() == null) {
+			valid = false;
+		}
+
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals(
-					"breachedInstanceCount", additionalAssertFieldName)) {
-
-				if (task.getBreachedInstanceCount() == null) {
+			if (Objects.equals("assigneeId", additionalAssertFieldName)) {
+				if (task.getAssigneeId() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals(
-					"breachedInstancePercentage", additionalAssertFieldName)) {
-
-				if (task.getBreachedInstancePercentage() == null) {
+			if (Objects.equals("className", additionalAssertFieldName)) {
+				if (task.getClassName() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("durationAvg", additionalAssertFieldName)) {
-				if (task.getDurationAvg() == null) {
+			if (Objects.equals("classPK", additionalAssertFieldName)) {
+				if (task.getClassPK() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("instanceCount", additionalAssertFieldName)) {
-				if (task.getInstanceCount() == null) {
+			if (Objects.equals("completed", additionalAssertFieldName)) {
+				if (task.getCompleted() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("key", additionalAssertFieldName)) {
-				if (task.getKey() == null) {
+			if (Objects.equals("completionUserId", additionalAssertFieldName)) {
+				if (task.getCompletionUserId() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("dateCompletion", additionalAssertFieldName)) {
+				if (task.getDateCompletion() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("duration", additionalAssertFieldName)) {
+				if (task.getDuration() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("instanceId", additionalAssertFieldName)) {
+				if (task.getInstanceId() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("label", additionalAssertFieldName)) {
+				if (task.getLabel() == null) {
 					valid = false;
 				}
 
@@ -504,20 +672,24 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals(
-					"onTimeInstanceCount", additionalAssertFieldName)) {
-
-				if (task.getOnTimeInstanceCount() == null) {
+			if (Objects.equals("nodeId", additionalAssertFieldName)) {
+				if (task.getNodeId() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals(
-					"overdueInstanceCount", additionalAssertFieldName)) {
+			if (Objects.equals("processId", additionalAssertFieldName)) {
+				if (task.getProcessId() == null) {
+					valid = false;
+				}
 
-				if (task.getOverdueInstanceCount() == null) {
+				continue;
+			}
+
+			if (Objects.equals("processVersion", additionalAssertFieldName)) {
+				if (task.getProcessVersion() == null) {
 					valid = false;
 				}
 
@@ -577,12 +749,9 @@ public abstract class BaseTaskResourceTestCase {
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals(
-					"breachedInstanceCount", additionalAssertFieldName)) {
-
+			if (Objects.equals("assigneeId", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						task1.getBreachedInstanceCount(),
-						task2.getBreachedInstanceCount())) {
+						task1.getAssigneeId(), task2.getAssigneeId())) {
 
 					return false;
 				}
@@ -590,12 +759,9 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals(
-					"breachedInstancePercentage", additionalAssertFieldName)) {
-
+			if (Objects.equals("className", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						task1.getBreachedInstancePercentage(),
-						task2.getBreachedInstancePercentage())) {
+						task1.getClassName(), task2.getClassName())) {
 
 					return false;
 				}
@@ -603,9 +769,9 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("durationAvg", additionalAssertFieldName)) {
+			if (Objects.equals("classPK", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						task1.getDurationAvg(), task2.getDurationAvg())) {
+						task1.getClassPK(), task2.getClassPK())) {
 
 					return false;
 				}
@@ -613,9 +779,9 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("instanceCount", additionalAssertFieldName)) {
+			if (Objects.equals("completed", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						task1.getInstanceCount(), task2.getInstanceCount())) {
+						task1.getCompleted(), task2.getCompleted())) {
 
 					return false;
 				}
@@ -623,8 +789,77 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("key", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(task1.getKey(), task2.getKey())) {
+			if (Objects.equals("completionUserId", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						task1.getCompletionUserId(),
+						task2.getCompletionUserId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("dateCompletion", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						task1.getDateCompletion(), task2.getDateCompletion())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("dateCreated", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						task1.getDateCreated(), task2.getDateCreated())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("dateModified", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						task1.getDateModified(), task2.getDateModified())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("duration", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						task1.getDuration(), task2.getDuration())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("id", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(task1.getId(), task2.getId())) {
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("instanceId", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						task1.getInstanceId(), task2.getInstanceId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("label", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(task1.getLabel(), task2.getLabel())) {
 					return false;
 				}
 
@@ -639,12 +874,17 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals(
-					"onTimeInstanceCount", additionalAssertFieldName)) {
+			if (Objects.equals("nodeId", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(task1.getNodeId(), task2.getNodeId())) {
+					return false;
+				}
 
+				continue;
+			}
+
+			if (Objects.equals("processId", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						task1.getOnTimeInstanceCount(),
-						task2.getOnTimeInstanceCount())) {
+						task1.getProcessId(), task2.getProcessId())) {
 
 					return false;
 				}
@@ -652,12 +892,9 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals(
-					"overdueInstanceCount", additionalAssertFieldName)) {
-
+			if (Objects.equals("processVersion", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						task1.getOverdueInstanceCount(),
-						task2.getOverdueInstanceCount())) {
+						task1.getProcessVersion(), task2.getProcessVersion())) {
 
 					return false;
 				}
@@ -675,10 +912,10 @@ public abstract class BaseTaskResourceTestCase {
 
 	protected boolean equalsJSONObject(Task task, JSONObject jsonObject) {
 		for (String fieldName : getAdditionalAssertFieldNames()) {
-			if (Objects.equals("breachedInstanceCount", fieldName)) {
+			if (Objects.equals("assigneeId", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getBreachedInstanceCount(),
-						jsonObject.getLong("breachedInstanceCount"))) {
+						task.getAssigneeId(),
+						jsonObject.getLong("assigneeId"))) {
 
 					return false;
 				}
@@ -686,10 +923,10 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("breachedInstancePercentage", fieldName)) {
+			if (Objects.equals("className", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getBreachedInstancePercentage(),
-						jsonObject.getDouble("breachedInstancePercentage"))) {
+						task.getClassName(),
+						jsonObject.getString("className"))) {
 
 					return false;
 				}
@@ -697,10 +934,9 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("durationAvg", fieldName)) {
+			if (Objects.equals("classPK", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getDurationAvg(),
-						jsonObject.getLong("durationAvg"))) {
+						task.getClassPK(), jsonObject.getLong("classPK"))) {
 
 					return false;
 				}
@@ -708,10 +944,10 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("instanceCount", fieldName)) {
+			if (Objects.equals("completed", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getInstanceCount(),
-						jsonObject.getLong("instanceCount"))) {
+						task.getCompleted(),
+						jsonObject.getBoolean("completed"))) {
 
 					return false;
 				}
@@ -719,9 +955,51 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("key", fieldName)) {
+			if (Objects.equals("completionUserId", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getKey(), jsonObject.getString("key"))) {
+						task.getCompletionUserId(),
+						jsonObject.getLong("completionUserId"))) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("duration", fieldName)) {
+				if (!Objects.deepEquals(
+						task.getDuration(), jsonObject.getLong("duration"))) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("id", fieldName)) {
+				if (!Objects.deepEquals(
+						task.getId(), jsonObject.getLong("id"))) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("instanceId", fieldName)) {
+				if (!Objects.deepEquals(
+						task.getInstanceId(),
+						jsonObject.getLong("instanceId"))) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("label", fieldName)) {
+				if (!Objects.deepEquals(
+						task.getLabel(), jsonObject.getString("label"))) {
 
 					return false;
 				}
@@ -739,10 +1017,9 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("onTimeInstanceCount", fieldName)) {
+			if (Objects.equals("nodeId", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getOnTimeInstanceCount(),
-						jsonObject.getLong("onTimeInstanceCount"))) {
+						task.getNodeId(), jsonObject.getLong("nodeId"))) {
 
 					return false;
 				}
@@ -750,10 +1027,20 @@ public abstract class BaseTaskResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("overdueInstanceCount", fieldName)) {
+			if (Objects.equals("processId", fieldName)) {
 				if (!Objects.deepEquals(
-						task.getOverdueInstanceCount(),
-						jsonObject.getLong("overdueInstanceCount"))) {
+						task.getProcessId(), jsonObject.getLong("processId"))) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("processVersion", fieldName)) {
+				if (!Objects.deepEquals(
+						task.getProcessVersion(),
+						jsonObject.getString("processVersion"))) {
 
 					return false;
 				}
@@ -818,29 +1105,145 @@ public abstract class BaseTaskResourceTestCase {
 		sb.append(operator);
 		sb.append(" ");
 
-		if (entityFieldName.equals("breachedInstanceCount")) {
+		if (entityFieldName.equals("assigneeId")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("breachedInstancePercentage")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("durationAvg")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("instanceCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("key")) {
+		if (entityFieldName.equals("className")) {
 			sb.append("'");
-			sb.append(String.valueOf(task.getKey()));
+			sb.append(String.valueOf(task.getClassName()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("classPK")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("completed")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("completionUserId")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("dateCompletion")) {
+			if (operator.equals("between")) {
+				sb = new StringBundler();
+
+				sb.append("(");
+				sb.append(entityFieldName);
+				sb.append(" gt ");
+				sb.append(
+					_dateFormat.format(
+						DateUtils.addSeconds(task.getDateCompletion(), -2)));
+				sb.append(" and ");
+				sb.append(entityFieldName);
+				sb.append(" lt ");
+				sb.append(
+					_dateFormat.format(
+						DateUtils.addSeconds(task.getDateCompletion(), 2)));
+				sb.append(")");
+			}
+			else {
+				sb.append(entityFieldName);
+
+				sb.append(" ");
+				sb.append(operator);
+				sb.append(" ");
+
+				sb.append(_dateFormat.format(task.getDateCompletion()));
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("dateCreated")) {
+			if (operator.equals("between")) {
+				sb = new StringBundler();
+
+				sb.append("(");
+				sb.append(entityFieldName);
+				sb.append(" gt ");
+				sb.append(
+					_dateFormat.format(
+						DateUtils.addSeconds(task.getDateCreated(), -2)));
+				sb.append(" and ");
+				sb.append(entityFieldName);
+				sb.append(" lt ");
+				sb.append(
+					_dateFormat.format(
+						DateUtils.addSeconds(task.getDateCreated(), 2)));
+				sb.append(")");
+			}
+			else {
+				sb.append(entityFieldName);
+
+				sb.append(" ");
+				sb.append(operator);
+				sb.append(" ");
+
+				sb.append(_dateFormat.format(task.getDateCreated()));
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("dateModified")) {
+			if (operator.equals("between")) {
+				sb = new StringBundler();
+
+				sb.append("(");
+				sb.append(entityFieldName);
+				sb.append(" gt ");
+				sb.append(
+					_dateFormat.format(
+						DateUtils.addSeconds(task.getDateModified(), -2)));
+				sb.append(" and ");
+				sb.append(entityFieldName);
+				sb.append(" lt ");
+				sb.append(
+					_dateFormat.format(
+						DateUtils.addSeconds(task.getDateModified(), 2)));
+				sb.append(")");
+			}
+			else {
+				sb.append(entityFieldName);
+
+				sb.append(" ");
+				sb.append(operator);
+				sb.append(" ");
+
+				sb.append(_dateFormat.format(task.getDateModified()));
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("duration")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("id")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("instanceId")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("label")) {
+			sb.append("'");
+			sb.append(String.valueOf(task.getLabel()));
 			sb.append("'");
 
 			return sb.toString();
@@ -854,14 +1257,22 @@ public abstract class BaseTaskResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("onTimeInstanceCount")) {
+		if (entityFieldName.equals("nodeId")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("overdueInstanceCount")) {
+		if (entityFieldName.equals("processId")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("processVersion")) {
+			sb.append("'");
+			sb.append(String.valueOf(task.getProcessVersion()));
+			sb.append("'");
+
+			return sb.toString();
 		}
 
 		throw new IllegalArgumentException(
@@ -888,14 +1299,22 @@ public abstract class BaseTaskResourceTestCase {
 	protected Task randomTask() throws Exception {
 		return new Task() {
 			{
-				breachedInstanceCount = RandomTestUtil.randomLong();
-				breachedInstancePercentage = RandomTestUtil.randomDouble();
-				durationAvg = RandomTestUtil.randomLong();
-				instanceCount = RandomTestUtil.randomLong();
-				key = RandomTestUtil.randomString();
+				assigneeId = RandomTestUtil.randomLong();
+				className = RandomTestUtil.randomString();
+				classPK = RandomTestUtil.randomLong();
+				completed = RandomTestUtil.randomBoolean();
+				completionUserId = RandomTestUtil.randomLong();
+				dateCompletion = RandomTestUtil.nextDate();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				duration = RandomTestUtil.randomLong();
+				id = RandomTestUtil.randomLong();
+				instanceId = RandomTestUtil.randomLong();
+				label = RandomTestUtil.randomString();
 				name = RandomTestUtil.randomString();
-				onTimeInstanceCount = RandomTestUtil.randomLong();
-				overdueInstanceCount = RandomTestUtil.randomLong();
+				nodeId = RandomTestUtil.randomLong();
+				processId = RandomTestUtil.randomLong();
+				processVersion = RandomTestUtil.randomString();
 			}
 		};
 	}

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.workflow.metrics.rest.internal.resource.v1_0;
 
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -59,9 +60,11 @@ import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.portal.workflow.metrics.index.InstanceWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.model.WorkflowMetricsSLADefinition;
-import com.liferay.portal.workflow.metrics.rest.dto.v1_0.AssigneeUser;
-import com.liferay.portal.workflow.metrics.rest.dto.v1_0.CreatorUser;
+import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Assignee;
+import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Creator;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Instance;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.SLAResult;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Transition;
@@ -94,6 +97,14 @@ import org.osgi.service.component.annotations.ServiceScope;
 	scope = ServiceScope.PROTOTYPE, service = InstanceResource.class
 )
 public class InstanceResourceImpl extends BaseInstanceResourceImpl {
+
+	@Override
+	public void deleteProcessInstance(Long processId, Long instanceId)
+		throws Exception {
+
+		_instanceWorkflowMetricsIndexer.delete(
+			contextCompany.getCompanyId(), instanceId);
+	}
 
 	@Override
 	public Instance getProcessInstance(Long processId, Long instanceId)
@@ -186,7 +197,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 				).findFirst(
 				).ifPresent(
 					bucket -> {
-						_setAssigneeUsers(bucket, instance);
+						_setAssignees(bucket, instance);
 						_setSLAResults(bucket, instance);
 						_setSLAStatus(bucket, instance);
 						_setTaskNames(bucket, instance);
@@ -196,8 +207,10 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 				return instance;
 			}
-		).orElseGet(
-			Instance::new
+		).orElseThrow(
+			() ->
+				new NoSuchModelException(
+					"No Instance exists with the id " + instanceId)
 		);
 	}
 
@@ -224,6 +237,45 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		}
 
 		return Page.of(Collections.emptyList());
+	}
+
+	public void patchProcessInstance(
+			Long processId, Long instanceId, Instance instance)
+		throws Exception {
+
+		_instanceWorkflowMetricsIndexer.update(
+			contextCompany.getCompanyId(), instanceId,
+			LocalizedMapUtil.getLocalizedMap(instance.getAssetTitle_i18n()),
+			LocalizedMapUtil.getLocalizedMap(instance.getAssetType_i18n()),
+			instance.getDateModified());
+	}
+
+	@Override
+	public void patchProcessInstanceComplete(
+			Long processId, Long instanceId, Instance instance)
+		throws Exception {
+
+		_instanceWorkflowMetricsIndexer.complete(
+			contextCompany.getCompanyId(), instanceId,
+			instance.getDateCompletion(), instance.getDateModified(),
+			instance.getDuration());
+	}
+
+	@Override
+	public Instance postProcessInstance(Long processId, Instance instance)
+		throws Exception {
+
+		Creator creator = instance.getCreator();
+
+		return _createInstance(
+			_instanceWorkflowMetricsIndexer.add(
+				contextCompany.getCompanyId(), instance.getId(),
+				LocalizedMapUtil.getLocalizedMap(instance.getAssetTitle_i18n()),
+				LocalizedMapUtil.getLocalizedMap(instance.getAssetType_i18n()),
+				instance.getClassName(), instance.getClassPK(),
+				instance.getDateCreated(), instance.getDateModified(),
+				processId, instance.getProcessVersion(), creator.getId(),
+				creator.getName()));
 	}
 
 	private BooleanQuery _createAssigneeUserIdsExistsBooleanQuery(
@@ -346,9 +398,10 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 				assetTitle = document.getString(
 					_getLocalizedName("assetTitle"));
 				assetType = document.getString(_getLocalizedName("assetType"));
-				creatorUser = _toCreatorUser(document.getLong("userId"));
+				creator = _toCreator(document.getLong("userId"));
 				dateCompletion = _toDate(document.getDate("completionDate"));
 				dateCreated = _toDate(document.getDate("createDate"));
+				dateModified = _toDate(document.getDate("modifiedDate"));
 				id = document.getLong("instanceId");
 				processId = document.getLong("processId");
 				status = _getStatus(
@@ -364,12 +417,14 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 					sourcesMap.get(_getLocalizedName("assetTitle")));
 				assetType = GetterUtil.getString(
 					sourcesMap.get(_getLocalizedName("assetType")));
-				creatorUser = _toCreatorUser(
+				creator = _toCreator(
 					GetterUtil.getLong(sourcesMap.get("userId")));
 				dateCompletion = _toDate(
 					GetterUtil.getString(sourcesMap.get("completionDate")));
 				dateCreated = _toDate(
 					GetterUtil.getString(sourcesMap.get("createDate")));
+				dateModified = _toDate(
+					GetterUtil.getString(sourcesMap.get("modifiedDate")));
 				id = GetterUtil.getLong(sourcesMap.get("instanceId"));
 				processId = GetterUtil.getLong(sourcesMap.get("processId"));
 				status = _getStatus(
@@ -432,7 +487,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		booleanQuery.addMustNotQueryClauses(_queries.term("tokenId", 0));
+		booleanQuery.addMustNotQueryClauses(_queries.term("taskId", 0));
 
 		if (assigneeUserIds.length > 0) {
 			booleanQuery.addShouldQueryClauses(
@@ -447,7 +502,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 			_queries.term("processId", processId));
 	}
 
-	private List<AssigneeUser> _getAssigneeUsers(Bucket bucket) {
+	private List<Assignee> _getAssigneeUsers(Bucket bucket) {
 		TermsAggregationResult termsAggregationResult =
 			(TermsAggregationResult)bucket.getChildAggregationResult(
 				"assigneeId");
@@ -577,7 +632,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 				this::_createInstance
 			).map(
 				instance -> {
-					_setAssigneeUsers(bucket, instance);
+					_setAssignees(bucket, instance);
 					_setSLAStatus(bucket, instance);
 					_setTaskNames(bucket, instance);
 					_setTransitions(instance);
@@ -695,14 +750,14 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		return false;
 	}
 
-	private void _setAssigneeUsers(Bucket bucket, Instance instance) {
-		List<AssigneeUser> assigneeUsers = _getAssigneeUsers(bucket);
+	private void _setAssignees(Bucket bucket, Instance instance) {
+		List<Assignee> assigneeUsers = _getAssigneeUsers(bucket);
 
 		if (ListUtil.isNull(assigneeUsers)) {
 			return;
 		}
 
-		instance.setAssigneeUsers(assigneeUsers.toArray(new AssigneeUser[0]));
+		instance.setAssignees(assigneeUsers.toArray(new Assignee[0]));
 	}
 
 	private void _setSLAResults(Bucket bucket, Instance instance) {
@@ -760,7 +815,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	}
 
 	private void _setTransitions(Instance instance) {
-		if (ArrayUtil.isEmpty(instance.getAssigneeUsers()) ||
+		if (ArrayUtil.isEmpty(instance.getAssignees()) ||
 			(ArrayUtil.getLength(instance.getTaskNames()) != 1)) {
 
 			return;
@@ -769,11 +824,11 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		instance.setTransitions(_toTransitions(instance.getId()));
 	}
 
-	private AssigneeUser _toAssigneeUser(long userId) {
+	private Assignee _toAssigneeUser(long userId) {
 		try {
 			User user = _userService.getUserById(userId);
 
-			return new AssigneeUser() {
+			return new Assignee() {
 				{
 					id = user.getUserId();
 					name = user.getFullName();
@@ -804,7 +859,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 		}
 	}
 
-	private CreatorUser _toCreatorUser(Long userId) {
+	private Creator _toCreator(Long userId) {
 		try {
 			if (Objects.isNull(userId)) {
 				return null;
@@ -812,7 +867,7 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 			User user = _userService.getUserById(userId);
 
-			return new CreatorUser() {
+			return new Creator() {
 				{
 					id = user.getUserId();
 					name = user.getFullName();
@@ -883,6 +938,9 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 
 	@Reference
 	private Aggregations _aggregations;
+
+	@Reference
+	private InstanceWorkflowMetricsIndexer _instanceWorkflowMetricsIndexer;
 
 	@Reference
 	private Language _language;

@@ -11,7 +11,7 @@
 
 const filterConstants = {
 	assignee: {
-		key: 'assigneeUserIds',
+		key: 'assigneeIds',
 		pinned: false,
 		title: Liferay.Language.get('assignee'),
 	},
@@ -44,7 +44,7 @@ const filterConstants = {
 		key: 'velocityUnit',
 		pinned: false,
 		title: Liferay.Language.get('velocity-unit'),
-	},
+	}
 };
 
 export default filterConstants;

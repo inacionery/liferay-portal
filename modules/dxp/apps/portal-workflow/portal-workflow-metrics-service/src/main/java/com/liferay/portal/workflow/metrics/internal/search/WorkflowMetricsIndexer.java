@@ -19,9 +19,9 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.workflow.metrics.internal.search.index.InstanceWorkflowMetricsIndexer;
-import com.liferay.portal.workflow.metrics.internal.search.index.NodeWorkflowMetricsIndexer;
-import com.liferay.portal.workflow.metrics.internal.search.index.ProcessWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.internal.search.index.InstanceWorkflowMetricsIndexerImpl;
+import com.liferay.portal.workflow.metrics.internal.search.index.NodeWorkflowMetricsIndexerImpl;
+import com.liferay.portal.workflow.metrics.internal.search.index.ProcessWorkflowMetricsIndexerImpl;
 import com.liferay.portal.workflow.metrics.internal.search.index.TokenWorkflowMetricsIndexer;
 
 import java.util.Locale;
@@ -80,32 +80,34 @@ public class WorkflowMetricsIndexer extends BaseIndexer<Object> {
 	protected void doReindex(String[] ids) throws Exception {
 		long companyId = GetterUtil.getLong(ids[0]);
 
-		_instanceWorkflowMetricsIndexer.deleteIndex(companyId);
-		_nodeWorkflowMetricsIndexer.deleteIndex(companyId);
-		_processWorkflowMetricsIndexer.deleteIndex(companyId);
-		_tokenWorkflowMetricsIndexer.deleteIndex(companyId);
+		_instanceWorkflowMetricsIndexerImpl.deleteIndex(companyId);
+		_nodeWorkflowMetricsIndexerImpl.deleteIndex(companyId);
+		_processWorkflowMetricsIndexerImpl.deleteIndex(companyId);
+		_tokenWorkflowMetricsIndexerImpl.deleteIndex(companyId);
 
-		_instanceWorkflowMetricsIndexer.createIndex();
-		_nodeWorkflowMetricsIndexer.createIndex();
-		_processWorkflowMetricsIndexer.createIndex();
-		_tokenWorkflowMetricsIndexer.createIndex();
+		_instanceWorkflowMetricsIndexerImpl.createIndex();
+		_nodeWorkflowMetricsIndexerImpl.createIndex();
+		_processWorkflowMetricsIndexerImpl.createIndex();
+		_tokenWorkflowMetricsIndexerImpl.createIndex();
 
-		_instanceWorkflowMetricsIndexer.reindex(companyId);
-		_nodeWorkflowMetricsIndexer.reindex(companyId);
-		_processWorkflowMetricsIndexer.reindex(companyId);
-		_tokenWorkflowMetricsIndexer.reindex(companyId);
+		_instanceWorkflowMetricsIndexerImpl.reindex(companyId);
+		_nodeWorkflowMetricsIndexerImpl.reindex(companyId);
+		_processWorkflowMetricsIndexerImpl.reindex(companyId);
+		_tokenWorkflowMetricsIndexerImpl.reindex(companyId);
 	}
 
 	@Reference
-	private InstanceWorkflowMetricsIndexer _instanceWorkflowMetricsIndexer;
+	private InstanceWorkflowMetricsIndexerImpl
+		_instanceWorkflowMetricsIndexerImpl;
 
 	@Reference
-	private NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
+	private NodeWorkflowMetricsIndexerImpl _nodeWorkflowMetricsIndexerImpl;
 
 	@Reference
-	private ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
+	private ProcessWorkflowMetricsIndexerImpl
+		_processWorkflowMetricsIndexerImpl;
 
 	@Reference
-	private TokenWorkflowMetricsIndexer _tokenWorkflowMetricsIndexer;
+	private TokenWorkflowMetricsIndexer _tokenWorkflowMetricsIndexerImpl;
 
 }

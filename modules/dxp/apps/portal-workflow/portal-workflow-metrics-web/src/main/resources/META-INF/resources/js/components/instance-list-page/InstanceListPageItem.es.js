@@ -58,8 +58,8 @@ const Item = ({totalCount, ...instance}) => {
 	const {
 		assetTitle,
 		assetType,
-		assigneeUsers = [],
-		creatorUser,
+		assignees = [],
+		creator,
 		dateCreated,
 		id,
 		status,
@@ -75,12 +75,10 @@ const Item = ({totalCount, ...instance}) => {
 	const completed = status === 'Completed';
 	const slaStatusIcon = getSLAStatusIcon(slaStatus);
 
-	const assigneeUserNames = assigneeUsers
-		.map(assigneeUser => assigneeUser.name)
-		.join(', ');
+	const assigneeNames = assignees.map(assignee => assignee.name).join(', ');
 
 	const formattedAssignees = !completed
-		? assigneeUserNames || Liferay.Language.get('unassigned')
+		? assigneeNames || Liferay.Language.get('unassigned')
 		: Liferay.Language.get('not-available');
 
 	const formattedTaskNames = !completed
@@ -158,7 +156,7 @@ const Item = ({totalCount, ...instance}) => {
 			</ClayTable.Cell>
 
 			<ClayTable.Cell data-testid="creatorUserCell">
-				{creatorUser ? creatorUser.name : ''}
+				{creator ? creator.name : ''}
 			</ClayTable.Cell>
 
 			<ClayTable.Cell data-testid="dateCreatedCell">

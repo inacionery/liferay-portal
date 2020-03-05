@@ -14,29 +14,30 @@
 
 package com.liferay.portal.workflow.metrics.internal.search.index;
 
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.document.DocumentBuilder;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
-
-import java.text.ParseException;
+import com.liferay.portal.workflow.metrics.index.TaskWorkflowMetricsIndexer;
 
 import java.time.Duration;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -45,99 +46,222 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Inácio Nery
  */
-@Component(immediate = true, service = TokenWorkflowMetricsIndexer.class)
-public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
+@Component(
+	immediate = true,
+	service = {
+		TaskWorkflowMetricsIndexer.class, TokenWorkflowMetricsIndexer.class
+	}
+)
+public class TokenWorkflowMetricsIndexer
+	extends BaseWorkflowMetricsIndexer implements TaskWorkflowMetricsIndexer {
 
-	public Document createDocument(
-		KaleoTaskInstanceToken kaleoTaskInstanceToken) {
+	@Override
+	public Document add(
+		long companyId, long nodeId, long assigneeId, String className,
+		long classPK, boolean completed, long completionUserId,
+		Date completionDate, Date createDate, Date modifiedDate,
+		long instanceId, boolean instanceCompleted, String name,
+		long processId, String processVersion, long taskId, long userId) {
 
-		Document document = new DocumentImpl();
+		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
 
-		document.addUID(
-			"WorkflowMetricsToken",
-			digest(
-				kaleoTaskInstanceToken.getCompanyId(),
-				kaleoTaskInstanceToken.getKaleoDefinitionVersionId(),
-				kaleoTaskInstanceToken.getKaleoInstanceId(),
-				kaleoTaskInstanceToken.getKaleoTaskId(),
-				kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId()));
+		documentBuilder.setString(
+			Field.UID, digest(companyId, taskId)
+		).setString(
+			"className", className
+		).setLong(
+			"classPK", classPK
+		).setLong(
+			"companyId", companyId
+		).setValue(
+			"completed", completed
+		);
 
-		KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance =
-			kaleoTaskAssignmentInstanceLocalService.
-				fetchFirstKaleoTaskAssignmentInstance(
-					kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
-					User.class.getName(), null);
-
-		if (kaleoTaskAssignmentInstance != null) {
-			document.addKeyword(
-				"assigneeId", kaleoTaskAssignmentInstance.getAssigneeClassPK());
+		if (completed) {
+			documentBuilder.setDate(
+				"completionDate", formatDate(completionDate)
+			).setLong(
+				"completionUserId", completionUserId
+			);
 		}
 
-		document.addKeyword("className", kaleoTaskInstanceToken.getClassName());
-		document.addKeyword("classPK", kaleoTaskInstanceToken.getClassPK());
-		document.addKeyword("companyId", kaleoTaskInstanceToken.getCompanyId());
-		document.addKeyword("completed", kaleoTaskInstanceToken.isCompleted());
+		documentBuilder.setDate(
+			"createDate", formatDate(createDate)
+		).setValue(
+			Field.getSortableFieldName(
+				StringBundler.concat(
+					"createDate", StringPool.UNDERLINE, "Number")),
+			createDate.getTime()
+		).setValue(
+			"deleted", false
+		);
 
-		Date completionDate = kaleoTaskInstanceToken.getCompletionDate();
-
-		if (kaleoTaskInstanceToken.isCompleted()) {
-			document.addDateSortable("completionDate", completionDate);
-			document.addKeyword(
-				"completionUserId",
-				kaleoTaskInstanceToken.getCompletionUserId());
+		if (completed) {
+			documentBuilder.setLong(
+				"duration", _getDuration(completionDate, createDate));
 		}
 
-		Date createDate = kaleoTaskInstanceToken.getCreateDate();
+		documentBuilder.setValue(
+			"instanceCompleted", instanceCompleted
+		).setLong(
+			"instanceId", instanceId
+		).setDate(
+			"modifiedDate", formatDate(modifiedDate)
+		).setLong(
+			"processId", processId
+		).setLong(
+			"nodeId", nodeId
+		).setString(
+			"name", name
+		).setLong(
+			"taskId", taskId
+		).setLong(
+			"userId", userId
+		).setString(
+			"version", processVersion
+		);
 
-		document.addDateSortable("createDate", createDate);
+		Document document = documentBuilder.build();
 
-		document.addKeyword("deleted", false);
-
-		if (kaleoTaskInstanceToken.isCompleted()) {
-			Duration duration = Duration.between(
-				createDate.toInstant(), completionDate.toInstant());
-
-			document.addNumber("duration", duration.toMillis());
-		}
-
-		KaleoInstance kaleoInstance =
-			kaleoInstanceLocalService.fetchKaleoInstance(
-				kaleoTaskInstanceToken.getKaleoInstanceId());
-
-		if (kaleoInstance != null) {
-			document.addKeyword(
-				"instanceCompleted", kaleoInstance.isCompleted());
-		}
-
-		document.addKeyword(
-			"instanceId", kaleoTaskInstanceToken.getKaleoInstanceId());
-		document.addDateSortable(
-			"modifiedDate", kaleoTaskInstanceToken.getModifiedDate());
-
-		KaleoDefinition kaleoDefinition = getKaleoDefinition(
-			kaleoTaskInstanceToken.getKaleoDefinitionVersionId());
-
-		if (kaleoDefinition != null) {
-			document.addKeyword(
-				"processId", kaleoDefinition.getKaleoDefinitionId());
-		}
-
-		document.addKeyword("taskId", kaleoTaskInstanceToken.getKaleoTaskId());
-		document.addKeyword(
-			"taskName", kaleoTaskInstanceToken.getKaleoTaskName());
-		document.addKeyword(
-			"tokenId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId());
-		document.addKeyword("userId", kaleoTaskInstanceToken.getUserId());
-
-		KaleoDefinitionVersion kaleoDefinitionVersion =
-			getKaleoDefinitionVersion(
-				kaleoTaskInstanceToken.getKaleoDefinitionVersionId());
-
-		if (kaleoDefinitionVersion != null) {
-			document.addKeyword("version", kaleoDefinitionVersion.getVersion());
-		}
+		workflowMetricsPortalExecutor.execute(() -> addDocument(document));
 
 		return document;
+	}
+
+	@Override
+	public Document add(
+		long companyId, long nodeId, String className, long classPK,
+		Date createDate, Date modifiedDate, long instanceId, String name,
+		long processId, String processVersion, long taskId, long userId) {
+
+		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
+
+		documentBuilder.setString(
+			Field.UID, digest(companyId, taskId)
+		).setString(
+			"className", className
+		).setLong(
+			"classPK", classPK
+		).setLong(
+			"companyId", companyId
+		).setValue(
+			"completed", false
+		).setDate(
+			"createDate", formatDate(createDate)
+		).setValue(
+			Field.getSortableFieldName(
+				StringBundler.concat(
+					"createDate", StringPool.UNDERLINE, "Number")),
+			createDate.getTime()
+		).setValue(
+			"deleted", false
+		).setValue(
+			"instanceCompleted", false
+		).setLong(
+			"instanceId", instanceId
+		).setDate(
+			"modifiedDate", formatDate(modifiedDate)
+		).setString(
+			"name", name
+		).setLong(
+			"processId", processId
+		).setLong(
+			"nodeId", nodeId
+		).setLong(
+			"taskId", taskId
+		).setLong(
+			"userId", userId
+		).setString(
+			"version", processVersion
+		);
+
+		Document document = documentBuilder.build();
+
+		workflowMetricsPortalExecutor.execute(() -> addDocument(document));
+
+		return document;
+	}
+
+	@Override
+	public Document complete(
+		long companyId, long completionUserId, Date completionDate,
+		Date modifiedDate, long duration, long taskId, long userId) {
+
+		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
+
+		documentBuilder.setString(
+			Field.UID, digest(companyId, taskId)
+		).setLong(
+			"companyId", companyId
+		).setValue(
+			"completed", true
+		).setDate(
+			"completionDate", formatDate(completionDate)
+		).setLong(
+			"completionUserId", completionUserId
+		).setValue(
+			"deleted", false
+		).setLong(
+			"duration", duration
+		).setLong(
+			"duration", duration
+		).setDate(
+			"modifiedDate", formatDate(modifiedDate)
+		).setLong(
+			"taskId", taskId
+		).setLong(
+			"userId", userId
+		);
+
+		Document document = documentBuilder.build();
+
+		workflowMetricsPortalExecutor.execute(
+			() -> {
+				updateDocument(document);
+
+				Map<String, Object> fieldsMap = new HashMap<>();
+
+				if (!Objects.isNull(document.getDate("completionDate"))) {
+					fieldsMap.put(
+						"completionDate", document.getDate("completionDate"));
+				}
+
+				if (!Objects.isNull(document.getLong("completionUserId"))) {
+					fieldsMap.put(
+						"completionUserId",
+						document.getLong("completionUserId"));
+				}
+
+				if (!Objects.isNull(document.getBoolean("instanceCompleted"))) {
+					fieldsMap.put(
+						"instanceCompleted",
+						document.getBoolean("instanceCompleted"));
+				}
+
+				if (!fieldsMap.isEmpty()) {
+					BooleanQuery booleanQuery = queries.booleanQuery();
+
+					booleanQuery.addMustQueryClauses(
+						queries.term("companyId",document.getLong("companyId")),
+						queries.term("taskId", document.getLong("taskId")));
+
+					_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
+						fieldsMap, booleanQuery);
+				}
+			});
+
+
+		return document;
+	}
+
+	@Override
+	public void delete(long companyId, long taskId) {
+		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
+
+		documentBuilder.setString(Field.UID, digest(companyId, taskId));
+
+		workflowMetricsPortalExecutor.execute(
+			() -> deleteDocument(documentBuilder));
 	}
 
 	@Override
@@ -165,68 +289,137 @@ public class TokenWorkflowMetricsIndexer extends BaseWorkflowMetricsIndexer {
 		actionableDynamicQuery.setPerformActionMethod(
 			(KaleoTaskInstanceToken kaleoTaskInstanceToken) ->
 				workflowMetricsPortalExecutor.execute(
-					() -> addDocument(createDocument(kaleoTaskInstanceToken))));
+					() -> {
+						KaleoDefinitionVersion kaleoDefinitionVersion =
+							getKaleoDefinitionVersion(
+								kaleoTaskInstanceToken.
+									getKaleoDefinitionVersionId());
+
+						KaleoDefinition kaleoDefinition = getKaleoDefinition(
+							kaleoTaskInstanceToken.
+								getKaleoDefinitionVersionId());
+
+						if (Objects.isNull(kaleoDefinition) ||
+							Objects.isNull(kaleoDefinitionVersion)) {
+
+							return;
+						}
+
+						KaleoTaskAssignmentInstance
+							kaleoTaskAssignmentInstance =
+								kaleoTaskAssignmentInstanceLocalService.
+									fetchFirstKaleoTaskAssignmentInstance(
+										kaleoTaskInstanceToken.
+											getKaleoTaskInstanceTokenId(),
+										User.class.getName(), null);
+
+						Long assigneeId = null;
+
+						if (kaleoTaskAssignmentInstance != null) {
+							assigneeId =
+								kaleoTaskAssignmentInstance.
+									getAssigneeClassPK();
+						}
+
+						if (kaleoTaskInstanceToken.isCompleted()) {
+							KaleoInstance kaleoInstance =
+								kaleoInstanceLocalService.fetchKaleoInstance(
+									kaleoTaskInstanceToken.
+										getKaleoInstanceId());
+
+							add(
+								kaleoTaskInstanceToken.getCompanyId(),
+								kaleoTaskInstanceToken.getKaleoTaskId(),
+								assigneeId,
+								kaleoTaskInstanceToken.getClassName(),
+								kaleoTaskInstanceToken.getClassPK(),
+								kaleoTaskInstanceToken.isCompleted(),
+								kaleoTaskInstanceToken.getCompletionUserId(),
+								kaleoTaskInstanceToken.getCompletionDate(),
+								kaleoTaskInstanceToken.getCreateDate(),
+								kaleoTaskInstanceToken.getModifiedDate(),
+								kaleoTaskInstanceToken.getKaleoInstanceId(),
+								kaleoInstance.isCompleted(),
+								kaleoTaskInstanceToken.getKaleoTaskName(),
+								kaleoDefinition.getKaleoDefinitionId(),
+								kaleoDefinitionVersion.getVersion(),
+								kaleoTaskInstanceToken.
+									getKaleoTaskInstanceTokenId(),
+								kaleoTaskInstanceToken.getUserId());
+						}
+						else {
+							add(
+								kaleoTaskInstanceToken.getCompanyId(),
+								kaleoTaskInstanceToken.getKaleoTaskId(),
+								kaleoTaskInstanceToken.getClassName(),
+								kaleoTaskInstanceToken.getClassPK(),
+								kaleoTaskInstanceToken.getCreateDate(),
+								kaleoTaskInstanceToken.getModifiedDate(),
+								kaleoTaskInstanceToken.getKaleoInstanceId(),
+								kaleoTaskInstanceToken.getKaleoTaskName(),
+								kaleoDefinition.getKaleoDefinitionId(),
+								kaleoDefinitionVersion.getVersion(),
+								kaleoTaskInstanceToken.
+									getKaleoTaskInstanceTokenId(),
+								kaleoTaskInstanceToken.getUserId());
+						}
+					}));
 
 		actionableDynamicQuery.performActions();
 	}
 
 	@Override
-	public void updateDocument(Document document) {
-		super.updateDocument(document);
+	public Document update(
+		long companyId, Long assigneeId, Date modifiedDate, long taskId,
+		long userId) {
 
-		BooleanQuery booleanQuery = queries.booleanQuery();
+		DocumentBuilder documentBuilder = documentBuilderFactory.builder();
 
-		booleanQuery.addMustQueryClauses(
-			queries.term(
-				"companyId", GetterUtil.getLong(document.get("companyId"))),
-			queries.term(
-				"instanceId", GetterUtil.getLong(document.get("instanceId"))),
-			queries.term(
-				"processId", GetterUtil.getLong(document.get("processId"))),
-			queries.term("taskId", GetterUtil.getLong(document.get("taskId"))),
-			queries.term(
-				"tokenId", GetterUtil.getLong(document.get("tokenId"))));
+		documentBuilder.setString(
+			Field.UID, digest(companyId, taskId)
+		).setLong(
+			"assigneeId", assigneeId
+		).setLong(
+			"companyId", companyId
+		).setDate(
+			"modifiedDate", formatDate(modifiedDate)
+		).setLong(
+			"taskId", taskId
+		).setLong(
+			"userId", userId
+		);
 
-		_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
-			documentImpl -> new DocumentImpl() {
-				{
-					if (!Objects.isNull(document.get("assigneeId"))) {
-						addKeyword("assigneeId", document.get("assigneeId"));
-					}
+		Document document = documentBuilder.build();
 
-					if (!Objects.isNull(document.get("completionDate"))) {
-						try {
-							addDateSortable(
-								"completionDate",
-								document.getDate("completionDate"));
-						}
-						catch (ParseException parseException) {
-							if (_log.isDebugEnabled()) {
-								_log.debug(parseException, parseException);
-							}
-						}
-					}
+		workflowMetricsPortalExecutor.execute(
+			() -> {
+				updateDocument(document);
 
-					if (!Objects.isNull(document.get("completionUserId"))) {
-						addKeyword(
-							"completionUserId",
-							document.get("completionUserId"));
-					}
+				if (!Objects.isNull(document.getLong("assigneeId"))) {
+					BooleanQuery booleanQuery = queries.booleanQuery();
 
-					if (!Objects.isNull(document.get("instanceCompleted"))) {
-						addKeyword(
-							"instanceCompleted",
-							document.get("instanceCompleted"));
-					}
+					booleanQuery.addMustQueryClauses(
+						queries.term("companyId", document.getLong("companyId")),
+						queries.term("taskId", document.getLong("taskId")));
 
-					addKeyword(Field.UID, documentImpl.getString(Field.UID));
+					_slaTaskResultWorkflowMetricsIndexer.updateDocuments(
+						HashMapBuilder.<String, Object>put(
+							"assigneeId",
+							document.getLong("assigneeId")).build(),
+						booleanQuery);
 				}
-			},
-			booleanQuery);
+
+			});
+
+		return document;
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		TokenWorkflowMetricsIndexer.class);
+	private long _getDuration(Date completionDate, Date createDate) {
+		Duration duration = Duration.between(
+			createDate.toInstant(), completionDate.toInstant());
+
+		return duration.toMillis();
+	}
 
 	@Reference
 	private SLATaskResultWorkflowMetricsIndexer

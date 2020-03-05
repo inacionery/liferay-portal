@@ -54,8 +54,8 @@ public class TokenWorkflowMetricsIndexerTest
 			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "companyId",
 			kaleoDefinition.getCompanyId(), "completed", false, "deleted",
 			false, "processId", kaleoDefinition.getKaleoDefinitionId(),
-			"taskId", kaleoTaskInstanceToken.getKaleoTaskId(), "taskName",
-			"review", "tokenId",
+			"nodeId", kaleoTaskInstanceToken.getKaleoTaskId(), "name",
+			"review", "taskId",
 			kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(), "version",
 			"1.0");
 	}
@@ -71,8 +71,8 @@ public class TokenWorkflowMetricsIndexerTest
 			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "companyId",
 			kaleoDefinition.getCompanyId(), "completed", false, "deleted",
 			false, "processId", kaleoDefinition.getKaleoDefinitionId(),
-			"taskId", kaleoTaskInstanceToken.getKaleoTaskId(), "taskName",
-			"review", "tokenId",
+			"nodeId", kaleoTaskInstanceToken.getKaleoTaskId(), "name",
+			"review", "taskId",
 			kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(), "version",
 			"1.0");
 
@@ -83,9 +83,9 @@ public class TokenWorkflowMetricsIndexerTest
 			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "assigneeId",
 			TestPropsValues.getUserId(), "companyId",
 			kaleoDefinition.getCompanyId(), "processId",
-			kaleoDefinition.getKaleoDefinitionId(), "taskId",
-			kaleoTaskInstanceToken.getKaleoTaskId(), "taskName", "review",
-			"tokenId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId());
+			kaleoDefinition.getKaleoDefinitionId(), "nodeId",
+			kaleoTaskInstanceToken.getKaleoTaskId(), "name", "review",
+			"taskId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId());
 	}
 
 	@Test
@@ -99,8 +99,8 @@ public class TokenWorkflowMetricsIndexerTest
 			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "companyId",
 			kaleoDefinition.getCompanyId(), "completed", false, "deleted",
 			false, "processId", kaleoDefinition.getKaleoDefinitionId(),
-			"taskId", kaleoTaskInstanceToken.getKaleoTaskId(), "taskName",
-			"review", "tokenId",
+			"nodeId", kaleoTaskInstanceToken.getKaleoTaskId(), "name",
+			"review", "taskId",
 			kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(), "version",
 			"1.0");
 
@@ -118,9 +118,9 @@ public class TokenWorkflowMetricsIndexerTest
 			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "assigneeId",
 			TestPropsValues.getUserId(), "companyId",
 			kaleoDefinition.getCompanyId(), "duration", duration.toMillis(),
-			"processId", kaleoDefinition.getKaleoDefinitionId(), "taskId",
-			kaleoTaskInstanceToken.getKaleoTaskId(), "taskName", "review",
-			"tokenId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId());
+			"processId", kaleoDefinition.getKaleoDefinitionId(), "nodeId",
+			kaleoTaskInstanceToken.getKaleoTaskId(), "name", "review",
+			"taskId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId());
 	}
 
 	@Test
@@ -135,9 +135,9 @@ public class TokenWorkflowMetricsIndexerTest
 		retryAssertCount(
 			"workflow-metrics-tokens", "WorkflowMetricsTokenType", "companyId",
 			kaleoDefinition.getCompanyId(), "completed", false, "deleted", true,
-			"processId", kaleoDefinition.getKaleoDefinitionId(), "taskId",
-			kaleoTaskInstanceToken.getKaleoTaskId(), "taskName", "review",
-			"tokenId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
+			"processId", kaleoDefinition.getKaleoDefinitionId(), "nodeId",
+			kaleoTaskInstanceToken.getKaleoTaskId(), "name", "review",
+			"taskId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
 			"version", "1.0");
 	}
 
@@ -152,9 +152,9 @@ public class TokenWorkflowMetricsIndexerTest
 			new String[] {"workflow-metrics-tokens"},
 			new String[] {"WorkflowMetricsTokenType"}, "companyId",
 			kaleoDefinition.getCompanyId(), "completed", false, "processId",
-			kaleoDefinition.getKaleoDefinitionId(), "taskId",
-			kaleoTaskInstanceToken.getKaleoTaskId(), "taskName", "review",
-			"tokenId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
+			kaleoDefinition.getKaleoDefinitionId(), "nodeId",
+			kaleoTaskInstanceToken.getKaleoTaskId(), "name", "review",
+			"taskId", kaleoTaskInstanceToken.getKaleoTaskInstanceTokenId(),
 			"version", "1.0");
 	}
 

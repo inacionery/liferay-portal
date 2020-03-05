@@ -22,6 +22,10 @@ import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.workflow.metrics.index.InstanceWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.index.NodeWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.index.ProcessWorkflowMetricsIndexer;
+import com.liferay.portal.workflow.metrics.index.TaskWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Node;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.NodeKey;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Process;
@@ -54,8 +58,7 @@ public class SLAResourceTest extends BaseSLAResourceTestCase {
 	public static void setUpClass() throws Exception {
 		BaseSLAResourceTestCase.setUpClass();
 
-		_workflowMetricsRESTTestHelper = new WorkflowMetricsRESTTestHelper(
-			_documentBuilderFactory, _queries, _searchEngineAdapter);
+		_workflowMetricsRESTTestHelper = new WorkflowMetricsRESTTestHelper(_documentBuilderFactory, _instanceWorkflowMetricsIndexer, _nodeWorkflowMetricsIndexer, _processWorkflowMetricsIndexer, _queries, _searchEngineAdapter, _taskWorkflowMetricsIndexer);
 	}
 
 	@Before
@@ -245,6 +248,19 @@ public class SLAResourceTest extends BaseSLAResourceTestCase {
 
 		unsafeTriConsumer.accept(sla1, sla2, page);
 	}
+	
+	@Inject
+	private static ProcessWorkflowMetricsIndexer _processWorkflowMetricsIndexer;
+
+	@Inject
+	private static InstanceWorkflowMetricsIndexer _instanceWorkflowMetricsIndexer;
+	
+	@Inject
+	private static NodeWorkflowMetricsIndexer _nodeWorkflowMetricsIndexer;
+	
+	@Inject
+	private static TaskWorkflowMetricsIndexer _taskWorkflowMetricsIndexer;
+
 
 	@Inject
 	private static DocumentBuilderFactory _documentBuilderFactory;
