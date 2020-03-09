@@ -17,7 +17,6 @@ package com.liferay.portal.workflow.metrics.rest.client.resource.v1_0;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Assignee;
 import com.liferay.portal.workflow.metrics.rest.client.http.HttpInvoker;
 import com.liferay.portal.workflow.metrics.rest.client.pagination.Page;
-import com.liferay.portal.workflow.metrics.rest.client.pagination.Pagination;
 import com.liferay.portal.workflow.metrics.rest.client.problem.Problem;
 import com.liferay.portal.workflow.metrics.rest.client.serdes.v1_0.AssigneeSerDes;
 
@@ -40,12 +39,11 @@ public interface AssigneeResource {
 		return new Builder();
 	}
 
-	public Page<Assignee> getProcessAssigneesPage(
-			Long processId, Pagination pagination, String sortString)
+	public Page<Assignee> getProcessAssigneesPage(Long processId)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getProcessAssigneesPageHttpResponse(
-			Long processId, Pagination pagination, String sortString)
+			Long processId)
 		throws Exception;
 
 	public static class Builder {
@@ -103,13 +101,11 @@ public interface AssigneeResource {
 
 	public static class AssigneeResourceImpl implements AssigneeResource {
 
-		public Page<Assignee> getProcessAssigneesPage(
-				Long processId, Pagination pagination, String sortString)
+		public Page<Assignee> getProcessAssigneesPage(Long processId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				getProcessAssigneesPageHttpResponse(
-					processId, pagination, sortString);
+				getProcessAssigneesPageHttpResponse(processId);
 
 			String content = httpResponse.getContent();
 
@@ -132,7 +128,7 @@ public interface AssigneeResource {
 		}
 
 		public HttpInvoker.HttpResponse getProcessAssigneesPageHttpResponse(
-				Long processId, Pagination pagination, String sortString)
+				Long processId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -155,17 +151,6 @@ public interface AssigneeResource {
 			}
 
 			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
-
-			if (pagination != null) {
-				httpInvoker.parameter(
-					"page", String.valueOf(pagination.getPage()));
-				httpInvoker.parameter(
-					"pageSize", String.valueOf(pagination.getPageSize()));
-			}
-
-			if (sortString != null) {
-				httpInvoker.parameter("sort", sortString);
-			}
 
 			httpInvoker.path(
 				_builder._scheme + "://" + _builder._host + ":" +

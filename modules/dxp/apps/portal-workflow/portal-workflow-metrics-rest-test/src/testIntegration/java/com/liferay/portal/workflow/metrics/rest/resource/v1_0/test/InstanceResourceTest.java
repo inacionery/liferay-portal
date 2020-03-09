@@ -20,6 +20,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.query.Queries;
@@ -130,6 +132,15 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 	protected Instance randomInstance() throws Exception {
 		Instance instance = super.randomInstance();
 
+		instance.setAssetTitle_i18n(
+			HashMapBuilder.put(
+				LocaleUtil.US.toLanguageTag(), instance.getAssetTitle()
+			).build());
+		instance.setAssetType_i18n(
+			HashMapBuilder.put(
+				LocaleUtil.US.toLanguageTag(), instance.getAssetType()
+			).build());
+
 		instance.setAssignees(new Assignee[0]);
 
 		User adminUser = UserTestUtil.getAdminUser(testGroup.getCompanyId());
@@ -143,9 +154,23 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 			});
 
 		instance.setDateCompletion((Date)null);
+		instance.setProcessId(_process.getId());
+		instance.setProcessVersion(_process.getVersion());
 
 		return instance;
 	}
+
+	
+	@Override
+	protected Instance testPatchProcessInstanceComplete_addInstance() throws Exception {
+		Instance instance = testGetProcessInstance_addInstance();
+
+		instance.setCompleted(true);
+		instance.setDateCompletion(RandomTestUtil.nextDate());
+
+		return instance;
+	}
+	
 
 	@Override
 	protected Instance testDeleteProcessInstance_addInstance()
@@ -200,6 +225,8 @@ public class InstanceResourceTest extends BaseInstanceResourceTestCase {
 			_workflowMetricsRESTTestHelper.deleteInstance(
 				testGroup.getCompanyId(), instance);
 		}
+
+		_instances.clear();
 	}
 
 	private void _testGetProcessInstancesPage(

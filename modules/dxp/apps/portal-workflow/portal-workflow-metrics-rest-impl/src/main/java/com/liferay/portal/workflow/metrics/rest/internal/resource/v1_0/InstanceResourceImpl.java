@@ -244,6 +244,8 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 			Long processId, Long instanceId, Instance instance)
 		throws Exception {
 
+		getProcessInstance(processId, instanceId);
+
 		_instanceWorkflowMetricsIndexer.update(
 			contextCompany.getCompanyId(), instanceId,
 			LocalizedMapUtil.getLocalizedMap(instance.getAssetTitle_i18n()),
@@ -255,6 +257,8 @@ public class InstanceResourceImpl extends BaseInstanceResourceImpl {
 	public void patchProcessInstanceComplete(
 			Long processId, Long instanceId, Instance instance)
 		throws Exception {
+
+		getProcessInstance(processId, instanceId);
 
 		_instanceWorkflowMetricsIndexer.complete(
 			contextCompany.getCompanyId(), instanceId,

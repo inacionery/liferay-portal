@@ -53,7 +53,7 @@ public class AssigneeResourceImpl extends BaseAssigneeResourceImpl {
 
 	@Override
 	public Page<Assignee> getProcessAssigneesPage(
-			Long processId, Pagination pagination, Sort[] sorts)
+			Long processId)
 		throws Exception {
 
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();

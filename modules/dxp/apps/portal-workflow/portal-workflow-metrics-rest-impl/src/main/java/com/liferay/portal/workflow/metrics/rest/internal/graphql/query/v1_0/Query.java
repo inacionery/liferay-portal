@@ -178,23 +178,18 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {processAssignees(page: ___, pageSize: ___, processId: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {processAssignees(processId: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public AssigneePage processAssignees(
-			@GraphQLName("processId") Long processId,
-			@GraphQLName("pageSize") int pageSize,
-			@GraphQLName("page") int page,
-			@GraphQLName("sort") String sortsString)
+			@GraphQLName("processId") Long processId)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_assigneeResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			assigneeResource -> new AssigneePage(
-				assigneeResource.getProcessAssigneesPage(
-					processId, Pagination.of(page, pageSize),
-					_sortsBiFunction.apply(assigneeResource, sortsString))));
+				assigneeResource.getProcessAssigneesPage(processId)));
 	}
 
 	/**
@@ -663,20 +658,13 @@ public class Query {
 		}
 
 		@GraphQLField
-		public AssigneePage assignees(
-				@GraphQLName("pageSize") int pageSize,
-				@GraphQLName("page") int page,
-				@GraphQLName("sort") String sortsString)
-			throws Exception {
-
+		public AssigneePage assignees() throws Exception {
 			return _applyComponentServiceObjects(
 				_assigneeResourceComponentServiceObjects,
 				Query.this::_populateResourceContext,
 				assigneeResource -> new AssigneePage(
 					assigneeResource.getProcessAssigneesPage(
-						_process.getId(), Pagination.of(page, pageSize),
-						_sortsBiFunction.apply(
-							assigneeResource, sortsString))));
+						_process.getId())));
 		}
 
 		private Process _process;

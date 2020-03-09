@@ -206,7 +206,12 @@ public class WorkflowMetricsRESTTestHelper {
 			).orElseGet(
 				Date::new
 			),
-			node.getName(), node.getId(), processId, version, false, "STATE");
+			node.getName(), node.getId(), processId, version, false,
+			Optional.ofNullable(
+				node.getType()
+			).orElseGet(
+				() -> "TASK"
+			));
 
 		_retryAssertCount(
 			"workflow-metrics-nodes", "companyId", companyId, "deleted", false,

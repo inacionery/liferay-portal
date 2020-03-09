@@ -427,6 +427,7 @@ public class TaskMetricResourceTest extends BaseTaskMetricResourceTestCase {
 						id = RandomTestUtil.randomLong();
 						label = RandomTestUtil.randomString();
 						name = RandomTestUtil.randomString();
+						nodeId = RandomTestUtil.randomLong();
 					}
 				};
 			}

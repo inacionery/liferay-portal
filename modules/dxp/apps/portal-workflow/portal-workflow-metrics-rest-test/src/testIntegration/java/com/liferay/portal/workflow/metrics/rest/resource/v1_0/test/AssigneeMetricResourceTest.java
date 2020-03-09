@@ -65,7 +65,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Rafael Praxedes
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class AssigneeMetricResourceTest
 	extends BaseAssigneeMetricResourceTestCase {
