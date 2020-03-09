@@ -15,6 +15,11 @@
 package com.liferay.portal.workflow.metrics.rest.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.query.Queries;
@@ -24,6 +29,7 @@ import com.liferay.portal.workflow.metrics.index.NodeWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.index.ProcessWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.index.TaskWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Assignee;
+import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Instance;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Node;
 import com.liferay.portal.workflow.metrics.rest.client.dto.v1_0.Process;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.test.helper.WorkflowMetricsRESTTestHelper;
@@ -52,6 +58,7 @@ public class AssigneeResourceTest extends BaseAssigneeResourceTestCase {
 			_queries, _searchEngineAdapter, _taskWorkflowMetricsIndexer);
 	}
 
+
 	@Before
 	@Override
 	public void setUp() throws Exception {
@@ -59,6 +66,9 @@ public class AssigneeResourceTest extends BaseAssigneeResourceTestCase {
 
 		_process = _workflowMetricsRESTTestHelper.addProcess(
 			testGroup.getCompanyId());
+
+		_instance = _workflowMetricsRESTTestHelper.addInstance(
+			testGroup.getCompanyId(), false, _process.getId());
 	}
 
 	@After
@@ -70,19 +80,48 @@ public class AssigneeResourceTest extends BaseAssigneeResourceTestCase {
 			_workflowMetricsRESTTestHelper.deleteProcess(
 				testGroup.getCompanyId(), _process);
 		}
+
+		if (_instance != null) {
+			_workflowMetricsRESTTestHelper.deleteInstance(
+				testGroup.getCompanyId(), _instance);
+		}
+
 	}
 	
 	@Override
 	protected Long testGetProcessAssigneesPage_getProcessId() throws Exception {
 		return _process.getId();
 	}
-	
+
 	@Override
 	protected Assignee testGetProcessAssigneesPage_addAssignee(
 		Long processId, Assignee assignee) throws Exception {
 
-		return super.testGetProcessAssigneesPage_addAssignee(processId, assignee);
+		_workflowMetricsRESTTestHelper.addTask(
+			assignee.getId(), testGroup.getCompanyId(), _instance);
+
+		return assignee;
 	}
+	
+	@Override
+	protected Assignee randomAssignee() throws Exception {
+		User user = UserTestUtil.addUser();
+
+		return new Assignee() {
+			{
+				id = user.getUserId();
+				image = user.getPortraitURL(
+					new ThemeDisplay() {
+						{
+							setPathImage(_portal.getPathImage());
+						}
+					});
+				name = user.getFullName();
+			}
+		};
+	}
+	
+	private Instance _instance;
 	
 	@Inject
 	private static DocumentBuilderFactory _documentBuilderFactory;
@@ -109,4 +148,7 @@ public class AssigneeResourceTest extends BaseAssigneeResourceTestCase {
 	private static WorkflowMetricsRESTTestHelper _workflowMetricsRESTTestHelper;
 
 	private Process _process;
+	
+	@Inject
+	private Portal _portal;
 }

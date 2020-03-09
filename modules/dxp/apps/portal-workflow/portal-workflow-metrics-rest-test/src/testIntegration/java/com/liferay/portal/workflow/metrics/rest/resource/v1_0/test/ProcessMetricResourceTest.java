@@ -19,6 +19,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilderFactory;
@@ -35,10 +36,14 @@ import com.liferay.portal.workflow.metrics.rest.client.pagination.Page;
 import com.liferay.portal.workflow.metrics.rest.client.pagination.Pagination;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.test.helper.WorkflowMetricsRESTTestHelper;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -92,8 +97,6 @@ public class ProcessMetricResourceTest
 	@Override
 	@Test
 	public void testGetProcessMetric() throws Exception {
-		super.testGetProcessMetric();
-
 		_testGetProcessMetric(
 			true,
 			(processMetric1, processMetric2) -> assertEquals(
@@ -145,6 +148,32 @@ public class ProcessMetricResourceTest
 			});
 	}
 
+	@Override
+	@Test
+	public void testGetProcessMetricsPageWithSortString() throws Exception {
+		testGetProcessMetricsPageWithSort(
+			EntityField.Type.STRING,
+			(entityField, processMetric1, processMetric2) -> {
+
+				if (Objects.equals(entityField.getName(), "title")) {
+					BeanUtils.setProperty(
+						processMetric1.getProcess(), entityField.getName(),
+						"Aaa" + RandomTestUtil.randomString());
+					BeanUtils.setProperty(
+						processMetric2.getProcess(), entityField.getName(),
+						"Bbb" + RandomTestUtil.randomString());
+				}
+				else {
+					BeanUtils.setProperty(
+						processMetric1, entityField.getName(),
+						"Aaa" + RandomTestUtil.randomString());
+					BeanUtils.setProperty(
+						processMetric2, entityField.getName(),
+						"Bbb" + RandomTestUtil.randomString());
+				}
+			});
+	}
+
 	@Ignore
 	@Override
 	@Test
@@ -180,10 +209,9 @@ public class ProcessMetricResourceTest
 
 				process = new Process() {
 					{
+						active = true;
 						id = RandomTestUtil.randomLong();
-
 						title = RandomTestUtil.randomString();
-
 						title_i18n = HashMapBuilder.put(
 							LocaleUtil.US.toLanguageTag(), title
 						).build();

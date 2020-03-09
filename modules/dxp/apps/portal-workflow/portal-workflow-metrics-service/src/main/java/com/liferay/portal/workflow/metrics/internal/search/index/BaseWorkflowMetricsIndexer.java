@@ -317,9 +317,16 @@ public abstract class BaseWorkflowMetricsIndexer {
 		).flatMap(
 			Set::stream
 		).forEach(
-			entry -> documentBuilder.setValue(
-				Field.getLocalizedName(entry.getKey(), fieldName),
-				entry.getValue())
+			entry -> {
+				String localizedName =
+					Field.getLocalizedName(entry.getKey(), fieldName);
+
+				documentBuilder.setValue(
+					localizedName, entry.getValue()
+				).setValue(
+					Field.getSortableFieldName(localizedName),
+					entry.getValue());
+			}
 		);
 	}
 

@@ -36,6 +36,7 @@ import com.liferay.portal.search.hits.SearchHits;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.workflow.metrics.index.InstanceWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.index.NodeWorkflowMetricsIndexer;
 import com.liferay.portal.workflow.metrics.index.ProcessWorkflowMetricsIndexer;
@@ -59,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -236,7 +238,12 @@ public class WorkflowMetricsRESTTestHelper {
 		throws Exception {
 
 		_processWorkflowMetricsIndexer.add(
-			companyId, true,
+			companyId,
+			Optional.ofNullable(
+				process.getActive()
+			).orElseGet(
+				() -> Boolean.TRUE
+			),
 			Optional.ofNullable(
 				process.getDateCreated()
 			).orElseGet(
@@ -249,7 +256,7 @@ public class WorkflowMetricsRESTTestHelper {
 				Date::new
 			),
 			process.getId(), process.getName(), process.getTitle(),
-			_createLocalizationMap(process.getTitle()),
+			LocalizedMapUtil.getLocalizedMap(process.getTitle_i18n()),
 				process.getVersion()
 			);
 
@@ -708,6 +715,16 @@ public class WorkflowMetricsRESTTestHelper {
 
 		for (Locale availableLocale : LanguageUtil.getAvailableLocales()) {
 			localizationMap.put(availableLocale, value);
+		}
+
+		return localizationMap;
+	}
+
+	public Map<String, String> createI18nMap(String value) {
+		Map<String, String> localizationMap = new HashMap<>();
+
+		for (Locale availableLocale : LanguageUtil.getAvailableLocales()) {
+			localizationMap.put(availableLocale.toLanguageTag(), value);
 		}
 
 		return localizationMap;
