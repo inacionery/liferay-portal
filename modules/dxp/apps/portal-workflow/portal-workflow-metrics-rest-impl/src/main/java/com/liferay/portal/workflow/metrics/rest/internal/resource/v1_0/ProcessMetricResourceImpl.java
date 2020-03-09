@@ -509,7 +509,6 @@ public class ProcessMetricResourceImpl
 		searchSearchRequest.setIndexNames("workflow-metrics-processes");
 		searchSearchRequest.setQuery(
 			_createProcessBooleanQuery(processId, title));
-		searchSearchRequest.setSelectedFieldNames("processId", "title*");
 
 		if ((fieldSort != null) && _isOrderByTitle(fieldSort.getField())) {
 			searchSearchRequest.setSize(pagination.getPageSize());

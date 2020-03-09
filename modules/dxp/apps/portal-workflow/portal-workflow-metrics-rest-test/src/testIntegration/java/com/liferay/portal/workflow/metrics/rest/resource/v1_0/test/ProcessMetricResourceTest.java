@@ -211,6 +211,8 @@ public class ProcessMetricResourceTest
 					{
 						active = true;
 						id = RandomTestUtil.randomLong();
+						dateCreated = RandomTestUtil.nextDate();
+						dateModified = RandomTestUtil.nextDate();
 						title = RandomTestUtil.randomString();
 						title_i18n = HashMapBuilder.put(
 							LocaleUtil.US.toLanguageTag(), title
