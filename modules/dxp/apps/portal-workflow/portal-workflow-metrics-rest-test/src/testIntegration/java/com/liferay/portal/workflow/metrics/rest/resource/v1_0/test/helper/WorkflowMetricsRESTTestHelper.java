@@ -427,7 +427,7 @@ public class WorkflowMetricsRESTTestHelper {
 			_taskWorkflowMetricsIndexer.complete(
 				companyId, task.getCompletionUserId(), task.getDateCompletion(),
 				task.getDateModified(), task.getDuration(), task.getId(), 0);
-			
+
 			_retryAssertCount(
 				"workflow-metrics-tasks",  "companyId", companyId, 
 				"completionUserId", task.getCompletionUserId(), "deleted",
