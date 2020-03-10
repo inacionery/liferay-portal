@@ -112,6 +112,9 @@ public abstract class BaseKaleoLocalServiceTestCase {
 			).put(
 				WorkflowConstants.CONTEXT_ENTRY_CLASS_PK,
 				String.valueOf(_addBlogsEntry().getEntryId())
+			).put(
+				WorkflowConstants.CONTEXT_SERVICE_CONTEXT,
+				(Serializable)serviceContext
 			).build();
 
 		return _kaleoInstanceLocalService.addKaleoInstance(
