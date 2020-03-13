@@ -1243,7 +1243,7 @@
     classnames "^2.2.6"
     warning "^4.0.3"
 
-"@clayui/navigation-bar@3.1.0":
+"@clayui/navigation-bar@3.1.0", "@clayui/navigation-bar@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@clayui/navigation-bar/-/navigation-bar-3.1.0.tgz#b23895d897da37b4def65d5a9f785460fc0a023a"
   integrity sha512-45fcMAql9bLf5gsZWcE+Qq4DTq53rBQ+dbGhyH0XHsz9GgBoT2aIvvdnOAmtYMB/z5sp/T4vumLTBqQlTKjVSg==
@@ -1334,7 +1334,7 @@
   dependencies:
     classnames "^2.2.6"
 
-"@clayui/tabs@3.1.0":
+"@clayui/tabs@3.1.0", "@clayui/tabs@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@clayui/tabs/-/tabs-3.1.0.tgz#29397f08c8271f6f25d4997fc8d7560d0641aa14"
   integrity sha512-0Uoqe00W9pGy9BBckL9AsVcE8/u/iCGRygvk9Ux7avhdnzUPtXM8GB/q3AUC38kxXNoMx+NyUyXhsCY6jQor8g==
@@ -6840,7 +6840,7 @@ discontinuous-range@1.0.0:
   resolved "https://registry.yarnpkg.com/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
   integrity sha1-44Mx8IRLukm5qctxx3FYWqsbxlo=
 
-dnd-core@10.0.1, dnd-core@^10.0.1:
+dnd-core@^10.0.1:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/dnd-core/-/dnd-core-10.0.1.tgz#151d95cd3a7fa47b210905c301364c0828203029"
   integrity sha512-PokpWzFSKbpmJSWbSIfVJtIsRdx3DP5e3//agNNzV8L1k9T4/IFKtgjjwKeLKmP9qMuTXdZZGSS40w+eZ8MmUg==
