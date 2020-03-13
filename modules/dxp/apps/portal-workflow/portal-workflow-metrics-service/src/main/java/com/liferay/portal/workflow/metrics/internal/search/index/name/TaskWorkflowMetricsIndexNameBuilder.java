@@ -25,10 +25,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rafael Praxedes
  */
 @Component(
-	immediate = true, property = "workflow.metrics.index.entity.name=token",
+	immediate = true, property = "workflow.metrics.index.entity.name=task",
 	service = WorkflowMetricsIndexNameBuilder.class
 )
-public class TokenWorkflowMetricsIndexNameBuilder
+public class TaskWorkflowMetricsIndexNameBuilder
 	implements WorkflowMetricsIndexNameBuilder {
 
 	@Override
@@ -41,6 +41,6 @@ public class TokenWorkflowMetricsIndexNameBuilder
 	@Reference
 	protected IndexNameBuilder indexNameBuilder;
 
-	private static final String _INDEX_NAME_PREFIX = "workflow-metrics-tokens";
+	private static final String _INDEX_NAME_PREFIX = "workflow-metrics-tasks";
 
 }
