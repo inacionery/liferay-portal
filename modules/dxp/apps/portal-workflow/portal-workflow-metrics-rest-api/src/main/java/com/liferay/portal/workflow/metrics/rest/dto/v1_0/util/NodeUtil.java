@@ -15,10 +15,14 @@
 package com.liferay.portal.workflow.metrics.rest.dto.v1_0.util;
 
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Node;
 
+import java.text.DateFormat;
+
+import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
@@ -32,6 +36,8 @@ public class NodeUtil {
 		return new Node() {
 			{
 				id = document.getLong("nodeId");
+				dateCreated = _parseDate(document.getDate("createDate"));
+				dateModified = _parseDate(document.getDate("modifiedDate"));
 				initial = GetterUtil.getBoolean(document.getValue("initial"));
 				label = language.get(
 					resourceBundle, document.getString("name"));
@@ -40,6 +46,18 @@ public class NodeUtil {
 				type = document.getString("type");
 			}
 		};
+	}
+
+	private static Date _parseDate(String formattedDate) {
+		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyyMMddHHmmss");
+
+		try {
+			return dateFormat.parse(formattedDate);
+		}
+		catch (Exception exception) {
+			return null;
+		}
 	}
 
 }
