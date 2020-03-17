@@ -61,8 +61,8 @@ const Item = ({totalCount, ...instance}) => {
 	const {
 		assetTitle,
 		assetType,
-		assigneeUsers = [],
-		creatorUser,
+		assignees = [],
+		creator,
 		dateCreated,
 		id,
 		status,
@@ -82,12 +82,12 @@ const Item = ({totalCount, ...instance}) => {
 	const disableCheckbox = (!assignedToUser && !unassigned) || completed;
 	const slaStatusIcon = getSLAStatusIcon(slaStatus);
 
-	const assigneeUserNames = unassigned
+	const assigneeNames = unassigned
 		? Liferay.Language.get('unassigned')
-		: assigneeUsers.map(user => user.name).join(', ');
+		: assignees.map(user => user.name).join(', ');
 
 	const formattedAssignees = !completed
-		? assigneeUserNames
+		? assigneeNames
 		: Liferay.Language.get('not-available');
 
 	const formattedTaskNames = !completed
@@ -166,7 +166,7 @@ const Item = ({totalCount, ...instance}) => {
 			</ClayTable.Cell>
 
 			<ClayTable.Cell data-testid="creatorUserCell">
-				{creatorUser ? creatorUser.name : ''}
+				{creator ? creator.name : ''}
 			</ClayTable.Cell>
 
 			<ClayTable.Cell data-testid="dateCreatedCell">
