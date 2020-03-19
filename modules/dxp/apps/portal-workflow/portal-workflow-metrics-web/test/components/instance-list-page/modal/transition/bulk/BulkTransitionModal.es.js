@@ -449,7 +449,7 @@ describe('The BulkTransitionModal component should', () => {
 		const nextBtn = getByTestId('nextButton');
 
 		expect(alertError).toHaveTextContent(
-			'your-connection-was-unexpectedly-lost select-done-to-retry'
+			'your-request-has-failed select-done-to-retry'
 		);
 
 		fireEvent.click(nextBtn);
@@ -458,9 +458,7 @@ describe('The BulkTransitionModal component should', () => {
 	test('Show alert message when attempt to transition without selecting any transition go to previous step and foward', () => {
 		const alertError = getByTestId('alertError');
 
-		expect(alertError).toHaveTextContent(
-			'your-connection-was-unexpectedly-lost'
-		);
+		expect(alertError).toHaveTextContent('your-request-has-failed');
 
 		const nextBtn = getByTestId('nextButton');
 		const modal = getByTestId('bulkTransitionModal');
