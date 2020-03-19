@@ -12,76 +12,20 @@
 import React, {useContext, useMemo, useState} from 'react';
 
 import PromisesResolver from '../../../../../shared/components/promises-resolver/PromisesResolver.es';
-import {useFilter} from '../../../../../shared/hooks/useFilter.es';
 import {usePaginationState} from '../../../../../shared/hooks/usePaginationState.es';
-import {usePost} from '../../../../../shared/hooks/usePost.es';
-import {InstanceListContext} from '../../../InstanceListPageProvider.es';
 import {ModalContext} from '../../ModalProvider.es';
 import {Body} from './SelectTasksStepBody.es';
 import {Header} from './SelectTasksStepHeader.es';
+import {useFetchTasks} from './hooks/useFetchTasks.es';
 
-const SelectTasksStep = ({processId, setErrorToast}) => {
-	const {selectAll, selectedItems} = useContext(InstanceListContext);
+const SelectTasksStep = ({setErrorToast}) => {
 	const {setSelectTasks} = useContext(ModalContext);
-
-	const filterKeys = ['processStep', 'assignee'];
-	const prefixKey = 'bulk';
-	const prefixKeys = [prefixKey];
-	const {
-		filterValues: {
-			bulkAssigneeUserIds: userIds,
-			bulkTaskKeys: workflowTaskNames,
-		},
-		prefixedKeys,
-		selectedFilters,
-	} = useFilter({filterKeys, prefixKeys, withoutRouteParams: true});
-
 	const [retry, setRetry] = useState(0);
 	const {page, pageSize, pagination} = usePaginationState({
 		initialPageSize: 5,
 	});
 
-	const instanceIds = useMemo(() => selectedItems.map(({id}) => id), [
-		selectedItems,
-	]);
-
-	const body = useMemo(() => {
-		const filterByUser = userIds && userIds.length;
-
-		const assigneeIds = filterByUser
-			? userIds.filter(id => id !== '-1')
-			: undefined;
-
-		const searchByRoles = filterByUser && userIds.includes('-1');
-
-		const body = {
-			assigneeIds,
-			completed: false,
-			searchByRoles,
-			workflowTaskNames,
-		};
-
-		if (selectAll) {
-			body.workflowDefinitionId = processId;
-		}
-		else {
-			body.workflowInstanceIds = instanceIds;
-		}
-
-		return body;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [instanceIds, userIds, workflowTaskNames]);
-
-	const {data, postData} = usePost({
-		admin: true,
-		body,
-		params: {
-			page,
-			pageSize,
-			sort: 'workflowInstanceId:asc',
-		},
-		url: `/workflow-tasks`,
-	});
+	const {data, fetchTasks} = useFetchTasks(page, pageSize);
 
 	const paginationState = {
 		...pagination,
@@ -92,7 +36,7 @@ const SelectTasksStep = ({processId, setErrorToast}) => {
 		setErrorToast(false);
 
 		return [
-			postData().catch(err => {
+			fetchTasks().catch(err => {
 				setSelectTasks({selectAll: false, tasks: []});
 				setErrorToast(Liferay.Language.get('your-request-has-failed'));
 
@@ -100,28 +44,24 @@ const SelectTasksStep = ({processId, setErrorToast}) => {
 			}),
 		];
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postData, retry]);
+	}, [fetchTasks, retry]);
 
 	return (
-		<PromisesResolver promises={promises}>
-			<SelectTasksStep.Header
-				filterKeys={prefixedKeys}
-				instanceIds={instanceIds}
-				prefixKey={prefixKey}
-				selectedFilters={selectedFilters}
-				{...data}
-			/>
+		<div className="fixed-height modal-metrics-content">
+			<PromisesResolver promises={promises}>
+				<SelectTasksStep.Header {...data} />
 
-			<SelectTasksStep.Body
-				{...data}
-				pagination={paginationState}
-				setRetry={setRetry}
-			/>
-		</PromisesResolver>
+				<SelectTasksStep.Body
+					{...data}
+					pagination={paginationState}
+					setRetry={setRetry}
+				/>
+			</PromisesResolver>
+		</div>
 	);
 };
 
 SelectTasksStep.Body = Body;
 SelectTasksStep.Header = Header;
 
-export {SelectTasksStep};
+export default SelectTasksStep;
