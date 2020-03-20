@@ -73,10 +73,8 @@ const Item = ({totalCount, ...instance}) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedItems]);
 
-	const assignedToUser = !!assignees.find(
-		({id}) => id === Number(userId)
-	);
-	const assigneeUserNames = assignees.map(user => user.name).join(', ');
+	const assignedToUser = !!assignees.find(({id}) => id === Number(userId));
+	const assigneeNames = assignees.map(user => user.name).join(', ');
 	const completed = status === processStatusConstants.completed;
 	const unassigned = !!assignees.find(({id}) => id === -1);
 
@@ -157,7 +155,7 @@ const Item = ({totalCount, ...instance}) => {
 				{formattedAssignees}
 			</ClayTable.Cell>
 
-			<ClayTable.Cell data-testid="creatorUserCell">
+			<ClayTable.Cell data-testid="creatorCell">
 				{creator ? creator.name : ''}
 			</ClayTable.Cell>
 
