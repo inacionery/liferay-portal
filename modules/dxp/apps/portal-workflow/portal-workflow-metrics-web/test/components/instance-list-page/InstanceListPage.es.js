@@ -31,7 +31,7 @@ const items = [
 		assetTitle: 'New Post 2',
 		assetType: 'Blog',
 		assigneeUsers: [{id: -1, name: 'Unassigned'}],
-		creatorUser: {
+		creator: {
 			name: 'User 1',
 		},
 		dateCreated: new Date('2019-01-03'),
