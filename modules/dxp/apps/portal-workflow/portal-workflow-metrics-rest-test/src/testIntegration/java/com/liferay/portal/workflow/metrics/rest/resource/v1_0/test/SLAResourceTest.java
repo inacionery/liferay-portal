@@ -110,12 +110,6 @@ public class SLAResourceTest extends BaseSLAResourceTestCase {
 	@Ignore
 	@Override
 	@Test
-	public void testGraphQLDeleteSLA() throws Exception {
-	}
-
-	@Ignore
-	@Override
-	@Test
 	public void testGraphQLGetSLA() throws Exception {
 	}
 
