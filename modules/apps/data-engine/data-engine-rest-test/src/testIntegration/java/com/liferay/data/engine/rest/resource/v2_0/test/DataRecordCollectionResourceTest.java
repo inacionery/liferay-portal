@@ -71,30 +71,6 @@ public class DataRecordCollectionResourceTest
 		Assert.assertTrue(false);
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLDeleteDataRecordCollection() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetDataDefinitionDataRecordCollection() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetDataRecordCollection() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetSiteDataRecordCollectionByDataRecordCollectionKey() {
-	}
-
 	@Override
 	@Test
 	public void testPostDataDefinitionDataRecordCollection() throws Exception {

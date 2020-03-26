@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -66,24 +65,6 @@ public class DataLayoutResourceTest extends BaseDataLayoutResourceTestCase {
 			"abcdefghijklmnopqrstuvwxyz0123456789");
 		_testGetDataDefinitionDataLayoutsPage("form layout", "form layout");
 		_testGetDataDefinitionDataLayoutsPage("layo", "form layout");
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLDeleteDataLayout() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetDataLayout() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetSiteDataLayoutByContentTypeByDataLayoutKey() {
 	}
 
 	@Override

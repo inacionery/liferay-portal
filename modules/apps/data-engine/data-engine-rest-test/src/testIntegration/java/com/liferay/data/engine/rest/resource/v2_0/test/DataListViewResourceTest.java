@@ -21,8 +21,6 @@ import com.liferay.data.engine.rest.resource.v2_0.test.util.DataDefinitionTestUt
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -39,18 +37,6 @@ public class DataListViewResourceTest extends BaseDataListViewResourceTestCase {
 			testGroup.getGroupId());
 		_irrelevantDataDefinition = DataDefinitionTestUtil.addDataDefinition(
 			irrelevantGroup.getGroupId());
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLDeleteDataListView() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetDataListView() {
 	}
 
 	@Override

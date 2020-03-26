@@ -56,18 +56,6 @@ public class DataRecordResourceTest extends BaseDataRecordResourceTestCase {
 		super.testGetDataRecordCollectionDataRecordExport();
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLDeleteDataRecord() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetDataRecord() {
-	}
-
 	@Override
 	@Test
 	public void testPostDataRecordCollectionDataRecord() throws Exception {

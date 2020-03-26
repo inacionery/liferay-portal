@@ -132,24 +132,6 @@ public class DataDefinitionResourceTest
 		Assert.assertEquals(1, page.getTotalCount());
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLDeleteDataDefinition() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetDataDefinition() {
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetSiteDataDefinitionByContentTypeByDataDefinitionKey() {
-	}
-
 	@Override
 	@Test
 	public void testPutDataDefinition() throws Exception {

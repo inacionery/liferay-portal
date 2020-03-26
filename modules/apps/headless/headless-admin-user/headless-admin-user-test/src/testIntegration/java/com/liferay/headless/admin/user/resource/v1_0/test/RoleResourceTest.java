@@ -35,7 +35,6 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -84,12 +83,6 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 		assertEqualsIgnoringOrder(
 			ListUtil.concat(roles, _roles), (List<Role>)page.getItems());
 		assertValid(page);
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testGraphQLGetRolesPage() {
 	}
 
 	@Override
