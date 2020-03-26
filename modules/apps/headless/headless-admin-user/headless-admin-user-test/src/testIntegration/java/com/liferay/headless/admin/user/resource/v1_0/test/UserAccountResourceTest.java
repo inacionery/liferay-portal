@@ -18,6 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.admin.user.client.pagination.Pagination;
+import com.liferay.headless.admin.user.client.serdes.v1_0.UserAccountSerDes;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -235,9 +236,11 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 
 		Assert.assertEquals(3, userAccountsJSONObject.get("totalCount"));
 
-		assertEqualsJSONArray(
+		assertEquals(
 			Arrays.asList(userAccount1, userAccount2),
-			userAccountsJSONObject.getJSONArray("items"));
+			Arrays.asList(
+				UserAccountSerDes.toDTOs(
+					userAccountsJSONObject.getString("items"))));
 	}
 
 	@Override
