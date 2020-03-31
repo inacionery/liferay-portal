@@ -14,6 +14,7 @@
 
 package com.liferay.portal.workflow.metrics.internal.search.index.creation.model.listener;
 
+import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -60,6 +61,29 @@ public class WorkflowMetricsCompanyModelListener
 				company.getCompanyId());
 			_tokenWorkflowMetricsIndexer.createIndex(company.getCompanyId());
 			_transitionWorkflowMetricsIndexer.createIndex(
+				company.getCompanyId());
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException, portalException);
+		}
+	}
+
+	@Override
+	public void onAfterRemove(Company company) throws ModelListenerException {
+		if (Objects.isNull(_searchEngineAdapter)) {
+			return;
+		}
+
+		try {
+			_instanceWorkflowMetricsIndexer.removeIndex(company.getCompanyId());
+			_nodeWorkflowMetricsIndexer.removeIndex(company.getCompanyId());
+			_processWorkflowMetricsIndexer.removeIndex(company.getCompanyId());
+			_slaInstanceResultWorkflowMetricsIndexer.removeIndex(
+				company.getCompanyId());
+			_slaTaskResultWorkflowMetricsIndexer.removeIndex(
+				company.getCompanyId());
+			_tokenWorkflowMetricsIndexer.removeIndex(company.getCompanyId());
+			_transitionWorkflowMetricsIndexer.removeIndex(
 				company.getCompanyId());
 		}
 		catch (PortalException portalException) {
