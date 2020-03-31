@@ -78,23 +78,15 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 	public void setUp() throws Exception {
 		_deployWorkflowDefinition();
 
-		activateWorkflow(
+		_activateWorkflow(
 			_kaleoDefinition.getName(), _kaleoDefinition.getVersion());
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		deactivateWorkflow();
-	}
+		_deactivateWorkflow();
 
-	protected void activateWorkflow(
-			String workflowDefinitionName, int workflowDefinitionVersion)
-		throws PortalException {
-
-		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
-			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
-			TestPropsValues.getGroupId(), BlogsEntry.class.getName(), 0, 0,
-			workflowDefinitionName, workflowDefinitionVersion);
+		_undeployWorkflowDefinition();
 	}
 
 	protected BlogsEntry addBlogsEntry() throws PortalException {
@@ -333,13 +325,6 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 				ServiceContextTestUtil.getServiceContext());
 	}
 
-	protected void deactivateWorkflow() throws PortalException {
-		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
-			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
-			TestPropsValues.getGroupId(), BlogsEntry.class.getName(), 0, 0,
-			null);
-	}
-
 	protected KaleoDefinition deleteKaleoDefinition(
 		KaleoDefinition kaleoDefinition) {
 
@@ -407,6 +392,16 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 	@Inject
 	protected KaleoNodeLocalService kaleoNodeLocalService;
 
+	private void _activateWorkflow(
+			String workflowDefinitionName, int workflowDefinitionVersion)
+		throws PortalException {
+
+		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
+			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
+			TestPropsValues.getGroupId(), BlogsEntry.class.getName(), 0, 0,
+			workflowDefinitionName, workflowDefinitionVersion);
+	}
+
 	private void _assertReindex(
 			Indexer<Object> indexer, Map<String, Integer> indexNamesMap,
 			String[] indexTypes, Object... parameters)
@@ -447,6 +442,13 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 		).build();
 	}
 
+	private void _deactivateWorkflow() throws PortalException {
+		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
+			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
+			TestPropsValues.getGroupId(), BlogsEntry.class.getName(), 0, 0,
+			null);
+	}
+
 	private void _deployWorkflowDefinition() throws Exception {
 		_workflowDefinition =
 			_workflowDefinitionManager.deployWorkflowDefinition(
@@ -459,6 +461,15 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 			ServiceContextTestUtil.getServiceContext());
 	}
 
+	private void _undeployWorkflowDefinition() throws Exception {
+		if (_workflowDefinition != null) {
+			_workflowDefinitionManager.undeployWorkflowDefinition(
+				TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+				_workflowDefinition.getName(),
+				_workflowDefinition.getVersion());
+		}
+	}
+
 	@DeleteAfterTestRun
 	private final List<BlogsEntry> _blogsEntries = new ArrayList<>();
 
@@ -468,7 +479,6 @@ public abstract class BaseWorkflowMetricsIndexerTestCase
 	@Inject
 	private DocumentBuilderFactory _documentBuilderFactory;
 
-	@DeleteAfterTestRun
 	private KaleoDefinition _kaleoDefinition;
 
 	@Inject
