@@ -142,6 +142,7 @@ public class SLATaskResultWorkflowMetricsIndexer
 		return "WorkflowMetricsSLATaskResultType";
 	}
 
+	@Override
 	public void reindex(long companyId) {
 		_creatDefaultDocuments(companyId);
 	}
