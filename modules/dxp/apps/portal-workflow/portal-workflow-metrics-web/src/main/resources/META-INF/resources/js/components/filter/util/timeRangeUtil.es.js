@@ -21,8 +21,8 @@ const convertQueryDate = (date = '', format = 'L') => {
 	return moment.utc(decodeURIComponent(date), null, 'en').format(format);
 };
 
-const formatDateTime = (date, format = 'L', isEndDate) => {
-	let dateTime = parseDateMoment(date, format);
+const formatDateTime = (date, format, isEndDate) => {
+	let dateTime = parseDateMoment(date, format || 'L');
 
 	dateTime = isEndDate ? dateTime.endOf('day') : dateTime.startOf('day');
 
@@ -64,7 +64,7 @@ const getCustomTimeRange = (dateEnd, dateStart) => {
 		dateEnd: decodeURIComponent(dateEnd),
 		dateStart: decodeURIComponent(dateStart),
 		dividerAfter: true,
-		key: 'custom',
+		id: 'custom',
 		name: Liferay.Language.get('custom-range'),
 	};
 

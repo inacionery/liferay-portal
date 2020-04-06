@@ -35,9 +35,9 @@ const buildFilterItem = data => {
 	};
 };
 
-const buildFilterItems = (items, selectedKeys) => {
+const buildFilterItems = ({items, propertyKey = 'key', selectedKeys}) => {
 	return items.map((item, index) => {
-		const key = item.key || String(item.id);
+		const key = String(item[propertyKey]);
 
 		return {
 			...item,
@@ -161,7 +161,7 @@ const removeItem = (filterKey, itemToRemove, queryString) => {
 	const filterValues = filtersParam[filterKey] || [];
 
 	filtersParam[filterKey] = filterValues.filter(
-		filterValue => filterValue != itemToRemove.key
+		filterValue => filterValue !== itemToRemove.key
 	);
 
 	queryParams.filters = filtersParam;

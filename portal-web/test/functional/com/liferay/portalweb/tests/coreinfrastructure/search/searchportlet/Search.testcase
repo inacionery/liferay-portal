@@ -920,6 +920,8 @@ definition {
 
 		for (var portletName : list "Search Bar,Search Results") {
 			PageEditor.addWidget(portletName = "${portletName}");
+
+			Refresh();
 		}
 
 		PageEditor.clickPublish();
@@ -1988,6 +1990,8 @@ definition {
 
 	@priority = "5"
 	test ViewMultipleFacetURLs {
+		property portal.upstream = "quarantine";
+
 		var searchPage = "Search Page";
 
 		JSONCategory.addVocabulary(

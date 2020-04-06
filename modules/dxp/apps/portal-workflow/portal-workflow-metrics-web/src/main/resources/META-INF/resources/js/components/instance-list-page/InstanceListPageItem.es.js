@@ -59,13 +59,13 @@ const Item = ({totalCount, ...instance}) => {
 	const {
 		assetTitle,
 		assetType,
-		assigneeUsers = [],
-		creatorUser,
+		assignees = [],
+		creator,
 		dateCreated,
 		id,
 		status,
 		slaStatus,
-		taskNames,
+		taskNames = [Liferay.Language.get('not-available')],
 	} = instance;
 
 	useEffect(() => {
@@ -73,22 +73,20 @@ const Item = ({totalCount, ...instance}) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedItems]);
 
-	const assignedToUser = !!assigneeUsers.find(({id}) => id == userId);
-	const assigneeUserNames = assigneeUsers.map(user => user.name).join(', ');
+	const assignedToUser = !!assignees.find(({id}) => id === Number(userId));
+	const assigneeNames = assignees.map(user => user.name).join(', ');
 	const completed = status === processStatusConstants.completed;
-	const unassigned = !!assigneeUsers.find(({id}) => id === -1);
+	const unassigned = !!assignees.find(({id}) => id === -1);
 
 	const disableCheckbox = (!assignedToUser && !unassigned) || completed;
 	const slaStatusIcon = getSLAStatusIcon(slaStatus);
 
 	const formattedAssignees = !completed
-		? assigneeUserNames
+		? assigneeNames
 		: Liferay.Language.get('not-available');
 
 	const formattedTaskNames = !completed
-		? taskNames
-			? taskNames.join(', ')
-			: Liferay.Language.get('not-available')
+		? taskNames.join(', ')
 		: Liferay.Language.get('completed');
 
 	const handleCheck = ({target}) => {
@@ -157,8 +155,8 @@ const Item = ({totalCount, ...instance}) => {
 				{formattedAssignees}
 			</ClayTable.Cell>
 
-			<ClayTable.Cell data-testid="creatorUserCell">
-				{creatorUser ? creatorUser.name : ''}
+			<ClayTable.Cell data-testid="creatorCell">
+				{creator ? creator.name : ''}
 			</ClayTable.Cell>
 
 			<ClayTable.Cell data-testid="dateCreatedCell">

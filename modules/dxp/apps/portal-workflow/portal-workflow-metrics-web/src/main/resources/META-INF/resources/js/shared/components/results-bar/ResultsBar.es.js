@@ -44,7 +44,7 @@ const Clear = ({filters = [], filterKeys = [], withoutRouteParams}) => {
 		});
 
 		filterKeys.forEach(key => {
-			filterState[key] = undefined;
+			delete filterState[key];
 		});
 
 		dispatch(filterState);
@@ -109,7 +109,7 @@ const FilterItem = ({filter, item, withoutRouteParams}) => {
 
 							<strong>
 								{filter.items[0].key !== 'custom'
-									? item.name
+									? item.label || item.name
 									: item.resultName}
 							</strong>
 						</div>

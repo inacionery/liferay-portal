@@ -91,7 +91,10 @@
 				"html": {
 					"oneOf": [
 						{
-							"$ref": "#/definitions/InlineValue"
+							"$ref": "#/definitions/FragmentInlineValue"
+						},
+						{
+							"$ref": "#/definitions/FragmentMappedValue"
 						}
 					],
 					"type": "object"
@@ -122,7 +125,10 @@
 				"text": {
 					"oneOf": [
 						{
-							"$ref": "#/definitions/InlineValue"
+							"$ref": "#/definitions/FragmentInlineValue"
+						},
+						{
+							"$ref": "#/definitions/FragmentMappedValue"
 						}
 					],
 					"type": "object"
@@ -137,26 +143,47 @@
 				"description": {
 					"oneOf": [
 						{
-							"$ref": "#/definitions/InlineValue"
+							"$ref": "#/definitions/FragmentInlineValue"
 						}
 					]
 				},
 				"title": {
 					"oneOf": [
 						{
-							"$ref": "#/definitions/InlineValue"
+							"$ref": "#/definitions/FragmentInlineValue"
 						}
 					]
 				},
 				"url": {
 					"oneOf": [
 						{
-							"$ref": "#/definitions/InlineValue"
+							"$ref": "#/definitions/FragmentInlineValue"
+						},
+						{
+							"$ref": "#/definitions/FragmentMappedValue"
 						}
 					]
 				}
 			},
 			"title": "The FragmentImage Schema",
+			"type": "object"
+		},
+		"FragmentInlineValue": {
+			"additionalProperties": false,
+			"properties": {
+				"value": {
+					"title": "The value Schema",
+					"type": "string"
+				},
+				"value_i18n": {
+					"additionalProperties": {
+						"type": "string"
+					},
+					"title": "The value_i18n Schema",
+					"type": "object"
+				}
+			},
+			"title": "The FragmentInlineValue Schema",
 			"type": "object"
 		},
 		"FragmentInstanceDefinition": {
@@ -200,7 +227,10 @@
 				"href": {
 					"oneOf": [
 						{
-							"$ref": "#/definitions/InlineValue"
+							"$ref": "#/definitions/FragmentInlineValue"
+						},
+						{
+							"$ref": "#/definitions/FragmentMappedValue"
 						}
 					]
 				},
@@ -216,6 +246,38 @@
 				}
 			},
 			"title": "The FragmentLink Schema",
+			"type": "object"
+		},
+		"FragmentMappedValue": {
+			"additionalProperties": false,
+			"properties": {
+				"defaultValue": {
+					"$ref": "#/definitions/FragmentInlineValue"
+				},
+				"mapping": {
+					"additionalProperties": false,
+					"properties": {
+						"fieldKey": {
+							"title": "The fieldKey Schema",
+							"type": "string"
+						},
+						"itemKey": {
+							"title": "The itemKey Schema",
+							"type": "string"
+						}
+					},
+					"required": [
+						"fieldKey",
+						"itemKey"
+					],
+					"title": "The mapping Schema",
+					"type": "object"
+				}
+			},
+			"required": [
+				"mapping"
+			],
+			"title": "The FragmentMappedValue Schema",
 			"type": "object"
 		},
 		"FragmentSettingsAllowed": {
@@ -250,24 +312,6 @@
 				"unallowedFragments"
 			],
 			"title": "The FragmentSettingsUnallowed Schema",
-			"type": "object"
-		},
-		"InlineValue": {
-			"additionalProperties": false,
-			"properties": {
-				"value": {
-					"title": "The value Schema",
-					"type": "string"
-				},
-				"value_i18n": {
-					"additionalProperties": {
-						"type": "string"
-					},
-					"title": "The value_i18n Schema",
-					"type": "object"
-				}
-			},
-			"title": "The InlineValue Schema",
 			"type": "object"
 		},
 		"PageElement": {

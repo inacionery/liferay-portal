@@ -17,7 +17,6 @@ dependencies {
 	compile group: "com.thoughtworks.qdox", name: "qdox", version: "2.0-M5"
 	compile group: "commons-io", name: "commons-io", version: "2.1"
 	compile group: "commons-logging", name: "commons-logging", version: "1.2"
-	compile group: "dom4j", name: "dom4j", version: "1.6.1"
 	compile(group: "jaxen", name: "jaxen", version: "1.1.1") {
 		exclude group: "com.ibm.icu", module: "icu4j"
 	}
@@ -25,6 +24,7 @@ dependencies {
 	compile group: "org.antlr", name: "antlr4-runtime", version: "4.7.2"
 	compile group: "org.apache.ant", name: "ant", version: "1.9.14"
 	compile group: "org.apache.maven", name: "maven-artifact", version: "3.3.9"
+	compile group: "org.dom4j", name: "dom4j", version: "2.1.1"
 	compile group: "org.json", name: "json", version: "20180813"
 	compile group: "xerces", name: "xercesImpl", version: "2.11.0"
 

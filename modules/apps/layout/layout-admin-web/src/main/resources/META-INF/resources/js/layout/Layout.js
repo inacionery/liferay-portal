@@ -97,7 +97,11 @@ const Layout = ({
 
 					if (parent) {
 						const oldParent = newColumn.find(item => item.active);
-						oldParent.active = false;
+
+						if (oldParent) {
+							oldParent.active = false;
+						}
+
 						parent.active = true;
 						newLayoutColumns.push(children);
 						break;

@@ -118,7 +118,7 @@ const MillerColumnsItem = ({
 		const dropdownActions = [];
 
 		actions.forEach(action => {
-			if (!action.quickAction && action.url) {
+			if (!action.quickAction) {
 				dropdownActions.push({
 					...action,
 					handler:
@@ -315,6 +315,7 @@ const MillerColumnsItem = ({
 						<ClayDropDown.ItemList>
 							{dropdownActions.map(action => (
 								<ClayDropDown.Item
+									disabled={!action.url}
 									href={action.url}
 									id={action.id}
 									key={action.id}

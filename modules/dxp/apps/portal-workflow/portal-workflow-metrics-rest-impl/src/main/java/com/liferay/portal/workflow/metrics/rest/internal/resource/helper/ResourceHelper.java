@@ -205,7 +205,7 @@ public class ResourceHelper {
 				clazz.getResourceAsStream("dependencies/" + resourceName)));
 	}
 
-	public BooleanQuery createTokensBooleanQuery(
+	public BooleanQuery createTasksBooleanQuery(
 		long companyId, boolean instanceCompleted) {
 
 		BooleanQuery booleanQuery = _queries.booleanQuery();
@@ -213,7 +213,7 @@ public class ResourceHelper {
 		booleanQuery.addFilterQueryClauses(
 			_queries.term(
 				"_index",
-				_tokenWorkflowMetricsIndexNameBuilder.getIndexName(companyId)));
+				_taskWorkflowMetricsIndexNameBuilder.getIndexName(companyId)));
 
 		booleanQuery.addMustQueryClauses(
 			_queries.term("instanceCompleted", instanceCompleted));
@@ -224,7 +224,7 @@ public class ResourceHelper {
 
 	public ScriptedMetricAggregation
 		creatInstanceCountScriptedMetricAggregation(
-			List<Long> assigneeUserIds, Date dateEnd, Date dateStart,
+			List<Long> assigneeIds, Date dateEnd, Date dateStart,
 			List<String> slaStatuses, List<String> statuses,
 			List<String> taskNames) {
 
@@ -239,9 +239,9 @@ public class ResourceHelper {
 			_workflowMetricsInstanceCountMapScript);
 		scriptedMetricAggregation.setParameters(
 			HashMapBuilder.<String, Object>put(
-				"assigneeUserIds",
+				"assigneeIds",
 				() -> Optional.ofNullable(
-					assigneeUserIds
+					assigneeIds
 				).filter(
 					ListUtil::isNotEmpty
 				).map(
@@ -502,9 +502,9 @@ public class ResourceHelper {
 	@Reference
 	private Sorts _sorts;
 
-	@Reference(target = "(workflow.metrics.index.entity.name=token)")
+	@Reference(target = "(workflow.metrics.index.entity.name=task)")
 	private WorkflowMetricsIndexNameBuilder
-		_tokenWorkflowMetricsIndexNameBuilder;
+		_taskWorkflowMetricsIndexNameBuilder;
 
 	private Script _workflowMetricsInstanceCountCombineScript;
 	private Script _workflowMetricsInstanceCountInitScript;
