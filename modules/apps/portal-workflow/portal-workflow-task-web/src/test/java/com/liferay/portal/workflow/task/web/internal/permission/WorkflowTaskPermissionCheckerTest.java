@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.ProxyFactory;
@@ -36,6 +37,7 @@ import com.liferay.portal.kernel.workflow.WorkflowTaskAssignee;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.registry.BasicRegistryImpl;
 import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.collections.ServiceReferenceMapper;
 import com.liferay.registry.collections.ServiceTrackerCollections;
 import com.liferay.registry.collections.ServiceTrackerMap;
 
@@ -50,6 +52,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,6 +76,11 @@ public class WorkflowTaskPermissionCheckerTest extends PowerMockito {
 
 		_setUpGroupLocalServiceUtil();
 		_setUpServiceTrackerCollections();
+	}
+
+	@Before
+	public void setUp() {
+		_setUpWorkflowHandlerRegistryUtil();
 	}
 
 	@Test
@@ -415,6 +423,48 @@ public class WorkflowTaskPermissionCheckerTest extends PowerMockito {
 		throws PortalException {
 
 		mockStatic(ServiceTrackerCollections.class, Mockito.RETURNS_DEFAULTS);
+	}
+
+	private void _setUpWorkflowHandlerRegistryUtil() {
+		mockStatic(ServiceTrackerCollections.class, Mockito.CALLS_REAL_METHODS);
+
+		stub(
+			method(
+				ServiceTrackerCollections.class, "openSingleValueMap",
+				Class.class, String.class, ServiceReferenceMapper.class)
+		).toReturn(
+			new MockServiceTrackerMap(
+				Collections.singletonMap(
+					_TEST_CONTEXT_ENTRY_CLASS_NAME,
+					new BaseWorkflowHandler<Object>() {
+
+						@Override
+						public String getClassName() {
+							return _TEST_CONTEXT_ENTRY_CLASS_NAME;
+						}
+
+						@Override
+						public String getType(Locale locale) {
+							return null;
+						}
+
+						@Override
+						public String getURLEditWorkflowTask(
+							long workflowTaskId,
+							ServiceContext serviceContext) {
+
+							return null;
+						}
+
+						@Override
+						public Object updateStatus(
+							int status, Map workflowContext) {
+
+							return null;
+						}
+
+					}))
+		);
 	}
 
 	private static final String _TEST_CONTEXT_ENTRY_CLASS_NAME =
