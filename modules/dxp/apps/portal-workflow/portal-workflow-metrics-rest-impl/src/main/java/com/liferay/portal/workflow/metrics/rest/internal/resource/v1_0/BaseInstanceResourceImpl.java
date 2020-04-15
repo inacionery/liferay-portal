@@ -95,7 +95,7 @@ public abstract class BaseInstanceResourceImpl
 			@Parameter(in = ParameterIn.QUERY, name = "dateStart"),
 			@Parameter(in = ParameterIn.QUERY, name = "slaStatuses"),
 			@Parameter(in = ParameterIn.QUERY, name = "statuses"),
-			@Parameter(in = ParameterIn.QUERY, name = "taskKeys"),
+			@Parameter(in = ParameterIn.QUERY, name = "taskNames"),
 			@Parameter(in = ParameterIn.QUERY, name = "page"),
 			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
 		}
@@ -115,7 +115,8 @@ public abstract class BaseInstanceResourceImpl
 			@Parameter(hidden = true) @QueryParam("slaStatuses") String[]
 				slaStatuses,
 			@Parameter(hidden = true) @QueryParam("statuses") String[] statuses,
-			@Parameter(hidden = true) @QueryParam("taskKeys") String[] taskKeys,
+			@Parameter(hidden = true) @QueryParam("taskNames") String[]
+				taskNames,
 			@Context Pagination pagination)
 		throws Exception {
 
@@ -334,7 +335,7 @@ public abstract class BaseInstanceResourceImpl
 			(java.util.Date)parameters.get("dateStart"),
 			(String[])parameters.get("slaStatuses"),
 			(String[])parameters.get("statuses"),
-			(String[])parameters.get("taskKeys"), pagination);
+			(String[])parameters.get("taskNames"), pagination);
 	}
 
 	@Override

@@ -46,13 +46,13 @@ public interface InstanceResource {
 	public Page<Instance> getProcessInstancesPage(
 			Long processId, Long[] assigneeIds, java.util.Date dateEnd,
 			java.util.Date dateStart, String[] slaStatuses, String[] statuses,
-			String[] taskKeys, Pagination pagination)
+			String[] taskNames, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getProcessInstancesPageHttpResponse(
 			Long processId, Long[] assigneeIds, java.util.Date dateEnd,
 			java.util.Date dateStart, String[] slaStatuses, String[] statuses,
-			String[] taskKeys, Pagination pagination)
+			String[] taskNames, Pagination pagination)
 		throws Exception;
 
 	public Instance postProcessInstance(Long processId, Instance instance)
@@ -158,13 +158,13 @@ public interface InstanceResource {
 		public Page<Instance> getProcessInstancesPage(
 				Long processId, Long[] assigneeIds, java.util.Date dateEnd,
 				java.util.Date dateStart, String[] slaStatuses,
-				String[] statuses, String[] taskKeys, Pagination pagination)
+				String[] statuses, String[] taskNames, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
 				getProcessInstancesPageHttpResponse(
 					processId, assigneeIds, dateEnd, dateStart, slaStatuses,
-					statuses, taskKeys, pagination);
+					statuses, taskNames, pagination);
 
 			String content = httpResponse.getContent();
 
@@ -189,7 +189,7 @@ public interface InstanceResource {
 		public HttpInvoker.HttpResponse getProcessInstancesPageHttpResponse(
 				Long processId, Long[] assigneeIds, java.util.Date dateEnd,
 				java.util.Date dateStart, String[] slaStatuses,
-				String[] statuses, String[] taskKeys, Pagination pagination)
+				String[] statuses, String[] taskNames, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -247,10 +247,10 @@ public interface InstanceResource {
 				}
 			}
 
-			if (taskKeys != null) {
-				for (int i = 0; i < taskKeys.length; i++) {
+			if (taskNames != null) {
+				for (int i = 0; i < taskNames.length; i++) {
 					httpInvoker.parameter(
-						"taskKeys", String.valueOf(taskKeys[i]));
+						"taskNames", String.valueOf(taskNames[i]));
 				}
 			}
 
