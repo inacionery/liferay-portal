@@ -87,7 +87,7 @@ describe('The workload by assignee body should', () => {
 			);
 			expect(
 				viewAllAssignees[0].parentNode.getAttribute('href')
-			).not.toContain('filters.taskKeys%5B0%5D=allSteps');
+			).not.toContain('filters.taskNames%5B0%5D=allSteps');
 		});
 	});
 
@@ -121,7 +121,7 @@ describe('The workload by assignee body should', () => {
 				'view-all-assignees (1)'
 			);
 			expect(viewAllAssignees.parentNode.getAttribute('href')).toContain(
-				'filters.taskKeys%5B0%5D=review'
+				'filters.taskNames%5B0%5D=review'
 			);
 		});
 	});
@@ -157,7 +157,7 @@ describe('The workload by assignee body should', () => {
 
 			expect(viewAllAssignees.innerHTML).toBe('view-all-assignees (1)');
 			expect(viewAllAssignees.parentNode.getAttribute('href')).toContain(
-				'filters.taskKeys%5B0%5D=update'
+				'filters.taskNames%5B0%5D=update'
 			);
 		});
 	});
