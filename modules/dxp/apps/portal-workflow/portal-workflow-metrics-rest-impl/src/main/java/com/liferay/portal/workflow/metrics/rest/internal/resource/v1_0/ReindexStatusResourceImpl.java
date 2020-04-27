@@ -22,8 +22,8 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatusRegistry;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.ReindexStatus;
-import com.liferay.portal.workflow.metrics.rest.internal.resource.helper.ResourceHelper;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.ReindexStatusResource;
+import com.liferay.portal.workflow.metrics.search.background.task.WorkflowMetricsBackgroundTaskExecutorNames;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,7 +43,8 @@ public class ReindexStatusResourceImpl extends BaseReindexStatusResourceImpl {
 		return Page.of(
 			transform(
 				_backgroundTaskLocalService.getBackgroundTasks(
-					ResourceHelper.REINDEX_TASK_EXECUTOR_CLASS_NAME,
+					WorkflowMetricsBackgroundTaskExecutorNames.
+						WORKFLOW_METRICS_REINDEX_BACKGROUND_TASK_EXECUTOR,
 					BackgroundTaskConstants.STATUS_IN_PROGRESS),
 				this::_toReindexStatus));
 	}

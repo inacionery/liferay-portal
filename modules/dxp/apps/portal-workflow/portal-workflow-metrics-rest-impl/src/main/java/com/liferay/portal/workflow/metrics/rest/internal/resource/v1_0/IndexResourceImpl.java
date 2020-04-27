@@ -29,8 +29,8 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.workflow.metrics.rest.dto.v1_0.Index;
 import com.liferay.portal.workflow.metrics.rest.internal.dto.v1_0.util.IndexUtil;
 import com.liferay.portal.workflow.metrics.rest.internal.resource.exception.IndexKeyException;
-import com.liferay.portal.workflow.metrics.rest.internal.resource.helper.ResourceHelper;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.IndexResource;
+import com.liferay.portal.workflow.metrics.search.background.task.WorkflowMetricsBackgroundTaskExecutorNames;
 import com.liferay.portal.workflow.metrics.search.index.reindexer.WorkflowMetricsReindexer;
 
 import java.io.Serializable;
@@ -86,7 +86,8 @@ public class IndexResourceImpl extends BaseIndexResourceImpl {
 		_backgroundTaskLocalService.addBackgroundTask(
 			contextUser.getUserId(), contextCompany.getGroupId(),
 			_getBackgroundTaskName(index),
-			ResourceHelper.REINDEX_TASK_EXECUTOR_CLASS_NAME,
+			WorkflowMetricsBackgroundTaskExecutorNames.
+				WORKFLOW_METRICS_REINDEX_BACKGROUND_TASK_EXECUTOR,
 			HashMapBuilder.<String, Serializable>put(
 				BackgroundTaskContextMapConstants.DELETE_ON_SUCCESS, true
 			).put(
@@ -132,8 +133,10 @@ public class IndexResourceImpl extends BaseIndexResourceImpl {
 
 	private String _getBackgroundTaskName(Index index) {
 		return StringBundler.concat(
-			ResourceHelper.REINDEX_TASK_EXECUTOR_CLASS_NAME, StringPool.DASH,
-			contextCompany.getCompanyId(), StringPool.DASH, index.getKey());
+			WorkflowMetricsBackgroundTaskExecutorNames.
+				WORKFLOW_METRICS_REINDEX_BACKGROUND_TASK_EXECUTOR,
+			StringPool.DASH, contextCompany.getCompanyId(), StringPool.DASH,
+			index.getKey());
 	}
 
 	private String[] _getIndexEntityNames(Index index) {
