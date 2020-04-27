@@ -86,7 +86,7 @@ public class IndexResourceImpl extends BaseIndexResourceImpl {
 		_backgroundTaskLocalService.addBackgroundTask(
 			contextUser.getUserId(), contextCompany.getGroupId(),
 			_getBackgroundTaskName(index),
-			ResourceHelper.REINDEX_TASK_EXECUTOR_CLASSNAME,
+			ResourceHelper.REINDEX_TASK_EXECUTOR_CLASS_NAME,
 			HashMapBuilder.<String, Serializable>put(
 				BackgroundTaskContextMapConstants.DELETE_ON_SUCCESS, true
 			).put(
@@ -132,7 +132,7 @@ public class IndexResourceImpl extends BaseIndexResourceImpl {
 
 	private String _getBackgroundTaskName(Index index) {
 		return StringBundler.concat(
-			ResourceHelper.REINDEX_TASK_EXECUTOR_CLASSNAME, StringPool.DASH,
+			ResourceHelper.REINDEX_TASK_EXECUTOR_CLASS_NAME, StringPool.DASH,
 			contextCompany.getCompanyId(), StringPool.DASH, index.getKey());
 	}
 

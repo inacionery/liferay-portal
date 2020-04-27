@@ -43,7 +43,7 @@ public class ReindexStatusResourceImpl extends BaseReindexStatusResourceImpl {
 		return Page.of(
 			transform(
 				_backgroundTaskLocalService.getBackgroundTasks(
-					ResourceHelper.REINDEX_TASK_EXECUTOR_CLASSNAME,
+					ResourceHelper.REINDEX_TASK_EXECUTOR_CLASS_NAME,
 					BackgroundTaskConstants.STATUS_IN_PROGRESS),
 				this::_toReindexStatus));
 	}

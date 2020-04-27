@@ -67,7 +67,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = ResourceHelper.class)
 public class ResourceHelper {
 
-	public static final String REINDEX_TASK_EXECUTOR_CLASSNAME =
+	public static final String REINDEX_TASK_EXECUTOR_CLASS_NAME =
 		"com.liferay.portal.workflow.metrics.internal.background.task." +
 			"WorkflowMetricsReindexBackgroundTaskExecutor";
 
