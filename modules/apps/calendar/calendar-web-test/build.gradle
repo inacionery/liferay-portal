@@ -1,4 +1,6 @@
 dependencies {
+	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
+	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
 	testIntegrationCompile project(":apps:calendar:calendar-api")
 	testIntegrationCompile project(":apps:calendar:calendar-test-util")
 	testIntegrationCompile project(":apps:social:social-activity-test-util")
