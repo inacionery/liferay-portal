@@ -59,6 +59,19 @@ public class AppBuilderAppLocalServiceWrapper
 			ddmStructureLayoutId, deDataListViewId, nameMap);
 	}
 
+	@Override
+	public com.liferay.app.builder.model.AppBuilderApp addAppBuilderApp(
+			long groupId, long companyId, long userId, boolean active,
+			long ddmStructureId, long ddmStructureLayoutId,
+			long deDataListViewId,
+			java.util.Map<java.util.Locale, String> nameMap, String scope)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _appBuilderAppLocalService.addAppBuilderApp(
+			groupId, companyId, userId, active, ddmStructureId,
+			ddmStructureLayoutId, deDataListViewId, nameMap, scope);
+	}
+
 	/**
 	 * Creates a new app builder app with the primary key. Does not add the app builder app to the database.
 	 *
@@ -327,6 +340,14 @@ public class AppBuilderAppLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.app.builder.model.AppBuilderApp>
+		getAppBuilderApps(long companyId, boolean active, String scope) {
+
+		return _appBuilderAppLocalService.getAppBuilderApps(
+			companyId, active, scope);
+	}
+
+	@Override
+	public java.util.List<com.liferay.app.builder.model.AppBuilderApp>
 		getAppBuilderApps(
 			long groupId, int start, int end,
 			com.liferay.portal.kernel.util.OrderByComparator
@@ -348,6 +369,18 @@ public class AppBuilderAppLocalServiceWrapper
 
 		return _appBuilderAppLocalService.getAppBuilderApps(
 			groupId, companyId, ddmStructureId, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.app.builder.model.AppBuilderApp>
+		getAppBuilderApps(
+			long groupId, String scope, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.app.builder.model.AppBuilderApp>
+					orderByComparator) {
+
+		return _appBuilderAppLocalService.getAppBuilderApps(
+			groupId, scope, start, end, orderByComparator);
 	}
 
 	/**
@@ -411,6 +444,12 @@ public class AppBuilderAppLocalServiceWrapper
 	}
 
 	@Override
+	public int getAppBuilderAppsCount(long groupId, String scope) {
+		return _appBuilderAppLocalService.getAppBuilderAppsCount(
+			groupId, scope);
+	}
+
+	@Override
 	public java.util.List<com.liferay.app.builder.model.AppBuilderApp>
 		getCompanyAppBuilderApps(
 			long companyId, int start, int end,
@@ -423,9 +462,27 @@ public class AppBuilderAppLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.app.builder.model.AppBuilderApp>
+		getCompanyAppBuilderApps(
+			long companyId, String scope, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.app.builder.model.AppBuilderApp>
+					orderByComparator) {
+
+		return _appBuilderAppLocalService.getCompanyAppBuilderApps(
+			companyId, scope, start, end, orderByComparator);
+	}
+
+	@Override
 	public int getCompanyAppBuilderAppsCount(long companyId) {
 		return _appBuilderAppLocalService.getCompanyAppBuilderAppsCount(
 			companyId);
+	}
+
+	@Override
+	public int getCompanyAppBuilderAppsCount(long companyId, String scope) {
+		return _appBuilderAppLocalService.getCompanyAppBuilderAppsCount(
+			companyId, scope);
 	}
 
 	@Override
