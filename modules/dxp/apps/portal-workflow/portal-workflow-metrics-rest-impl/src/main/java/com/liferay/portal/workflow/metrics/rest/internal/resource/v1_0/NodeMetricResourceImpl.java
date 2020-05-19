@@ -337,6 +337,23 @@ public class NodeMetricResourceImpl
 			_queries.term("deleted", Boolean.FALSE));
 	}
 
+	private long _getInstanceCount(Bucket bucket) {
+		if (bucket == null) {
+			return 0;
+		}
+
+		FilterAggregationResult filterAggregationResult =
+			(FilterAggregationResult)bucket.getChildAggregationResult(
+				"countFilter");
+
+		ValueCountAggregationResult valueCountAggregationResult =
+			(ValueCountAggregationResult)
+				filterAggregationResult.getChildAggregationResult(
+					"instanceCount");
+
+		return GetterUtil.getLong(valueCountAggregationResult.getValue());
+	}
+
 	private Collection<NodeMetric> _getNodeMetrics(
 		boolean completed, Date dateEnd, Date dateStart, FieldSort fieldSort,
 		Map<String, NodeMetric> nodeMetrics, Pagination pagination,
@@ -424,10 +441,7 @@ public class NodeMetricResourceImpl
 			bucket -> {
 				NodeMetric nodeMetric = nodeMetrics.remove(bucket.getKey());
 
-				_populateNodeMetricWithSLAMetrics(
-					bucket, completed, nodeMetric);
-				_setDurationAvg(bucket, nodeMetric);
-				_setInstanceCount(bucket, nodeMetric);
+				_populateNodeMetric(bucket, completed, nodeMetric);
 
 				return nodeMetric;
 			}
@@ -577,7 +591,7 @@ public class NodeMetricResourceImpl
 		return false;
 	}
 
-	private void _populateNodeMetricWithSLAMetrics(
+	private void _populateNodeMetric(
 		Bucket bucket, boolean completed, NodeMetric nodeMetric) {
 
 		if (completed) {
@@ -588,6 +602,14 @@ public class NodeMetricResourceImpl
 			_setOnTimeInstanceCount(bucket, nodeMetric);
 			_setOverdueInstanceCount(bucket, nodeMetric);
 		}
+
+		long instanceCount = _getInstanceCount(bucket);
+
+		if (instanceCount > 0) {
+			_setDurationAvg(bucket, nodeMetric);
+		}
+
+		nodeMetric.setInstanceCount(instanceCount);
 	}
 
 	private void _setBreachedInstanceCount(
@@ -628,24 +650,6 @@ public class NodeMetricResourceImpl
 
 		nodeMetric.setDurationAvg(
 			GetterUtil.getLong(avgAggregationResult.getValue()));
-	}
-
-	private void _setInstanceCount(Bucket bucket, NodeMetric nodeMetric) {
-		if (bucket == null) {
-			return;
-		}
-
-		FilterAggregationResult filterAggregationResult =
-			(FilterAggregationResult)bucket.getChildAggregationResult(
-				"countFilter");
-
-		ValueCountAggregationResult valueCountAggregationResult =
-			(ValueCountAggregationResult)
-				filterAggregationResult.getChildAggregationResult(
-					"instanceCount");
-
-		nodeMetric.setInstanceCount(
-			GetterUtil.getLong(valueCountAggregationResult.getValue()));
 	}
 
 	private void _setOnTimeInstanceCount(Bucket bucket, NodeMetric nodeMetric) {
