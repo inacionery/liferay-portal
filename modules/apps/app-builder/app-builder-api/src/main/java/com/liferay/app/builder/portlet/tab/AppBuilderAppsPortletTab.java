@@ -14,6 +14,8 @@
 
 package com.liferay.app.builder.portlet.tab;
 
+import com.liferay.petra.string.StringPool;
+
 import java.util.Locale;
 
 /**
@@ -24,5 +26,9 @@ public interface AppBuilderAppsPortletTab {
 	public String getLabel(Locale locale);
 
 	public String getPluginEntryPoint();
+
+	public default String getScope() {
+		return StringPool.BLANK;
+	}
 
 }
