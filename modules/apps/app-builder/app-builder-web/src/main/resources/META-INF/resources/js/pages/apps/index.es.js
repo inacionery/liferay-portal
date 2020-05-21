@@ -12,20 +12,51 @@
  * details.
  */
 
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayModalProvider} from '@clayui/modal';
-import React from 'react';
+import React, {Suspense, lazy} from 'react';
 import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 
 import {AppContextProvider} from '../../AppContext.es';
-import ListApps from './ListApps.es';
+import useLoader from '../../hooks/useLoader.es';
+import ListAppsTabs from './ListAppsTabs.es';
 
 export default (props) => {
+	const editRoutes = [];
+
+	const loadModule = useLoader();
+
+	Object.values(props.appsTabs).forEach(
+		({editRouteEntryPoint, editRoutePath}) => {
+			if (editRouteEntryPoint && editRoutePath) {
+				editRoutes.push({
+					component: (props) => {
+						const Component = lazy(() =>
+							loadModule(editRoutePath, editRouteEntryPoint)
+						);
+
+						return (
+							<Suspense fallback={<ClayLoadingIndicator />}>
+								<Component {...props} />
+							</Suspense>
+						);
+					},
+					path: editRoutePath,
+				});
+			}
+		}
+	);
+
 	return (
 		<AppContextProvider {...props}>
 			<ClayModalProvider>
 				<Router>
 					<Switch>
-						<Route component={ListApps} path="/" />
+						{editRoutes.map((route, index) => (
+							<Route key={index} {...route} />
+						))}
+
+						<Route component={ListAppsTabs} path="/:tab?" />
 					</Switch>
 				</Router>
 			</ClayModalProvider>

@@ -21,9 +21,14 @@ import java.util.Locale;
  */
 public interface AppBuilderAppsPortletTab {
 
+	public String getEditRouteEntryPoint();
+
+	public String getEditRoutePath();
+	
+	public String getEntryPoint();
+
 	public String getLabel(Locale locale);
 
-	public String getPluginEntryPoint();
 
 	public String getScope();
 

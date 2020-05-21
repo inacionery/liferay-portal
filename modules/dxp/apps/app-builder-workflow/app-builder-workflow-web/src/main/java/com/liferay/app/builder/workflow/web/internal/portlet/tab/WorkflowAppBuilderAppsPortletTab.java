@@ -35,6 +35,23 @@ public class WorkflowAppBuilderAppsPortletTab
 	implements AppBuilderAppsPortletTab {
 
 	@Override
+	public String getEditRouteEntryPoint() {
+		return _npmResolver.resolveModuleName(
+			"app-builder-workflow-web/js/pages/edit-workflow-app/EditWorkflowApp.es");
+	}
+
+	@Override
+	public String getEditRoutePath() {
+		return _EDIT_ROUTE_PATH;
+	}
+
+	@Override
+	public String getEntryPoint() {
+		return _npmResolver.resolveModuleName(
+			"app-builder-workflow-web/js/index.es");
+	}
+
+	@Override
 	public String getLabel(Locale locale) {
 		return _language.get(
 			ResourceBundleUtil.getModuleAndPortalResourceBundle(
@@ -43,15 +60,11 @@ public class WorkflowAppBuilderAppsPortletTab
 	}
 
 	@Override
-	public String getPluginEntryPoint() {
-		return _npmResolver.resolveModuleName(
-			"app-builder-workflow-web/js/index.es");
-	}
-
-	@Override
 	public String getScope() {
 		return _WORKFLOW_APP_SCOPE;
 	}
+
+	private static final String _EDIT_ROUTE_PATH = "/edit_workflow_app";
 
 	private static final String _WORKFLOW_APP_SCOPE = "workflowAppScope";
 

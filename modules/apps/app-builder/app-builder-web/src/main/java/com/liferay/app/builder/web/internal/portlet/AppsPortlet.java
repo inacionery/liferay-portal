@@ -82,10 +82,9 @@ public class AppsPortlet extends MVCPortlet {
 						themeDisplay.getLocale(), getClass()),
 					"standard")
 			).put(
-				"pluginEntryPoint",
-				_npmResolver.resolveModuleName("app-builder-web/js/index.es")
-			).put(
-				"scope", AppBuilderAppConstants.STANDARD_APP_SCOPE
+				"entryPoint",
+				_npmResolver.resolveModuleName(
+					"app-builder-web/js/pages/apps/ListApps.es")
 			).build()
 		).build();
 
@@ -99,11 +98,17 @@ public class AppsPortlet extends MVCPortlet {
 			appsTabs.put(
 				appBuilderAppsPortletTabName,
 				HashMapBuilder.<String, Object>put(
+					"editRouteEntryPoint",
+					appBuilderAppsPortletTab.getEditRouteEntryPoint()
+				).put(
+					"editRoutePath",
+					appBuilderAppsPortletTab.getEditRoutePath()
+				).put(
+					"entryPoint",
+					appBuilderAppsPortletTab.getEntryPoint()
+				).put(
 					"label",
 					appBuilderAppsPortletTab.getLabel(themeDisplay.getLocale())
-				).put(
-					"pluginEntryPoint",
-					appBuilderAppsPortletTab.getPluginEntryPoint()
 				).put(
 					"scope", appBuilderAppsPortletTab.getScope()
 				).build());
