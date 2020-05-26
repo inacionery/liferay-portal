@@ -394,8 +394,10 @@ public class AppResourceImpl
 		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
 			dataDefinitionId);
 
-		AppBuilderApp appBuilderApp =
-			_appBuilderAppLocalService.addAppBuilderApp(
+		AppBuilderApp appBuilderApp = null;
+
+		if (Objects.isNull(app.getDataRecordCollectionId())) {
+			appBuilderApp = _appBuilderAppLocalService.addAppBuilderApp(
 				ddmStructure.getGroupId(), contextCompany.getCompanyId(),
 				PrincipalThreadLocal.getUserId(), app.getActive(),
 				dataDefinitionId, GetterUtil.getLong(app.getDataLayoutId()),
@@ -403,6 +405,18 @@ public class AppResourceImpl
 				LocalizedValueUtil.toLocaleStringMap(app.getName()),
 				GetterUtil.getString(
 					app.getScope(), AppBuilderAppConstants.STANDARD_APP_SCOPE));
+		}
+		else {
+			appBuilderApp = _appBuilderAppLocalService.addAppBuilderApp(
+				ddmStructure.getGroupId(), contextCompany.getCompanyId(),
+				PrincipalThreadLocal.getUserId(), app.getActive(),
+				app.getDataRecordCollectionId(), dataDefinitionId,
+				GetterUtil.getLong(app.getDataLayoutId()),
+				GetterUtil.getLong(app.getDataListViewId()),
+				LocalizedValueUtil.toLocaleStringMap(app.getName()),
+				GetterUtil.getString(
+					app.getScope(), AppBuilderAppConstants.STANDARD_APP_SCOPE));
+		}
 
 		app.setId(appBuilderApp.getAppBuilderAppId());
 
