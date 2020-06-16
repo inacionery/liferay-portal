@@ -74,7 +74,7 @@ const SelectDropdown = ({
 	useEffect(() => {
 		doFetch();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [endpoint]);
 
 	return (
 		<>
