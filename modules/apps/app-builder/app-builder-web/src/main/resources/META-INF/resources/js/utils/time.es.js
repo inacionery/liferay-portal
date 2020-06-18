@@ -12,6 +12,10 @@
  * details.
  */
 
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
+
+moment.locale(themeDisplay.getBCP47LanguageId());
 
 export const fromNow = (date) => moment(date).fromNow();
+
+export const toLocaleDate = (date) => moment(date).format('L');
