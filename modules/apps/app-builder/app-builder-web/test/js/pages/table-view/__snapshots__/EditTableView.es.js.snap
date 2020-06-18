@@ -39,6 +39,7 @@ exports[`EditTableView renders 1`] = `
                     <input
                       aria-label="untitled-table-view"
                       class="form-control form-control-inline"
+                      maxlength="30"
                       placeholder="untitled-table-view"
                       type="text"
                       value=""

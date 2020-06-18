@@ -370,6 +370,7 @@ exports[`ListCustomObjects renders 1`] = `
           <input
             class="form-control form-control"
             id="customObjectNameInput"
+            maxlength="30"
             type="text"
           />
         </div>
