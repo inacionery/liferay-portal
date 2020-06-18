@@ -65,6 +65,8 @@ const CustomObjectPopover = ({
 		}
 	}, [alignElement, nameInputRef, visible]);
 
+	const maxLength = 30;
+
 	return (
 		<Popover
 			alignElement={alignElement}
@@ -93,6 +95,7 @@ const CustomObjectPopover = ({
 						<ClayInput
 							className="form-control"
 							id="customObjectNameInput"
+							maxLength={maxLength}
 							onChange={({currentTarget}) =>
 								validate(currentTarget.value)
 							}

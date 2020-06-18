@@ -116,6 +116,8 @@ const EditTableView = withRouter(({history}) => {
 		dispatch({payload: {fieldName}, type: REMOVE_DATA_LIST_VIEW_FIELD});
 	};
 
+	const maxLength = 30;
+
 	return (
 		<div className="app-builder-table-view">
 			<ControlMenu backURL="../" title={title} />
@@ -132,6 +134,7 @@ const EditTableView = withRouter(({history}) => {
 				>
 					<UpperToolbar>
 						<UpperToolbar.Input
+							maxLength={maxLength}
 							onChange={onChange}
 							placeholder={Liferay.Language.get(
 								'untitled-table-view'

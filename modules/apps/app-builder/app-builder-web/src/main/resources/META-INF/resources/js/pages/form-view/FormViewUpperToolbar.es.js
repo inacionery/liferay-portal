@@ -112,6 +112,8 @@ export default ({newCustomObject}) => {
 		return null;
 	}
 
+	const maxLength = 30;
+
 	return (
 		<UpperToolbar>
 			<UpperToolbar.Group>
@@ -124,6 +126,7 @@ export default ({newCustomObject}) => {
 			</UpperToolbar.Group>
 
 			<UpperToolbar.Input
+				maxLength={maxLength}
 				onInput={onDataLayoutNameChange}
 				onKeyDown={onKeyDown}
 				placeholder={Liferay.Language.get('untitled-form-view')}
