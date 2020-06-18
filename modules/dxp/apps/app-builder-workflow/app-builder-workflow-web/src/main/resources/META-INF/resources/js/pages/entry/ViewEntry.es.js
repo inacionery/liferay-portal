@@ -9,8 +9,182 @@
  * distribution rights of the Software.
  */
 
-import React from 'react';
+import ClayLabel from '@clayui/label';
+import {AppContext} from 'app-builder-web/js/AppContext.es';
+import ControlMenu from 'app-builder-web/js/components/control-menu/ControlMenu.es';
+import {Loading} from 'app-builder-web/js/components/loading/Loading.es';
+import UpperToolbar from 'app-builder-web/js/components/upper-toolbar/UpperToolbar.es';
+import useDataLayout from 'app-builder-web/js/hooks/useDataLayout.es';
+import useQuery from 'app-builder-web/js/hooks/useQuery.es';
+import {ViewDataLayoutPageValues} from 'app-builder-web/js/pages/entry/ViewEntry.es';
+import ViewEntryUpperToolbar from 'app-builder-web/js/pages/entry/ViewEntryUpperToolbar.es';
+import {getItem, request} from 'app-builder-web/js/utils/client.es';
+import {toLocaleDate} from 'app-builder-web/js/utils/time.es';
+import {errorToast} from 'app-builder-web/js/utils/toast.es';
+import {isEqualObjects} from 'app-builder-web/js/utils/utils.es';
+import {usePrevious} from 'frontend-js-react-web';
+import React, {useContext, useEffect, useState} from 'react';
 
-export default () => {
-	return <span>View Entry</span>;
+import '../../../css/ViewEntry.scss';
+
+const WorkflowInfo = ({assigneePerson = {}, completed, dateDue, label}) => {
+	const status = completed ? (
+		<ClayLabel displayType="success">
+			{Liferay.Language.get('completed')}
+		</ClayLabel>
+	) : (
+		<ClayLabel displayType="secondary">
+			{Liferay.Language.get('pending')}
+		</ClayLabel>
+	);
+
+	const items = [
+		{label: Liferay.Language.get('status'), value: status},
+		{label: Liferay.Language.get('step'), value: label},
+		{label: Liferay.Language.get('assignee'), value: assigneePerson.name},
+		{label: Liferay.Language.get('due-date'), value: toLocaleDate(dateDue)},
+	];
+
+	return (
+		<UpperToolbar.Item>
+			<div className="workflow-info">
+				{items.map(({label, value}, index) => (
+					<div className="info-item" key={index}>
+						<span className="font-weight-bold text-secondary">
+							{`${label}: `}
+						</span>
+
+						{value}
+					</div>
+				))}
+			</div>
+		</UpperToolbar.Item>
+	);
 };
+
+export default function ViewEntry({
+	history,
+	match: {
+		params: {entryIndex},
+	},
+}) {
+	const {dataDefinitionId, dataLayoutId} = useContext(AppContext);
+	const {
+		dataDefinition,
+		dataLayout: {dataLayoutPages},
+		isLoading,
+	} = useDataLayout(dataLayoutId, dataDefinitionId);
+
+	const [
+		{dataRecord, isFetching, page, totalCount, workflowInfo},
+		setState,
+	] = useState({
+		dataRecord: {},
+		isFetching: true,
+		page: 1,
+		totalCount: 0,
+		workflowInfo: null,
+	});
+
+	const {dataRecordValues = {}, id: dataRecordId} = dataRecord;
+
+	const [query] = useQuery(history, {
+		keywords: '',
+		page: 1,
+		sort: '',
+	});
+
+	const previousQuery = usePrevious(query);
+	const previousIndex = usePrevious(entryIndex);
+
+	useEffect(() => {
+		if (
+			!isEqualObjects(query, previousQuery) ||
+			entryIndex !== previousIndex
+		) {
+			getItem(
+				`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-records`,
+				{...query, page: entryIndex, pageSize: 1}
+			)
+				.then(({items = [], ...response}) => {
+					if (items.length > 0) {
+						const state = {
+							dataRecord: items.pop(),
+							isFetching: false,
+							workflowInfo: null,
+							...response,
+						};
+
+						return request({
+							body: {assetPrimaryKeys: [state.dataRecord.id]},
+							endpoint: `/o/headless-admin-workflow/v1.0/workflow-tasks`,
+							method: 'POST',
+						})
+							.then((workflowResponse) => {
+								if (workflowResponse.totalCount > 0) {
+									state.workflowInfo = workflowResponse.items.pop();
+								}
+
+								setState((prevState) => ({
+									...prevState,
+									...state,
+								}));
+							})
+							.catch(() => {
+								setState((prevState) => ({
+									...prevState,
+									...state,
+								}));
+							});
+					}
+				})
+				.catch(() => {
+					setState((prevState) => ({
+						...prevState,
+						isFetching: false,
+					}));
+
+					errorToast();
+				});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [entryIndex, query]);
+
+	return (
+		<div className="view-entry">
+			<ControlMenu
+				backURL="app-builder-web/js/"
+				title={Liferay.Language.get('details-view')}
+			/>
+
+			<ViewEntryUpperToolbar
+				dataRecordId={dataRecordId}
+				page={page}
+				totalCount={totalCount}
+			>
+				{workflowInfo && <WorkflowInfo {...workflowInfo} />}
+			</ViewEntryUpperToolbar>
+
+			<Loading isLoading={isLoading || isFetching}>
+				<div className="container">
+					<div className="justify-content-center row">
+						<div className="col-lg-8">
+							{dataLayoutPages &&
+								dataRecordValues &&
+								dataLayoutPages.map((dataLayoutPage, index) => (
+									<div className="sheet" key={index}>
+										<ViewDataLayoutPageValues
+											dataDefinition={dataDefinition}
+											dataLayoutPage={dataLayoutPage}
+											dataRecordValues={dataRecordValues}
+											key={index}
+										/>
+									</div>
+								))}
+						</div>
+					</div>
+				</div>
+			</Loading>
+		</div>
+	);
+}
