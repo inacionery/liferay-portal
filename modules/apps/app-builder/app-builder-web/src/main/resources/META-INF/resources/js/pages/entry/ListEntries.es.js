@@ -21,10 +21,8 @@ import ListView from '../../components/list-view/ListView.es';
 import {Loading} from '../../components/loading/Loading.es';
 import useDataListView from '../../hooks/useDataListView.es';
 import {toQuery, toQueryString} from '../../hooks/useQuery.es';
-import {confirmDelete} from '../../utils/client.es';
-import {successToast} from '../../utils/toast.es';
 import {FieldValuePreview} from './FieldPreview.es';
-import {ACTIONS, PermissionsContext} from './PermissionsContext.es';
+import usePermissions from '../../hooks/usePermissions.es';
 
 export default function ListEntries({history}) {
 	const {
@@ -33,10 +31,6 @@ export default function ListEntries({history}) {
 		dataListViewId,
 		showFormView,
 	} = useContext(AppContext);
-
-	const actionIds = useContext(PermissionsContext);
-	const hasAddPermission = actionIds.includes(ACTIONS.ADD_DATA_RECORD);
-	const hasViewPermission = actionIds.includes(ACTIONS.VIEW_DATA_RECORD);
 
 	const getEditURL = (dataRecordId = 0) =>
 		Liferay.Util.PortletURL.createRenderURL(basePortletURL, {
@@ -47,43 +41,6 @@ export default function ListEntries({history}) {
 	const handleEditItem = (dataRecordId) => {
 		Liferay.Util.navigate(getEditURL(dataRecordId));
 	};
-
-	const actions = [];
-
-	if (showFormView) {
-		if (hasViewPermission) {
-			actions.push({
-				action: ({viewURL}) => Promise.resolve(history.push(viewURL)),
-				name: Liferay.Language.get('view'),
-			});
-		}
-
-		if (actionIds.includes(ACTIONS.UPDATE_DATA_RECORD)) {
-			actions.push({
-				action: ({id}) => Promise.resolve(handleEditItem(id)),
-				name: Liferay.Language.get('edit'),
-			});
-		}
-
-		if (actionIds.includes(ACTIONS.DELETE_DATA_RECORD)) {
-			actions.push({
-				action: (item) =>
-					confirmDelete('/o/data-engine/v2.0/data-records/')(
-						item
-					).then((confirmed) => {
-						if (confirmed) {
-							successToast(
-								Liferay.Language.get('an-entry-was-deleted')
-							);
-						}
-
-						return Promise.resolve(confirmed);
-					}),
-				name: Liferay.Language.get('delete'),
-			});
-		}
-	}
-
 	const {
 		columns,
 		dataDefinition,
@@ -91,13 +48,15 @@ export default function ListEntries({history}) {
 		isLoading,
 	} = useDataListView(dataListViewId, dataDefinitionId);
 
+	const permissions = usePermissions();
+
 	return (
 		<Loading isLoading={isLoading}>
 			<ListView
 				actions={actions}
 				addButton={() =>
 					showFormView &&
-					hasAddPermission && (
+					permissions.add && (
 						<Button
 							className="nav-btn nav-btn-monospaced"
 							onClick={() => handleEditItem(0)}
@@ -110,7 +69,7 @@ export default function ListEntries({history}) {
 				emptyState={{
 					button: () =>
 						showFormView &&
-						hasAddPermission && (
+						permissions.add && (
 							<Button
 								displayType="secondary"
 								onClick={() => handleEditItem(0)}
