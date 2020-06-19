@@ -13,17 +13,15 @@
  */
 
 import React, {useContext} from 'react';
-import {Link} from 'react-router-dom';
 
 import {AppContext} from '../../AppContext.es';
 import Button from '../../components/button/Button.es';
 import ListView from '../../components/list-view/ListView.es';
 import {Loading} from '../../components/loading/Loading.es';
 import useDataListView from '../../hooks/useDataListView.es';
-import {toQuery, toQueryString} from '../../hooks/useQuery.es';
-import {FieldValuePreview} from './FieldPreview.es';
 import useEntriesActions from '../../hooks/useEntriesActions.es';
 import usePermissions from '../../hooks/usePermissions.es';
+import {buildEntries, navigateToEditPage} from './utils.es';
 
 export default function ListEntries({history}) {
 	const {
@@ -33,15 +31,6 @@ export default function ListEntries({history}) {
 		showFormView,
 	} = useContext(AppContext);
 
-	const getEditURL = (dataRecordId = 0) =>
-		Liferay.Util.PortletURL.createRenderURL(basePortletURL, {
-			dataRecordId,
-			mvcPath: '/edit_entry.jsp',
-		});
-
-	const handleEditItem = (dataRecordId) => {
-		Liferay.Util.navigate(getEditURL(dataRecordId));
-	};
 	const {
 		columns,
 		dataDefinition,
@@ -60,7 +49,7 @@ export default function ListEntries({history}) {
 					permissions.add && (
 						<Button
 							className="nav-btn nav-btn-monospaced"
-							onClick={() => handleEditItem(0)}
+							onClick={() => navigateToEditPage(basePortletURL)}
 							symbol="plus"
 							tooltip={Liferay.Language.get('new-entry')}
 						/>
@@ -73,7 +62,9 @@ export default function ListEntries({history}) {
 						permissions.add && (
 							<Button
 								displayType="secondary"
-								onClick={() => handleEditItem(0)}
+								onClick={() =>
+									navigateToEditPage(basePortletURL)
+								}
 							>
 								{Liferay.Language.get('new-entry')}
 							</Button>
@@ -83,51 +74,7 @@ export default function ListEntries({history}) {
 				endpoint={`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-records`}
 				queryParams={{dataListViewId}}
 			>
-				{(item, index) => {
-					const {dataRecordValues = {}, id} = item;
-					const query = toQuery(location.search, {
-						keywords: '',
-						page: 1,
-						pageSize: 20,
-						sort: '',
-					});
-
-					const entryIndex =
-						query.pageSize * (query.page - 1) + index + 1;
-
-					const viewURL = `/entries/${entryIndex}?${toQueryString(
-						query
-					)}`;
-
-					const displayedDataRecordValues = {};
-
-					columns.forEach((fieldName, columnIndex) => {
-						let fieldValuePreview = (
-							<FieldValuePreview
-								dataDefinition={dataDefinition}
-								dataRecordValues={dataRecordValues}
-								displayType="list"
-								fieldName={fieldName}
-							/>
-						);
-
-						if (columnIndex === 0 && hasViewPermission) {
-							fieldValuePreview = (
-								<Link to={viewURL}>{fieldValuePreview}</Link>
-							);
-						}
-
-						displayedDataRecordValues[
-							'dataRecordValues/' + fieldName
-						] = fieldValuePreview;
-					});
-
-					return {
-						...displayedDataRecordValues,
-						id,
-						viewURL,
-					};
-				}}
+				{buildEntries(fieldNames, dataDefinition, permissions)}
 			</ListView>
 		</Loading>
 	);
