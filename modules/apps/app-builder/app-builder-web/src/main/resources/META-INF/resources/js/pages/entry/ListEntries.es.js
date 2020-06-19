@@ -22,6 +22,7 @@ import {Loading} from '../../components/loading/Loading.es';
 import useDataListView from '../../hooks/useDataListView.es';
 import {toQuery, toQueryString} from '../../hooks/useQuery.es';
 import {FieldValuePreview} from './FieldPreview.es';
+import useEntriesActions from '../../hooks/useEntriesActions.es';
 import usePermissions from '../../hooks/usePermissions.es';
 
 export default function ListEntries({history}) {
@@ -53,7 +54,7 @@ export default function ListEntries({history}) {
 	return (
 		<Loading isLoading={isLoading}>
 			<ListView
-				actions={actions}
+				actions={useEntriesActions(history)}
 				addButton={() =>
 					showFormView &&
 					permissions.add && (
