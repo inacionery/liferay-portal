@@ -120,8 +120,6 @@ public class AppWorkflowResourceTest extends BaseAppWorkflowResourceTestCase {
 					},
 					new AppWorkflowState() {
 						{
-							appWorkflowTransitions =
-								new AppWorkflowTransition[0];
 							initial = false;
 							name = terminalStateName;
 						}
