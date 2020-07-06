@@ -16,6 +16,12 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+	LiferayPortletURL baseResourceURL = (LiferayPortletURL)renderResponse.createResourceURL();
+
+	baseResourceURL.setCopyCurrentRenderParameters(false);
+%>
+
 <liferay-util:html-top>
 	<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathModule() + "/data-engine-taglib/data_layout_builder/css/main.css") %>" rel="stylesheet" />
 </liferay-util:html-top>
@@ -28,7 +34,7 @@
 			).put(
 				"basePortletURL", String.valueOf(renderResponse.createRenderURL())
 			).put(
-				"baseResourceURL", String.valueOf(renderResponse.createResourceURL())
+				"baseResourceURL", String.valueOf(baseResourceURL)
 			).put(
 				"defaultDelta", PropsValues.SEARCH_CONTAINER_PAGE_DEFAULT_DELTA
 			).put(

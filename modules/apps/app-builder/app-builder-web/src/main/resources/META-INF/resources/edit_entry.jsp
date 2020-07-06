@@ -18,6 +18,10 @@
 
 <%
 AppBuilderApp appBuilderApp = (AppBuilderApp)request.getAttribute(AppBuilderWebKeys.APP);
+LiferayPortletURL baseResourceURL = (LiferayPortletURL)renderResponse.createResourceURL();
+
+baseResourceURL.setCopyCurrentRenderParameters(false);
+
 List<Long> dataLayoutIds = (List<Long>)request.getAttribute(AppBuilderWebKeys.DATA_LAYOUT_IDS);
 %>
 
@@ -64,7 +68,7 @@ List<Long> dataLayoutIds = (List<Long>)request.getAttribute(AppBuilderWebKeys.DA
 								).put(
 									"basePortletURL", String.valueOf(renderResponse.createRenderURL())
 								).put(
-									"baseResourceURL", String.valueOf(renderResponse.createResourceURL())
+									"baseResourceURL", String.valueOf(baseResourceURL)
 								).put(
 									"containerElementId", liferayPortletResponse.getNamespace() + "container"
 								).put(
