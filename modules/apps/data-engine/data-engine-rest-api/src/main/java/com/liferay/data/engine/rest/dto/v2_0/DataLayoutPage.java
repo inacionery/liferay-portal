@@ -242,6 +242,12 @@ public class DataLayoutPage {
 
 			Object value = entry.getValue();
 
+			if (value == null) {
+				sb.append("null");
+
+				continue;
+			}
+
 			Class<?> clazz = value.getClass();
 
 			if (clazz.isArray()) {
