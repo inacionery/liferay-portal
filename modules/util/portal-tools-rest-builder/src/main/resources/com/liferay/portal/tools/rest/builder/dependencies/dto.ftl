@@ -381,6 +381,12 @@ public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoPare
 
 			Object value = entry.getValue();
 
+			if (value == null) {
+				sb.append("null");
+
+				continue;
+			}
+
 			Class<?> clazz = value.getClass();
 
 			if (clazz.isArray()) {
