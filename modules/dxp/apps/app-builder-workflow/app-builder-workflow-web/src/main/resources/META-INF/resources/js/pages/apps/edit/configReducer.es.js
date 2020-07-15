@@ -164,7 +164,11 @@ export default (state, action) => {
 				workflowSteps = workflowSteps.map((step) => ({
 					...step,
 					appWorkflowDataLayoutLinks: [
-						{dataLayoutId: action.formView.id, readOnly: true},
+						{
+							dataLayoutId: action.formView.id,
+							name: action.formView.name,
+							readOnly: true,
+						},
 					],
 				}));
 			}
