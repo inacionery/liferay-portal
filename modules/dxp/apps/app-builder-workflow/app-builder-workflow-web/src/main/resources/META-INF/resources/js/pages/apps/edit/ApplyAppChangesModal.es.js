@@ -10,58 +10,48 @@
  */
 
 import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
 import ClayModal, {useModal} from '@clayui/modal';
-import {DeploySettings} from 'app-builder-web/js/pages/apps/edit/DeployApp.es';
 import EditAppContext from 'app-builder-web/js/pages/apps/edit/EditAppContext.es';
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 
-export default function DeployAppModal({onSave}) {
-	const {
-		isDeployModalVisible,
-		setDeployModalVisible,
-		state: {app},
-	} = useContext(EditAppContext);
-
-	const [isDeploying, setDeploying] = useState(false);
+export default function ApplyAppChangesModal({onSave}) {
+	const {isAppChangesModalVisible, setAppChangesModalVisible} = useContext(
+		EditAppContext
+	);
 
 	const {observer, onClose} = useModal({
-		onClose: () => {
-			setDeploying(false);
-			setDeployModalVisible(false);
-		},
+		onClose: () => setAppChangesModalVisible(false),
 	});
 
-	if (!isDeployModalVisible) {
+	if (!isAppChangesModalVisible) {
 		return <></>;
 	}
 
-	const onDone = () => {
-		setDeploying(true);
-
-		if (!app.active) {
-			onSave(onClose, true);
-		}
-		else {
-			onClose();
-		}
-	};
-
 	return (
-		<ClayModal observer={observer} size="md">
-			<ClayModal.Header>
-				{Liferay.Language.get('deploy')}
+		<ClayModal className="save-app-modal" observer={observer}>
+			<ClayModal.Header className="border-0">
+				<ClayIcon
+					className="circle-icon info mr-3"
+					fontSize="26px"
+					symbol="exclamation-full"
+				/>
+				{Liferay.Language.get('applying-app-updates')}
 			</ClayModal.Header>
 
-			<div className="modal-body px-0">
-				<DeploySettings />
-			</div>
+			<ClayModal.Body>
+				<span className="text-secondary">
+					{Liferay.Language.get(
+						'some-of-the-updates-cannot-be-applied-to-existing-app-data'
+					)}
+				</span>
+			</ClayModal.Body>
 
 			<ClayModal.Footer
 				last={
 					<>
 						<ClayButton
 							className="mr-3"
-							disabled={isDeploying}
 							displayType="secondary"
 							onClick={onClose}
 							small
@@ -70,13 +60,10 @@ export default function DeployAppModal({onSave}) {
 						</ClayButton>
 
 						<ClayButton
-							disabled={
-								isDeploying || app.appDeployments.length === 0
-							}
-							onClick={onDone}
+							onClick={() => onSave(setAppChangesModalVisible)}
 							small
 						>
-							{Liferay.Language.get('done')}
+							{Liferay.Language.get('save')}
 						</ClayButton>
 					</>
 				}
