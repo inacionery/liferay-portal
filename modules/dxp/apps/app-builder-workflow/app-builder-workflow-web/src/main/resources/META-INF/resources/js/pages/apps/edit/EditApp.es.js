@@ -218,7 +218,9 @@ export default ({
 								disabled={isDeployButtonDisabled}
 								onClick={() => setModalVisible(true)}
 							>
-								{Liferay.Language.get('deploy')}
+								{appId
+									? Liferay.Language.get('save')
+									: Liferay.Language.get('deploy')}
 							</UpperToolbar.Button>
 						</UpperToolbar.Group>
 					</UpperToolbar>
