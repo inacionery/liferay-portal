@@ -42,12 +42,12 @@ $navbarHeight: 120px;
 			}
 
 			.arrow-body {
-				align-items: end;
 				display: flex;
 				flex-flow: wrap-reverse;
 				justify-content: center;
 
 				.arrow-head {
+					align-self: flex-start;
 					margin-bottom: -4px;
 					margin-top: 4px;
 				}
