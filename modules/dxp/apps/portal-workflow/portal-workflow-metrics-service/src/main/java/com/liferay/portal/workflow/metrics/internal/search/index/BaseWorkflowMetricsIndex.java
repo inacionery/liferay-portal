@@ -138,7 +138,7 @@ public abstract class BaseWorkflowMetricsIndex implements WorkflowMetricsIndex {
 		return indicesExistsIndexResponse.isExists();
 	}
 
-	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	@Reference(target = ModuleServiceLifecycle.SYSTEM_CHECK, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
