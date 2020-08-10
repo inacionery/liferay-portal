@@ -26,9 +26,10 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
+import com.liferay.portal.kernel.util.Portal;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -75,24 +76,23 @@ public class ProductMenuAppDeployer extends BaseAppDeployer {
 		if (scopeJSONArray.length() == 2) {
 			_serviceRegistrations.computeIfAbsent(
 				appId,
-				key -> ArrayUtil.append(
+				key -> new ServiceRegistration<?>[] {
 					_deployPortlet(
 						appBuilderApp, appName, applicationsMenuLabel),
 					_deployPortlet(appBuilderApp, appName, siteMenuLabel),
-					new ServiceRegistration<?>[] {
-						_deployPanelApp(
-							appBuilderApp.getCompanyId(),
-							PanelCategoryKeys.APPLICATIONS_MENU_APPLICATIONS,
-							applicationsMenuLabel,
-							JSONUtil.toLongArray(
-								jsonObject.getJSONArray("siteIds"))),
-						_deployPanelApp(
-							appBuilderApp.getCompanyId(),
-							PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT,
-							siteMenuLabel,
-							JSONUtil.toLongArray(
-								jsonObject.getJSONArray("siteIds")))
-					}));
+					_deployPanelApp(
+						appBuilderApp.getCompanyId(),
+						PanelCategoryKeys.APPLICATIONS_MENU_APPLICATIONS,
+						applicationsMenuLabel,
+						JSONUtil.toLongArray(
+							jsonObject.getJSONArray("siteIds"))),
+					_deployPanelApp(
+						appBuilderApp.getCompanyId(),
+						PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT,
+						siteMenuLabel,
+						JSONUtil.toLongArray(
+							jsonObject.getJSONArray("siteIds")))
+				});
 		}
 		else {
 			String scope = scopeJSONArray.getString(0);
@@ -109,12 +109,13 @@ public class ProductMenuAppDeployer extends BaseAppDeployer {
 
 			_serviceRegistrations.computeIfAbsent(
 				appId,
-				mapKey -> ArrayUtil.append(
+				mapKey -> new ServiceRegistration<?>[] {
 					_deployPortlet(appBuilderApp, appName, menuLabel),
 					_deployPanelApp(
 						appBuilderApp.getCompanyId(), scope, menuLabel,
 						JSONUtil.toLongArray(
-							jsonObject.getJSONArray("siteIds")))));
+							jsonObject.getJSONArray("siteIds")))
+				});
 		}
 
 		appBuilderAppLocalService.updateAppBuilderApp(appBuilderApp);
@@ -147,7 +148,7 @@ public class ProductMenuAppDeployer extends BaseAppDeployer {
 			});
 	}
 
-	private ServiceRegistration<?>[] _deployPortlet(
+	private ServiceRegistration<?> _deployPortlet(
 		AppBuilderApp appBuilderApp, String appName, String portletName) {
 
 		return deployPortlet(
@@ -167,7 +168,13 @@ public class ProductMenuAppDeployer extends BaseAppDeployer {
 		_appBuilderAppDeploymentLocalService;
 
 	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private Portal _portal;
 
 	private final ConcurrentHashMap<Long, ServiceRegistration<?>[]>
 		_serviceRegistrations = new ConcurrentHashMap<>();
