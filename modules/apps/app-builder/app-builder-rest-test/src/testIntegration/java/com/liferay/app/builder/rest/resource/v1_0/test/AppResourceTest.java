@@ -15,6 +15,8 @@
 package com.liferay.app.builder.rest.resource.v1_0.test;
 
 import com.liferay.app.builder.constants.AppBuilderAppConstants;
+import com.liferay.app.builder.constants.AppBuilderPortletKeys;
+import com.liferay.app.builder.deploy.AppDeployer;
 import com.liferay.app.builder.rest.client.dto.v1_0.App;
 import com.liferay.app.builder.rest.client.dto.v1_0.AppDeployment;
 import com.liferay.app.builder.rest.client.pagination.Page;
@@ -32,16 +34,31 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureLayoutTestHelper;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
 
 import java.io.InputStream;
@@ -50,10 +67,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Gabriel Albuquerque
@@ -79,6 +99,22 @@ public class AppResourceTest extends BaseAppResourceTestCase {
 			StringPool.BLANK);
 
 		_irrelevantDDMStructure = _addDDMStructure(irrelevantGroup);
+
+		_originalPermissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		PermissionChecker permissionChecker =
+			PermissionCheckerFactoryUtil.create(
+				UserTestUtil.getAdminUser(testCompany.getCompanyId()));
+
+		PermissionThreadLocal.setPermissionChecker(permissionChecker);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+
+		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 	}
 
 	@Override
@@ -193,6 +229,60 @@ public class AppResourceTest extends BaseAppResourceTestCase {
 		App getApp = appResource.getApp(postApp.getId());
 
 		Assert.assertEquals(getApp.getActive(), true);
+
+		// ProductMenu Deployer
+
+		String appPortletURL = _productMenuAppDeployer.getAppPortletURL(
+			getApp.getId(), testGroup.getGroupId(),
+			_createMockHttpServletRequest());
+
+		Assert.assertTrue(appPortletURL, Validator.isNotNull(appPortletURL));
+		Assert.assertTrue(
+			appPortletURL,
+			appPortletURL.contains(
+				StringBundler.concat(
+					"/~/control_panel/manage?p_p_id=",
+					AppBuilderPortletKeys.PRODUCT_MENU_APP,
+					StringPool.UNDERLINE, getApp.getId())));
+
+		// Standalone Deployer
+
+		appPortletURL = _standaloneAppDeployer.getAppPortletURL(
+			getApp.getId(), testGroup.getGroupId(),
+			_createMockHttpServletRequest());
+
+		Assert.assertTrue(appPortletURL, Validator.isNull(appPortletURL));
+
+		Group standaloneGroup = _groupLocalService.fetchFriendlyURLGroup(
+			testCompany.getCompanyId(),
+			StringBundler.concat(
+				StringPool.FORWARD_SLASH,
+				StringUtil.toLowerCase(GroupConstants.APP), getApp.getId()));
+
+		appPortletURL = _standaloneAppDeployer.getAppPortletURL(
+			getApp.getId(), standaloneGroup.getGroupId(),
+			_createMockHttpServletRequest());
+
+		Assert.assertTrue(appPortletURL, Validator.isNotNull(appPortletURL));
+		Assert.assertTrue(appPortletURL, appPortletURL.contains("/shared"));
+
+		// Widget Deployer
+
+		appPortletURL = _widgetAppDeployer.getAppPortletURL(
+			getApp.getId(), testGroup.getGroupId(),
+			_createMockHttpServletRequest());
+
+		Assert.assertTrue(appPortletURL, Validator.isNull(appPortletURL));
+
+		Layout layout = _createLayout(getApp);
+
+		appPortletURL = _widgetAppDeployer.getAppPortletURL(
+			getApp.getId(), testGroup.getGroupId(),
+			_createMockHttpServletRequest());
+
+		Assert.assertTrue(appPortletURL, Validator.isNotNull(appPortletURL));
+		Assert.assertTrue(
+			appPortletURL, appPortletURL.contains(layout.getFriendlyURL()));
 	}
 
 	@Override
@@ -357,6 +447,53 @@ public class AppResourceTest extends BaseAppResourceTestCase {
 			ddmStructureId, ddmFormLayout);
 	}
 
+	private Layout _createLayout(App getApp) throws Exception {
+		Layout layout = _layoutLocalService.addLayout(
+			TestPropsValues.getUserId(), testGroup.getGroupId(), false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+			"Test " + RandomTestUtil.nextInt(), StringPool.BLANK,
+			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
+			StringPool.BLANK, ServiceContextTestUtil.getServiceContext());
+
+		LayoutTypePortlet layoutTypePortlet =
+			(LayoutTypePortlet)layout.getLayoutType();
+
+		layoutTypePortlet.addPortletId(
+			TestPropsValues.getUserId(),
+			StringBundler.concat(
+				AppBuilderPortletKeys.WIDGET_APP, StringPool.UNDERLINE,
+				getApp.getId()),
+			"column-1", 0);
+
+		return _layoutLocalService.updateLayout(
+			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+			layout.getTypeSettings());
+	}
+
+	private MockHttpServletRequest _createMockHttpServletRequest()
+		throws Exception {
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		ThemeDisplay themeDisplay = new ThemeDisplay();
+
+		themeDisplay.setCompany(testCompany);
+		themeDisplay.setPermissionChecker(
+			PermissionThreadLocal.getPermissionChecker());
+		themeDisplay.setRequest(mockHttpServletRequest);
+		themeDisplay.setScopeGroupId(testGroup.getGroupId());
+		themeDisplay.setServerName("localhost");
+		themeDisplay.setServerPort(8080);
+		themeDisplay.setSiteGroupId(testGroup.getGroupId());
+		themeDisplay.setUser(TestPropsValues.getUser());
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.THEME_DISPLAY, themeDisplay);
+
+		return mockHttpServletRequest;
+	}
+
 	private String _read(String fileName) throws Exception {
 		Class<?> clazz = AppResourceTest.class;
 
@@ -381,6 +518,23 @@ public class AppResourceTest extends BaseAppResourceTestCase {
 	@Inject
 	private DEDataListViewLocalService _deDataListViewLocalService;
 
+	@Inject
+	private GroupLocalService _groupLocalService;
+
 	private DDMStructure _irrelevantDDMStructure;
+
+	@Inject
+	private LayoutLocalService _layoutLocalService;
+
+	private PermissionChecker _originalPermissionChecker;
+
+	@Inject(filter = "app.builder.deploy.type=productMenu")
+	private AppDeployer _productMenuAppDeployer;
+
+	@Inject(filter = "app.builder.deploy.type=standalone")
+	private AppDeployer _standaloneAppDeployer;
+
+	@Inject(filter = "app.builder.deploy.type=widget")
+	private AppDeployer _widgetAppDeployer;
 
 }
