@@ -16,6 +16,7 @@ package com.liferay.portal.search.engine.adapter.document;
 
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.engine.adapter.ccr.CrossClusterRequest;
+import com.liferay.portal.search.script.Script;
 
 import java.util.function.Consumer;
 
@@ -50,6 +51,16 @@ public class UpdateDocumentRequest
 		_indexName = indexName;
 		_uid = uid;
 		_document = document;
+		_legacyDocument = null;
+	}
+
+	public UpdateDocumentRequest(
+		String indexName, String uid, Script script) {
+
+		_indexName = indexName;
+		_uid = uid;
+		_script = script;
+		_document = null;
 		_legacyDocument = null;
 	}
 
@@ -109,6 +120,7 @@ public class UpdateDocumentRequest
 		_upsert = upsert;
 	}
 
+
 	private final Document _document;
 	private final String _indexName;
 	private final com.liferay.portal.kernel.search.Document _legacyDocument;
@@ -116,5 +128,13 @@ public class UpdateDocumentRequest
 	private String _type;
 	private final String _uid;
 	private boolean _upsert;
+	private Script _script;
 
+	public Script getScript() {
+		return _script;
+	}
+
+	public void setScript(Script script) {
+		_script = script;
+	}
 }
