@@ -14,7 +14,6 @@
 
 package com.liferay.portal.workflow.metrics.internal.sla.processor;
 
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.search.document.Document;
@@ -32,8 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -671,31 +668,7 @@ public class WorkflowMetricsSLAProcessorTest extends PowerMockito {
 		throws Exception {
 
 		WorkflowMetricsSLAProcessor workflowMetricsSLAProcessor =
-			new WorkflowMetricsSLAProcessor() {
-
-				@Override
-				protected WorkflowMetricsSLAInstanceResult
-					fetchLastWorkflowMetricsSLAInstanceResult(
-						WorkflowMetricsSLADefinitionVersion
-							workflowMetricsSLADefinitionVersion,
-						long instanceId) {
-
-					return lastWorkflowMetricsSLAInstanceResult;
-				}
-
-				@Override
-				protected List<Document> getDocuments(
-					long companyId, long instanceId,
-					LocalDateTime lastCheckLocalDateTime) {
-
-					if (ArrayUtil.isEmpty(documents)) {
-						return Collections.emptyList();
-					}
-
-					return Arrays.asList(documents);
-				}
-
-			};
+			new WorkflowMetricsSLAProcessor();
 
 		field(
 			WorkflowMetricsSLAProcessor.class,
@@ -706,9 +679,10 @@ public class WorkflowMetricsSLAProcessorTest extends PowerMockito {
 
 		Optional<WorkflowMetricsSLAInstanceResult> optional =
 			workflowMetricsSLAProcessor.process(
-				0, completionLocalDateTime, createLocalDateTime, 0,
-				nowLocalDateTime, startNodeId,
-				workflowMetricsSLADefinitionVersion);
+				completionLocalDateTime, createLocalDateTime,
+				Arrays.asList(documents), 0, nowLocalDateTime, startNodeId,
+				workflowMetricsSLADefinitionVersion,
+				lastWorkflowMetricsSLAInstanceResult);
 
 		WorkflowMetricsSLAInstanceResult workflowMetricsSLAInstanceResult =
 			optional.get();
