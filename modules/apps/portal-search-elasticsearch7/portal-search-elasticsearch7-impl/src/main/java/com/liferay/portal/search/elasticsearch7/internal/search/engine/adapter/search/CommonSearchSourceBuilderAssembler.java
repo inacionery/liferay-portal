@@ -17,12 +17,17 @@ package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 /**
  * @author Michael C. Han
  */
 public interface CommonSearchSourceBuilderAssembler {
+
+	public void assemble(
+		SearchSourceBuilder searchSourceBuilder,
+		BaseSearchRequest baseSearchRequest, CountRequest countRequest);
 
 	public void assemble(
 		SearchSourceBuilder searchSourceBuilder,

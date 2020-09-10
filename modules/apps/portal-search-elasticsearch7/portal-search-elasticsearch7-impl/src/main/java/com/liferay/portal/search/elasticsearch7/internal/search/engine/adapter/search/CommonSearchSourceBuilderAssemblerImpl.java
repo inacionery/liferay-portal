@@ -42,6 +42,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -60,6 +61,22 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = CommonSearchSourceBuilderAssembler.class)
 public class CommonSearchSourceBuilderAssemblerImpl
 	implements CommonSearchSourceBuilderAssembler {
+
+	@Override
+	public void assemble(
+		SearchSourceBuilder searchSourceBuilder,
+		BaseSearchRequest baseSearchRequest, CountRequest countRequest) {
+
+		countRequest.indices(baseSearchRequest.getIndexNames());
+
+		if (baseSearchRequest.getTypes() != null) {
+			countRequest.types(baseSearchRequest.getTypes());
+		}
+
+		searchSourceBuilder.query(getQueryBuilder(baseSearchRequest));
+
+		countRequest.query(searchSourceBuilder.query());
+	}
 
 	@Override
 	public void assemble(

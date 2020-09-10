@@ -35,6 +35,7 @@ import org.apache.lucene.search.FuzzyQuery;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.ToXContent;
@@ -57,6 +58,19 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = CommonSearchResponseAssembler.class)
 public class CommonSearchResponseAssemblerImpl
 	implements CommonSearchResponseAssembler {
+
+	@Override
+	public void assemble(
+		SearchSourceBuilder searchSourceBuilder, CountResponse countResponse,
+		BaseSearchRequest baseSearchRequest,
+		BaseSearchResponse baseSearchResponse) {
+
+		setSearchRequestString(
+			searchSourceBuilder, baseSearchRequest, baseSearchResponse);
+		setSearchResponseString(
+			countResponse, baseSearchRequest, baseSearchResponse);
+		setTerminatedEarly(countResponse, baseSearchResponse);
+	}
 
 	@Override
 	public void assemble(
@@ -160,6 +174,16 @@ public class CommonSearchResponseAssemblerImpl
 	}
 
 	protected void setSearchResponseString(
+		CountResponse countResponse, BaseSearchRequest baseSearchRequest,
+		BaseSearchResponse baseSearchResponse) {
+
+		if (baseSearchRequest.isIncludeResponseString()) {
+			baseSearchResponse.setSearchResponseString(
+				countResponse.toString());
+		}
+	}
+
+	protected void setSearchResponseString(
 		SearchResponse searchResponse, BaseSearchRequest baseSearchRequest,
 		BaseSearchResponse baseSearchResponse) {
 
@@ -172,6 +196,13 @@ public class CommonSearchResponseAssemblerImpl
 	@Reference(unbind = "-")
 	protected void setStatsTranslator(StatsTranslator statsTranslator) {
 		_statsTranslator = statsTranslator;
+	}
+
+	protected void setTerminatedEarly(
+		CountResponse countResponse, BaseSearchResponse baseSearchResponse) {
+
+		baseSearchResponse.setTerminatedEarly(
+			GetterUtil.getBoolean(countResponse.isTerminatedEarly()));
 	}
 
 	protected void setTerminatedEarly(

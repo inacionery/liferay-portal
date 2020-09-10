@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
@@ -23,13 +22,10 @@ import com.liferay.portal.search.engine.adapter.search.CountSearchResponse;
 
 import java.io.IOException;
 
-import org.apache.lucene.search.TotalHits;
-
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import org.osgi.service.component.annotations.Component;
@@ -44,49 +40,36 @@ public class CountSearchRequestExecutorImpl
 
 	@Override
 	public CountSearchResponse execute(CountSearchRequest countSearchRequest) {
-		SearchRequest searchRequest = new SearchRequest(
+		CountRequest countRequest = new CountRequest(
 			countSearchRequest.getIndexNames());
-
-		if (countSearchRequest.isRequestCache()) {
-			searchRequest.requestCache(countSearchRequest.isRequestCache());
-		}
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 		_commonSearchSourceBuilderAssembler.assemble(
-			searchSourceBuilder, countSearchRequest, searchRequest);
+			searchSourceBuilder, countSearchRequest, countRequest);
 
-		searchSourceBuilder.size(0);
-		searchSourceBuilder.trackScores(false);
-
-		SearchResponse searchResponse = getSearchResponse(
-			searchRequest, countSearchRequest);
-
-		SearchHits searchHits = searchResponse.getHits();
+		CountResponse countResponse = getCountResponse(
+			countRequest, countSearchRequest);
 
 		CountSearchResponse countSearchResponse = new CountSearchResponse();
 
-		TotalHits totalHits = searchHits.getTotalHits();
-
-		countSearchResponse.setCount(totalHits.value);
+		countSearchResponse.setCount(countResponse.getCount());
 
 		_commonSearchResponseAssembler.assemble(
-			searchSourceBuilder, searchResponse, countSearchRequest,
+			searchSourceBuilder, countResponse, countSearchRequest,
 			countSearchResponse);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				StringBundler.concat(
-					"The search engine processed ",
-					countSearchResponse.getSearchRequestString(), " in ",
-					countSearchResponse.getExecutionTime(), " ms"));
+				"The search engine processed " +
+					countSearchResponse.getSearchRequestString());
 		}
 
 		return countSearchResponse;
 	}
 
-	protected SearchResponse getSearchResponse(
-		SearchRequest searchRequest, CountSearchRequest countSearchRequest) {
+	protected CountResponse getCountResponse(
+		CountRequest countRequest, CountSearchRequest countSearchRequest) {
 
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchClientResolver.getRestHighLevelClient(
@@ -94,8 +77,8 @@ public class CountSearchRequestExecutorImpl
 				countSearchRequest.isPreferLocalCluster());
 
 		try {
-			return restHighLevelClient.search(
-				searchRequest, RequestOptions.DEFAULT);
+			return restHighLevelClient.count(
+				countRequest, RequestOptions.DEFAULT);
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
