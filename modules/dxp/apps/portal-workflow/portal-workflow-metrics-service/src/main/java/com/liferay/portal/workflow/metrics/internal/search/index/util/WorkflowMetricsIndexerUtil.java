@@ -12,21 +12,28 @@
  *
  */
 
-package com.liferay.portal.workflow.metrics.internal.search.index;
+package com.liferay.portal.workflow.metrics.internal.search.index.util;
 
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import java.io.Serializable;
+
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * @author Rafael Praxedes
  */
-public interface WorkflowMetricsIndex {
+public class WorkflowMetricsIndexerUtil {
 
-	public void createIndex(long companyId) throws PortalException;
+	public static String digest(String indexType, Serializable... parts) {
+		StringBuilder sb = new StringBuilder();
 
-	public String getIndexName(long companyId);
+		for (Serializable part : parts) {
+			sb.append(part);
+		}
 
-	public String getIndexType();
-
-	public void removeIndex(long companyId) throws PortalException;
+		return StringUtil.removeSubstring(indexType, "Type") +
+			DigestUtils.sha256Hex(sb.toString());
+	}
 
 }
