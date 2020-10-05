@@ -28,10 +28,10 @@ import com.liferay.portal.search.aggregation.bucket.FilterAggregation;
 import com.liferay.portal.search.aggregation.bucket.FilterAggregationResult;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregationResult;
-import com.liferay.portal.search.aggregation.metrics.ScriptedMetricAggregationResult;
-import com.liferay.portal.search.aggregation.metrics.ValueCountAggregationResult;
 import com.liferay.portal.search.aggregation.pipeline.BucketSelectorPipelineAggregation;
 import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.engine.adapter.search.CountSearchRequest;
+import com.liferay.portal.search.engine.adapter.search.CountSearchResponse;
 import com.liferay.portal.search.engine.adapter.search.SearchRequestExecutor;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
@@ -64,6 +64,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -94,35 +95,27 @@ public class ProcessMetricResourceImpl
 			Long processId, Boolean completed, Date dateEnd, Date dateStart)
 		throws Exception {
 
-		return Stream.of(
-			_getProcessMetricsSearchSearchResponse(null, null, processId, null)
-		).map(
-			SearchSearchResponse::getSearchHits
-		).map(
-			SearchHits::getSearchHits
-		).flatMap(
-			List::stream
-		).map(
-			SearchHit::getDocument
-		).findFirst(
-		).map(
-			document -> {
-				ProcessMetric processMetric = _createProcessMetric(document);
+		Map<Long, ProcessMetric> processMetrics = _getProcessMetrics(
+			null, null, processId, null);
 
-				Bucket bucket = _getProcessBucket(
-					GetterUtil.getBoolean(completed), dateEnd, dateStart,
-					processId);
+		if (processMetrics.isEmpty()) {
+			return new ProcessMetric();
+		}
 
-				_populateProcessWithSLAMetrics(bucket, processMetric);
-				_setInstanceCount(bucket, processMetric);
+		ProcessMetric processMetric = processMetrics.get(processId);
 
-				_setUntrackedInstanceCount(processMetric);
+		Bucket instanceBucket = _getInstanceBucket(
+			GetterUtil.getBoolean(completed), dateEnd, dateStart, processId);
 
-				return processMetric;
-			}
-		).orElseGet(
-			ProcessMetric::new
-		);
+		if (instanceBucket != null) {
+			_setInstanceCount(instanceBucket, processMetric);
+			_setOnTimeInstanceCount(instanceBucket, processMetric);
+			_setOverdueInstanceCount(instanceBucket, processMetric);
+			
+			_setUntrackedInstanceCount(processMetric);
+		}
+
+		return processMetric;
 	}
 
 	@Override
@@ -130,20 +123,32 @@ public class ProcessMetricResourceImpl
 			String title, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
-		FieldSort fieldSort = _toFieldSort(sorts);
+		long processCount = _getProcessCount(title);
 
-		SearchSearchResponse searchSearchResponse =
-			_getProcessMetricsSearchSearchResponse(
-				fieldSort, pagination, null, title);
+		if (processCount > 0) {
+			FieldSort fieldSort = _toFieldSort(sorts);
 
-		long count = searchSearchResponse.getCount();
+			if (_isOrderByTitle(fieldSort.getField())) {
+				Map<Long, ProcessMetric> processMetrics = _getProcessMetrics(
+					fieldSort, pagination, null, title);
 
-		if (count > 0) {
+				Collection<Bucket> instanceBuckets = _getInstanceBuckets(
+					processMetrics.keySet());
+
+				return Page.of(
+					_getProcessMetrics(instanceBuckets, processMetrics),
+					pagination, processCount);
+			}
+
+			Map<Long, Bucket> instanceBuckets = _getInstanceBuckets(
+				fieldSort, pagination, title);
+
+			Map<Long, ProcessMetric> processMetrics = _getProcessMetrics(
+				instanceBuckets.keySet());
+
 			return Page.of(
-				_getProcessMetrics(
-					fieldSort, pagination,
-					searchSearchResponse.getSearchHits()),
-				pagination, count);
+				_getProcessMetrics(instanceBuckets.values(), processMetrics),
+				pagination, processCount);
 		}
 
 		return Page.of(Collections.emptyList());
@@ -234,7 +239,6 @@ public class ProcessMetricResourceImpl
 		}
 
 		return booleanQuery.addMustQueryClauses(
-			_queries.term("companyId", contextCompany.getCompanyId()),
 			_queries.term("deleted", Boolean.FALSE),
 			_createBooleanQuery(completed),
 			_createProcessIdTermsQuery(processIds));
@@ -250,22 +254,20 @@ public class ProcessMetricResourceImpl
 				_queries.term("processId", processId));
 		}
 
-		if (Validator.isNotNull(title)) {
-			booleanQuery.addMustQueryClauses(_createTitleBooleanQuery(title));
-		}
-
 		return booleanQuery.addMustQueryClauses(
-			_queries.term("companyId", contextCompany.getCompanyId()),
-			_queries.term("deleted", Boolean.FALSE));
+			_queries.term("deleted", Boolean.FALSE),
+			_createTitleBooleanQuery(title));
 	}
 
 	private TermsQuery _createProcessIdTermsQuery(Set<Long> processIds) {
 		TermsQuery termsQuery = _queries.terms("processId");
 
-		Stream<Long> stream = processIds.stream();
-
 		termsQuery.addValues(
-			stream.map(
+			Stream.of(
+				processIds
+			).flatMap(
+				Set::stream
+			).map(
 				String::valueOf
 			).toArray(
 				Object[]::new
@@ -282,6 +284,7 @@ public class ProcessMetricResourceImpl
 				overdueInstanceCount = 0L;
 				process = ProcessUtil.toProcess(
 					document, contextAcceptLanguage.getPreferredLocale());
+				untrackedInstanceCount = 0L;
 			}
 		};
 	}
@@ -319,12 +322,155 @@ public class ProcessMetricResourceImpl
 	private BooleanQuery _createTitleBooleanQuery(String title) {
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
-		StringQuery stringQuery = _queries.string(title + StringPool.STAR);
+		if (Validator.isNotNull(title)) {
+			StringQuery stringQuery = _queries.string(title + StringPool.STAR);
 
-		stringQuery.setDefaultField(_getTitleFieldName());
+			stringQuery.setDefaultField(_getTitleFieldName());
 
-		return booleanQuery.addShouldQueryClauses(
-			stringQuery, _queries.match(_getTitleFieldName(), title));
+			booleanQuery.addShouldQueryClauses(
+				stringQuery, _queries.match(_getTitleFieldName(), title));
+		}
+
+		return booleanQuery;
+	}
+
+	private Bucket _getInstanceBucket(
+		boolean completed, Date dateEnd, Date dateStart, long processId) {
+
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		TermsAggregation termsAggregation = _aggregations.terms(
+			"processId", "processId");
+
+		FilterAggregation onTimeFilterAggregation = _aggregations.filter(
+			"onTime", _queries.term("slaStatus", "OnTime"));
+
+		FilterAggregation overdueFilterAggregation = _aggregations.filter(
+			"overdue", _queries.term("slaStatus", "Overdue"));
+
+		termsAggregation.addChildrenAggregations(
+			onTimeFilterAggregation, overdueFilterAggregation);
+
+		searchSearchRequest.addAggregation(termsAggregation);
+
+		searchSearchRequest.setIndexNames(
+			_instanceWorkflowMetricsIndexNameBuilder.getIndexName(
+				contextCompany.getCompanyId()));
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		searchSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(
+				_createInstanceBooleanQuery(
+					completed, dateEnd, dateStart,
+					Collections.singleton(processId))));
+
+		SearchSearchResponse searchSearchResponse =
+			_searchRequestExecutor.executeSearchRequest(searchSearchRequest);
+
+		Map<String, AggregationResult> aggregationResultsMap =
+			searchSearchResponse.getAggregationResultsMap();
+
+		TermsAggregationResult termsAggregationResult =
+			(TermsAggregationResult)aggregationResultsMap.get("processId");
+
+		return termsAggregationResult.getBucket(String.valueOf(processId));
+	}
+
+	private Map<Long, Bucket> _getInstanceBuckets(
+		FieldSort fieldSort, Pagination pagination, String title) {
+
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		TermsAggregation termsAggregation = _aggregations.terms(
+			"processId", "processId");
+
+		termsAggregation.addChildrenAggregations(
+			_aggregations.filter(
+				"onTime", _queries.term("slaStatus", "OnTime")),
+			_aggregations.filter(
+				"overdue", _queries.term("slaStatus", "Overdue")));
+
+		termsAggregation.addPipelineAggregation(
+			_resourceHelper.createBucketSortPipelineAggregation(
+				fieldSort, pagination));
+
+		termsAggregation.setSize(pagination.getPageSize());
+
+		searchSearchRequest.addAggregation(termsAggregation);
+
+		searchSearchRequest.setIndexNames(
+			_instanceWorkflowMetricsIndexNameBuilder.getIndexName(
+				contextCompany.getCompanyId()));
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		searchSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(
+				_queries.term("completed", Boolean.FALSE),
+				_queries.term("deleted", Boolean.FALSE),
+				_createTitleBooleanQuery(title)));
+
+		searchSearchRequest.setSize(0);
+
+		return Stream.of(
+			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)
+		).map(
+			SearchSearchResponse::getAggregationResultsMap
+		).map(
+			aggregationResultsMap ->
+				(TermsAggregationResult)aggregationResultsMap.get("processId")
+		).map(
+			TermsAggregationResult::getBuckets
+		).flatMap(
+			Collection::stream
+		).collect(
+			LinkedHashMap::new,
+			(map, bucket) -> map.put(Long.valueOf(bucket.getKey()), bucket),
+			Map::putAll
+		);
+	}
+
+	private Collection<Bucket> _getInstanceBuckets(Set<Long> processIds) {
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		TermsAggregation termsAggregation = _aggregations.terms(
+			"processId", "processId");
+
+		termsAggregation.addChildrenAggregations(
+			_aggregations.filter(
+				"onTime", _queries.term("slaStatus", "OnTime")),
+			_aggregations.filter(
+				"overdue", _queries.term("slaStatus", "Overdue")));
+
+		termsAggregation.setSize(processIds.size());
+
+		searchSearchRequest.addAggregation(termsAggregation);
+
+		searchSearchRequest.setIndexNames(
+			_instanceWorkflowMetricsIndexNameBuilder.getIndexName(
+				contextCompany.getCompanyId()));
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		searchSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(
+				_queries.term("completed", Boolean.FALSE),
+				_queries.term("deleted", Boolean.FALSE),
+				_createProcessIdTermsQuery(processIds)));
+
+		searchSearchRequest.setSize(0);
+
+		SearchSearchResponse searchSearchResponse =
+			_searchRequestExecutor.executeSearchRequest(searchSearchRequest);
+
+		Map<String, AggregationResult> aggregationResultsMap =
+			searchSearchResponse.getAggregationResultsMap();
+
+		TermsAggregationResult termsAggregationResult =
+			(TermsAggregationResult)aggregationResultsMap.get("processId");
+
+		return termsAggregationResult.getBuckets();
 	}
 
 	private TermsAggregationResult _getInstanceTermsAggregationResult(
@@ -429,6 +575,101 @@ public class ProcessMetricResourceImpl
 		return termsAggregationResult.getBucket(String.valueOf(processId));
 	}
 
+	private long _getProcessCount(String title) {
+		CountSearchRequest countSearchRequest = new CountSearchRequest();
+
+		countSearchRequest.setIndexNames(
+			_processWorkflowMetricsIndexNameBuilder.getIndexName(
+				contextCompany.getCompanyId()));
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		countSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(
+				_createProcessBooleanQuery(null, title)));
+
+		CountSearchResponse countSearchResponse =
+			_searchRequestExecutor.executeSearchRequest(countSearchRequest);
+
+		return countSearchResponse.getCount();
+	}
+
+	private List<ProcessMetric> _getProcessMetrics(
+		Collection<Bucket> buckets, Map<Long, ProcessMetric> processMetrics) {
+
+		return Stream.of(
+			buckets
+		).flatMap(
+			Collection::stream
+		).map(
+			bucket -> {
+				ProcessMetric processMetric = processMetrics.get(
+					Long.valueOf(bucket.getKey()));
+
+				_setInstanceCount(bucket, processMetric);
+				_setOnTimeInstanceCount(bucket, processMetric);
+				_setOverdueInstanceCount(bucket, processMetric);
+
+				_setUntrackedInstanceCount(processMetric);
+
+				return processMetric;
+			}
+		).collect(
+			Collectors.toList()
+		);
+	}
+
+	private Map<Long, ProcessMetric> _getProcessMetrics(
+		FieldSort fieldSort, Pagination pagination, Long processId,
+		String title) {
+
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		if (fieldSort != null) {
+			searchSearchRequest.addSorts(fieldSort);
+		}
+
+		searchSearchRequest.setIndexNames(
+			_processWorkflowMetricsIndexNameBuilder.getIndexName(
+				contextCompany.getCompanyId()));
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		searchSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(
+				_createProcessBooleanQuery(processId, title)));
+
+		if (pagination != null) {
+			searchSearchRequest.setSize(pagination.getPageSize());
+			searchSearchRequest.setStart(pagination.getStartPosition());
+		}
+		else {
+			searchSearchRequest.setSize(1);
+		}
+
+		return Stream.of(
+			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)
+		).map(
+			SearchSearchResponse::getSearchHits
+		).map(
+			SearchHits::getSearchHits
+		).flatMap(
+			List::stream
+		).map(
+			SearchHit::getDocument
+		).map(
+			this::_createProcessMetric
+		).collect(
+			LinkedHashMap::new,
+			(map, processMetric) -> {
+				Process process = processMetric.getProcess();
+
+				map.put(process.getId(), processMetric);
+			},
+			Map::putAll
+		);
+	}
+
 	private Collection<ProcessMetric> _getProcessMetrics(
 			FieldSort fieldSort, Pagination pagination, SearchHits searchHits)
 		throws Exception {
@@ -508,6 +749,45 @@ public class ProcessMetricResourceImpl
 		}
 
 		return processMetrics;
+	}
+
+	private Map<Long, ProcessMetric> _getProcessMetrics(Set<Long> processIds) {
+		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
+
+		searchSearchRequest.setIndexNames(
+			_processWorkflowMetricsIndexNameBuilder.getIndexName(
+				contextCompany.getCompanyId()));
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		searchSearchRequest.setQuery(
+			booleanQuery.addFilterQueryClauses(
+				_queries.term("deleted", Boolean.FALSE),
+				_createProcessIdTermsQuery(processIds)));
+
+		searchSearchRequest.setSize(processIds.size());
+
+		return Stream.of(
+			_searchRequestExecutor.executeSearchRequest(searchSearchRequest)
+		).map(
+			SearchSearchResponse::getSearchHits
+		).map(
+			SearchHits::getSearchHits
+		).flatMap(
+			List::stream
+		).map(
+			SearchHit::getDocument
+		).map(
+			this::_createProcessMetric
+		).collect(
+			LinkedHashMap::new,
+			(map, processMetric) -> {
+				Process process = processMetric.getProcess();
+
+				map.put(process.getId(), processMetric);
+			},
+			Map::putAll
+		);
 	}
 
 	private SearchSearchResponse _getProcessMetricsSearchSearchResponse(
@@ -609,53 +889,28 @@ public class ProcessMetricResourceImpl
 	}
 
 	private void _setInstanceCount(Bucket bucket, ProcessMetric processMetric) {
-		if (bucket == null) {
-			return;
-		}
-
-		FilterAggregationResult filterAggregationResult =
-			(FilterAggregationResult)bucket.getChildAggregationResult(
-				"instanceCountFilter");
-
-		if (filterAggregationResult != null) {
-			ValueCountAggregationResult valueCountAggregationResult =
-				(ValueCountAggregationResult)
-					filterAggregationResult.getChildAggregationResult(
-						"instanceCount");
-
-			processMetric.setInstanceCount(
-				valueCountAggregationResult.getValue());
-		}
-		else {
-			ScriptedMetricAggregationResult scriptedMetricAggregationResult =
-				(ScriptedMetricAggregationResult)
-					bucket.getChildAggregationResult("instanceCount");
-
-			processMetric.setInstanceCount(
-				GetterUtil.getLong(scriptedMetricAggregationResult.getValue()));
-		}
+		processMetric.setInstanceCount(bucket.getDocCount());
 	}
 
 	private void _setOnTimeInstanceCount(
 		Bucket bucket, ProcessMetric processMetric) {
 
-		if (bucket == null) {
-			return;
-		}
+		FilterAggregationResult filterAggregationResult =
+			(FilterAggregationResult)bucket.getChildAggregationResult("onTime");
 
 		processMetric.setOnTimeInstanceCount(
-			_resourceHelper.getOnTimeInstanceCount(bucket));
+			filterAggregationResult.getDocCount());
 	}
 
 	private void _setOverdueInstanceCount(
 		Bucket bucket, ProcessMetric processMetric) {
 
-		if (bucket == null) {
-			return;
-		}
+		FilterAggregationResult filterAggregationResult =
+			(FilterAggregationResult)bucket.getChildAggregationResult(
+				"overdue");
 
 		processMetric.setOverdueInstanceCount(
-			_resourceHelper.getOverdueInstanceCount(bucket));
+			filterAggregationResult.getDocCount());
 	}
 
 	private void _setUntrackedInstanceCount(ProcessMetric processMetric) {
@@ -681,16 +936,15 @@ public class ProcessMetricResourceImpl
 
 		String fieldName = sort.getFieldName();
 
-		if (_isOrderByInstanceCount(fieldName)) {
-			fieldName = "instanceCountFilter > instanceCount";
+		if (StringUtil.startsWith(fieldName, "instanceCount")) {
+			fieldName = "_count";
 		}
-		else if (_isOrderByTitle(fieldName)) {
+		else if (StringUtil.startsWith(fieldName, "title")) {
 			fieldName = titleFieldName;
 		}
 		else {
-			fieldName =
-				StringUtil.extractFirst(fieldName, "InstanceCount") +
-					" > instanceCount.value";
+			fieldName = 
+				StringUtil.extractFirst(fieldName, "InstanceCount") + ">_count";
 		}
 
 		FieldSort fieldSort = _sorts.field(fieldName);

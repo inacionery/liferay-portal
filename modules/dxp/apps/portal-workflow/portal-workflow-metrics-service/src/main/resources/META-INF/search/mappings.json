@@ -1059,6 +1059,18 @@
 				"store": true,
 				"type": "keyword"
 			},
+			"onTime": {
+				"store": true,
+				"type": "long"
+			},
+			"overdue": {
+				"store": true,
+				"type": "long"
+			},
+			"untracked": {
+				"store": true,
+				"type": "long"
+			},
 			"userId": {
 				"store": true,
 				"type": "long"

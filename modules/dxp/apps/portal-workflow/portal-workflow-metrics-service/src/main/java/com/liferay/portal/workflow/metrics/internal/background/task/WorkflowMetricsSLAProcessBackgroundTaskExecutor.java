@@ -77,6 +77,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -634,6 +635,10 @@ public class WorkflowMetricsSLAProcessBackgroundTaskExecutor
 		List<Document> slaInstanceResultDocuments = new ArrayList<>();
 		List<Document> slaTaskResultDocuments = new ArrayList<>();
 
+		AtomicLong onTime = new AtomicLong(0L);
+		AtomicLong overdue = new AtomicLong(0L);
+		AtomicLong untracked = new AtomicLong(0L);
+
 		Stream.of(
 			instanceDocuments
 		).flatMap(
@@ -666,6 +671,12 @@ public class WorkflowMetricsSLAProcessBackgroundTaskExecutor
 						workflowMetricsInstanceSLAStatus =
 							WorkflowMetricsInstanceSLAStatus.ON_TIME;
 					}
+
+					_calculateSlaStatus(
+						onTime, overdue, untracked, 
+						WorkflowMetricsInstanceSLAStatus.valueOf(
+							document.getString("slaStatus")),
+						workflowMetricsInstanceSLAStatus);
 
 					bulkDocumentRequest.addBulkableDocumentRequest(
 						new UpdateDocumentRequest(
@@ -721,6 +732,11 @@ public class WorkflowMetricsSLAProcessBackgroundTaskExecutor
 					getWorkflowMetricsSLADefinitionId(),
 				firstInstanceDocument.getLong("instanceId"));
 		}
+		
+		_updateProcess(
+			workflowMetricsSLADefinitionVersion.getCompanyId(),
+			workflowMetricsSLADefinitionVersion.getProcessId(), onTime.get(),
+			overdue.get(), untracked.get());
 
 		if (searchHits.getTotalHits() >= 10000) {
 			return lastInstanceDocument.getLong("instanceId");
@@ -728,7 +744,70 @@ public class WorkflowMetricsSLAProcessBackgroundTaskExecutor
 
 		return instanceId;
 	}
+	
+	private void _calculateSlaStatus(
+		AtomicLong onTime, AtomicLong overdue, AtomicLong untracked,
+		WorkflowMetricsInstanceSLAStatus oldWorkflowMetricsInstanceSLAStatus, 
+		WorkflowMetricsInstanceSLAStatus workflowMetricsInstanceSLAStatus) {
 
+		if (Objects.equals(
+			oldWorkflowMetricsInstanceSLAStatus,
+			WorkflowMetricsInstanceSLAStatus.ON_TIME)) {
+
+			onTime.decrementAndGet();
+		}
+		else if (Objects.equals(
+			oldWorkflowMetricsInstanceSLAStatus,
+			WorkflowMetricsInstanceSLAStatus.OVERDUE)) {
+
+			overdue.decrementAndGet();
+		}
+		else if (Objects.equals(
+			oldWorkflowMetricsInstanceSLAStatus,
+			WorkflowMetricsInstanceSLAStatus.UNTRACKED)) {
+
+			untracked.decrementAndGet();
+		}
+
+		if (Objects.equals(
+			workflowMetricsInstanceSLAStatus,
+			WorkflowMetricsInstanceSLAStatus.ON_TIME)) {
+
+			onTime.incrementAndGet();
+		}
+		else if (Objects.equals(
+			workflowMetricsInstanceSLAStatus,
+			WorkflowMetricsInstanceSLAStatus.OVERDUE)) {
+
+			overdue.incrementAndGet();
+		}
+	}
+	
+	private void _updateProcess(
+		long companyId, long processId, long onTime,
+		long overdue, long untracked) {
+
+		if (_searchEngineAdapter == null) {
+			return;
+		}
+
+		UpdateByQueryDocumentRequest updateByQueryDocumentRequest =
+			new UpdateByQueryDocumentRequest(
+				_queries.term("processId", processId),
+				_scripts.script(
+					StringBundler.concat(
+						"ctx._source.onTime += ", onTime,";ctx._source.overdue += ", overdue,";ctx._source.untracked += ", untracked)),
+				_processWorkflowMetricsIndexNameBuilder.getIndexName(
+					companyId));
+
+		if (PortalRunMode.isTestMode()) {
+			updateByQueryDocumentRequest.setRefresh(true);
+		}
+
+		_searchEngineAdapter.execute(updateByQueryDocumentRequest);
+	}
+
+	
 	private void _updateInstances(
 		long companyId, long endInstanceId, long slaDefinitionId,
 		long startInstanceId) {
@@ -769,6 +848,10 @@ public class WorkflowMetricsSLAProcessBackgroundTaskExecutor
 	@Reference(target = "(workflow.metrics.index.entity.name=instance)")
 	private WorkflowMetricsIndexNameBuilder
 		_instanceWorkflowMetricsIndexNameBuilder;
+	
+	@Reference(target = "(workflow.metrics.index.entity.name=process)")
+	private WorkflowMetricsIndexNameBuilder
+		_processWorkflowMetricsIndexNameBuilder;
 
 	@Reference(target = ModuleServiceLifecycle.PORTLETS_INITIALIZED)
 	private ModuleServiceLifecycle _moduleServiceLifecycle;

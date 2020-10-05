@@ -48,19 +48,6 @@ public class ProcessWorkflowMetricsIndexerImpl
 
 		bulkDocumentRequest.addBulkableDocumentRequest(
 			new IndexDocumentRequest(
-				_instanceWorkflowMetricsIndex.getIndexName(
-					document.getLong("companyId")),
-				_createWorkflowMetricsInstanceDocument(
-					document.getLong("companyId"),
-					document.getLong("processId"))) {
-
-				{
-					setType(_instanceWorkflowMetricsIndex.getIndexType());
-				}
-			});
-
-		bulkDocumentRequest.addBulkableDocumentRequest(
-			new IndexDocumentRequest(
 				_slaInstanceResultWorkflowMetricsIndexer.getIndexName(
 					document.getLong("companyId")),
 				_slaInstanceResultWorkflowMetricsIndexer.creatDefaultDocument(
