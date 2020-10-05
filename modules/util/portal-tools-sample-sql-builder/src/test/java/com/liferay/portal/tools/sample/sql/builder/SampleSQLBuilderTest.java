@@ -162,11 +162,13 @@ public class SampleSQLBuilderTest {
 		properties.put(BenchmarksPropsKeys.MAX_WIKI_NODE_COUNT, "1");
 		properties.put(BenchmarksPropsKeys.MAX_WIKI_PAGE_COMMENT_COUNT, "1");
 		properties.put(BenchmarksPropsKeys.MAX_WIKI_PAGE_COUNT, "1");
+		properties.put(BenchmarksPropsKeys.MAX_WORKFLOW_COUNT, "1");
+		properties.put(BenchmarksPropsKeys.MAX_WORKFLOW_INSTANCE_COUNT, "1");
 		properties.put(BenchmarksPropsKeys.OPTIMIZE_BUFFER_SIZE, "8192");
 		properties.put(
 			BenchmarksPropsKeys.OUTPUT_CSV_FILE_NAMES,
 			"assetPublisher,blog,company,documentLibrary,dynamicDataList," +
-				"fragment,layout,mbCategory,mbThread,repository,wiki");
+				"fragment,layout,mbCategory,mbThread,repository,wiki,workflow");
 		properties.put(BenchmarksPropsKeys.OUTPUT_DIR, outputDir);
 		properties.put(BenchmarksPropsKeys.OUTPUT_MERGE, "true");
 		properties.put(

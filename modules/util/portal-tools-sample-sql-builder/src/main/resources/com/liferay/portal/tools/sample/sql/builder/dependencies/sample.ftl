@@ -20,4 +20,6 @@
 
 <#include "counters.ftl">
 
+<#include "workflow.ftl">
+
 COMMIT_TRANSACTION

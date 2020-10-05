@@ -45,6 +45,22 @@
 			/>
 			<fileset
 				dir="${sdk.dir}/dist"
+				includes="com.liferay.portal.workflow.api*.jar"
+			/>
+			<fileset
+				dir="${sdk.dir}/dist"
+				includes="com.liferay.portal.workflow.kaleo.api*.jar"
+			/>
+			<fileset
+				dir="${sdk.dir}/dist"
+				includes="com.liferay.portal.workflow.kaleo.definition.api*.jar"
+			/>
+			<fileset
+				dir="${sdk.dir}/dist"
+				includes="com.liferay.portal.workflow.kaleo.service*.jar"
+			/>
+			<fileset
+				dir="${sdk.dir}/dist"
 				includes="com.liferay.subscription.*.jar"
 			/>
 

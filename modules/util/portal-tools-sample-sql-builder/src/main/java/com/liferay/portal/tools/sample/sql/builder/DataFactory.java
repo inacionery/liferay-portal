@@ -190,6 +190,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserModel;
 import com.liferay.portal.kernel.model.UserPersonalSite;
 import com.liferay.portal.kernel.model.VirtualHostModel;
+import com.liferay.portal.kernel.model.WorkflowDefinitionLinkModel;
+import com.liferay.portal.kernel.model.WorkflowInstanceLinkModel;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
@@ -202,6 +204,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.PortletKeys;
@@ -227,8 +230,38 @@ import com.liferay.portal.model.impl.ResourcePermissionModelImpl;
 import com.liferay.portal.model.impl.RoleModelImpl;
 import com.liferay.portal.model.impl.UserModelImpl;
 import com.liferay.portal.model.impl.VirtualHostModelImpl;
+import com.liferay.portal.model.impl.WorkflowDefinitionLinkModelImpl;
+import com.liferay.portal.model.impl.WorkflowInstanceLinkModelImpl;
 import com.liferay.portal.upgrade.PortalUpgradeProcess;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portal.workflow.constants.WorkflowDefinitionConstants;
+import com.liferay.portal.workflow.kaleo.definition.ExecutionType;
+import com.liferay.portal.workflow.kaleo.definition.NodeType;
+import com.liferay.portal.workflow.kaleo.definition.ScriptLanguage;
+import com.liferay.portal.workflow.kaleo.model.KaleoActionModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersionModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoInstanceModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoInstanceTokenModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoNode;
+import com.liferay.portal.workflow.kaleo.model.KaleoNodeModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoTask;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstanceModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceTokenModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskModel;
+import com.liferay.portal.workflow.kaleo.model.KaleoTransitionModel;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoActionModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoDefinitionModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoDefinitionVersionModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoNodeModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentInstanceModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskInstanceTokenModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskModelImpl;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoTransitionModelImpl;
 import com.liferay.portlet.PortletPreferencesFactoryImpl;
 import com.liferay.portlet.PortletPreferencesImpl;
 import com.liferay.portlet.asset.model.impl.AssetCategoryModelImpl;
@@ -265,7 +298,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -306,6 +339,7 @@ public class DataFactory {
 		List<String> models = ModelHintsUtil.getModels();
 
 		models.add(Layout.class.getName());
+		models.add(MBMessage.class.getName());
 		models.add(UserPersonalSite.class.getName());
 
 		models.add(_getMBDiscussionCombinedClassName(BlogsEntry.class));
@@ -3175,6 +3209,33 @@ public class DataFactory {
 			threadId, groupId, MBCategoryConstants.DISCUSSION_CATEGORY_ID,
 			rootMessageId);
 	}
+	
+	public List<MBMessageModel> newWorkflowMBMessageModels(
+		MBThreadModel mbThreadModel) {
+
+		List<MBMessageModel> mbMessageModels = new ArrayList<>(
+			BenchmarksPropsValues.MAX_WORKFLOW_INSTANCE_COUNT);
+
+		mbMessageModels.add(
+			newMBMessageModel(
+				mbThreadModel.getGroupId(), 0, 0, 0,
+				mbThreadModel.getThreadId(), mbThreadModel.getRootMessageId(),
+				mbThreadModel.getRootMessageId(),
+				MBMessageConstants.DEFAULT_PARENT_MESSAGE_ID, "Test Message 1",
+				"test-message-1", "This is test message 1.", WorkflowConstants.STATUS_PENDING));
+
+		for (int i = 2; i <= BenchmarksPropsValues.MAX_WORKFLOW_INSTANCE_COUNT; i++) {
+			mbMessageModels.add(
+				newMBMessageModel(
+					mbThreadModel.getGroupId(), 0, 0, 0,
+					mbThreadModel.getThreadId(),
+					_counter.get(), mbThreadModel.getRootMessageId(),
+					mbThreadModel.getRootMessageId(), "Test Message " + i,
+					"test-message-" + i, "This is test message " + i + ".", WorkflowConstants.STATUS_PENDING));
+		}
+
+		return mbMessageModels;
+	}
 
 	public List<MBThreadModel> newMBThreadModels(
 		MBCategoryModel mbCategoryModel) {
@@ -4411,6 +4472,362 @@ public class DataFactory {
 
 		return groupModel;
 	}
+	
+	public KaleoActionModel newApproveKaleoActionModel(KaleoNodeModel kaleoNodeModel) throws Exception {
+		return newKaleoActionModel(kaleoNodeModel, "approve", ExecutionType.ON_ENTRY.getValue(), _readFile("approve-script.groovy"));
+	}
+	
+	public KaleoActionModel newRejectKaleoActionModel(KaleoNodeModel kaleoNodeModel) throws Exception {
+		return newKaleoActionModel(kaleoNodeModel, "reject", ExecutionType.ON_ASSIGNMENT.getValue(), _readFile("reject-script.groovy"));
+	}
+
+	protected KaleoActionModel newKaleoActionModel(
+		KaleoNodeModel kaleoNodeModel,
+		String name, String executionType, String script) {
+
+		KaleoActionModel kaleoActionModel = new KaleoActionModelImpl();
+
+		kaleoActionModel.setKaleoActionId(_counter.get());
+		kaleoActionModel.setGroupId(kaleoNodeModel.getGroupId());
+		kaleoActionModel.setCompanyId(_companyId);
+		kaleoActionModel.setUserId(_sampleUserId);
+		kaleoActionModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoActionModel.setCreateDate(new Date());
+		kaleoActionModel.setModifiedDate(new Date());
+		kaleoActionModel.setKaleoClassName(KaleoNode.class.getName());
+		kaleoActionModel.setKaleoClassPK(kaleoNodeModel.getKaleoNodeId());
+		kaleoActionModel.setKaleoDefinitionId(kaleoNodeModel.getKaleoDefinitionId());
+		kaleoActionModel.setKaleoDefinitionVersionId(kaleoNodeModel.getKaleoDefinitionVersionId());
+		kaleoActionModel.setKaleoNodeName(kaleoNodeModel.getName());
+		kaleoActionModel.setName(name);
+		kaleoActionModel.setExecutionType(executionType);
+		kaleoActionModel.setScript(script);
+		kaleoActionModel.setScriptLanguage(ScriptLanguage.GROOVY.toString());
+		kaleoActionModel.setPriority(0);
+
+		return kaleoActionModel;
+	}
+	
+	public List<KaleoDefinitionModel> newKaleoDefinitionModels() throws Exception {
+		List<KaleoDefinitionModel> kaleoDefinitionModels = new ArrayList<>(
+			BenchmarksPropsValues.MAX_WORKFLOW_COUNT);
+
+		for (int i = 1; i <= BenchmarksPropsValues.MAX_WORKFLOW_COUNT; i++) {
+			kaleoDefinitionModels.add(newKaleoDefinitionModel(i));
+		}
+
+		return kaleoDefinitionModels;
+	}
+	
+	protected KaleoDefinitionModel newKaleoDefinitionModel(int index) throws Exception {
+
+		KaleoDefinitionModel kaleoDefinitionModel =
+			new KaleoDefinitionModelImpl();
+		
+		kaleoDefinitionModel.setKaleoDefinitionId(_counter.get());
+		kaleoDefinitionModel.setGroupId(_globalGroupId);
+		kaleoDefinitionModel.setCompanyId(_companyId);
+		kaleoDefinitionModel.setUserId(_sampleUserId);
+		kaleoDefinitionModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoDefinitionModel.setCreateDate(new Date());
+		kaleoDefinitionModel.setModifiedDate(new Date());
+		kaleoDefinitionModel.setName("Teste Workflow " + index);
+		kaleoDefinitionModel.setTitle("Teste Workflow " + index);
+		kaleoDefinitionModel.setContent(
+			_readFile("single-approver-definition.xml"));
+		kaleoDefinitionModel.setScope(WorkflowDefinitionConstants.SCOPE_ALL);
+		kaleoDefinitionModel.setVersion(1);
+		kaleoDefinitionModel.setActive(true);
+
+		return kaleoDefinitionModel;
+	}
+
+	public KaleoDefinitionVersionModel newKaleoDefinitionVersionModel(
+		KaleoDefinitionModel kaleoDefinitionModel) {
+
+		KaleoDefinitionVersionModel kaleoDefinitionVersionModel =
+			new KaleoDefinitionVersionModelImpl();
+		
+		kaleoDefinitionVersionModel.setKaleoDefinitionVersionId(_counter.get());
+		kaleoDefinitionVersionModel.setGroupId(kaleoDefinitionModel.getGroupId());
+		kaleoDefinitionVersionModel.setCompanyId(_companyId);
+		kaleoDefinitionVersionModel.setUserId(_sampleUserId);
+		kaleoDefinitionVersionModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoDefinitionVersionModel.setCreateDate(new Date());
+		kaleoDefinitionVersionModel.setModifiedDate(new Date());
+		kaleoDefinitionVersionModel.setKaleoDefinitionId(kaleoDefinitionModel.getKaleoDefinitionId());
+		kaleoDefinitionVersionModel.setName(kaleoDefinitionModel.getName());
+		kaleoDefinitionVersionModel.setTitle(kaleoDefinitionModel.getTitle());
+		kaleoDefinitionVersionModel.setDescription(kaleoDefinitionModel.getDescription());
+		kaleoDefinitionVersionModel.setContent(kaleoDefinitionModel.getContent());
+		kaleoDefinitionVersionModel.setVersion("1.0");
+		kaleoDefinitionVersionModel.setStatus(
+			WorkflowConstants.STATUS_APPROVED);
+		kaleoDefinitionVersionModel.setStatusByUserId(_sampleUserId);
+		kaleoDefinitionVersionModel.setStatusByUserName(_SAMPLE_USER_NAME);
+		kaleoDefinitionVersionModel.setStatusDate(new Date());
+
+		return kaleoDefinitionVersionModel;
+	}
+
+	public KaleoInstanceModel newKaleoInstanceModel(
+		KaleoDefinitionModel kaleoDefinitionModel, KaleoDefinitionVersionModel kaleoDefinitionVersionModel,
+		long classPK, boolean completed) {
+
+		KaleoInstanceModel kaleoInstanceModel = new KaleoInstanceModelImpl();
+
+		kaleoInstanceModel.setKaleoInstanceId(_counter.get());
+		kaleoInstanceModel.setGroupId(kaleoDefinitionVersionModel.getGroupId());
+		kaleoInstanceModel.setCompanyId(_companyId);
+		kaleoInstanceModel.setUserId(_sampleUserId);
+		kaleoInstanceModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoInstanceModel.setCreateDate(new Date());
+		kaleoInstanceModel.setModifiedDate(new Date());
+		kaleoInstanceModel.setKaleoDefinitionId(kaleoDefinitionModel.getKaleoDefinitionId());
+		kaleoInstanceModel.setKaleoDefinitionVersionId(
+			kaleoDefinitionVersionModel.getKaleoDefinitionVersionId());
+		kaleoInstanceModel.setKaleoDefinitionName(kaleoDefinitionModel.getName());
+		kaleoInstanceModel.setKaleoDefinitionVersion(kaleoDefinitionModel.getVersion());
+		kaleoInstanceModel.setRootKaleoInstanceTokenId(_counter.get());
+		kaleoInstanceModel.setClassName(MBMessage.class.getName());
+		kaleoInstanceModel.setClassPK(classPK);
+		kaleoInstanceModel.setCompleted(completed);
+		kaleoInstanceModel.setWorkflowContext(
+			JSONFactoryUtil.serialize(
+				HashMapBuilder.<String, Serializable>put(
+					WorkflowConstants.CONTEXT_COMPANY_ID,
+					String.valueOf(_companyId)
+				).put(
+					WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME,
+					MBMessage.class.getName()
+				).put(
+					WorkflowConstants.CONTEXT_ENTRY_CLASS_PK,
+					String.valueOf(classPK)
+				).put(
+					WorkflowConstants.CONTEXT_USER_ID,
+					String.valueOf(_sampleUserId)
+				).build()));
+
+		return kaleoInstanceModel;
+	}
+
+	public KaleoNodeModel newApprovedKaleoNodeModel(KaleoDefinitionVersionModel kaleoDefinitionVersionModel) throws Exception {
+		return newKaleoNodeModel(kaleoDefinitionVersionModel, "approved", NodeType.STATE.toString(), false, true);
+	}
+	
+	public KaleoNodeModel newCreatedKaleoNodeModel(KaleoDefinitionVersionModel kaleoDefinitionVersionModel) throws Exception {
+		return newKaleoNodeModel(kaleoDefinitionVersionModel, "created", NodeType.STATE.toString(), true, false);
+	}
+	
+	public KaleoNodeModel newReviewKaleoNodeModel(KaleoDefinitionVersionModel kaleoDefinitionVersionModel) throws Exception {
+		return newKaleoNodeModel(kaleoDefinitionVersionModel, "review", NodeType.TASK.toString(), false, false);
+	}
+	
+	public KaleoNodeModel newUpdateKaleoNodeModel(KaleoDefinitionVersionModel kaleoDefinitionVersionModel) throws Exception {
+		return newKaleoNodeModel(kaleoDefinitionVersionModel, "update", NodeType.TASK.toString(), false, false);
+	}
+	
+	protected KaleoNodeModel newKaleoNodeModel(
+		KaleoDefinitionVersionModel kaleoDefinitionVersionModel,
+		String name, String type, boolean initial,
+		boolean terminal) {
+
+		KaleoNodeModel kaleoNodeModel = new KaleoNodeModelImpl();
+
+		kaleoNodeModel.setKaleoNodeId(_counter.get());
+		kaleoNodeModel.setGroupId(kaleoDefinitionVersionModel.getGroupId());
+		kaleoNodeModel.setCompanyId(_companyId);
+		kaleoNodeModel.setUserId(_sampleUserId);
+		kaleoNodeModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoNodeModel.setCreateDate(new Date());
+		kaleoNodeModel.setModifiedDate(new Date());
+		kaleoNodeModel.setKaleoDefinitionId(kaleoDefinitionVersionModel.getKaleoDefinitionId());
+		kaleoNodeModel.setKaleoDefinitionVersionId(kaleoDefinitionVersionModel.getKaleoDefinitionVersionId());
+		kaleoNodeModel.setName(name);
+		kaleoNodeModel.setType(type);
+		kaleoNodeModel.setInitial(initial);
+		kaleoNodeModel.setTerminal(terminal);
+
+		return kaleoNodeModel;
+	}
+
+	public KaleoTaskAssignmentInstanceModel
+		newKaleoTaskAssignmentInstanceModel(
+			KaleoTaskAssignmentModel kaleoTaskAssignmentModel,
+			KaleoTaskInstanceTokenModel kaleoTaskInstanceTokenModel) {
+
+		KaleoTaskAssignmentInstanceModel kaleoTaskAssignmentInstanceModel =
+			new KaleoTaskAssignmentInstanceModelImpl();
+		
+		kaleoTaskAssignmentInstanceModel.setKaleoTaskAssignmentInstanceId(_counter.get());
+		kaleoTaskAssignmentInstanceModel.setGroupId(kaleoTaskInstanceTokenModel.getGroupId());
+		kaleoTaskAssignmentInstanceModel.setCompanyId(_companyId);
+		kaleoTaskAssignmentInstanceModel.setUserId(_sampleUserId);
+		kaleoTaskAssignmentInstanceModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoTaskAssignmentInstanceModel.setCreateDate(new Date());
+		kaleoTaskAssignmentInstanceModel.setModifiedDate(new Date());
+		kaleoTaskAssignmentInstanceModel.setKaleoDefinitionId(
+			kaleoTaskInstanceTokenModel.getKaleoDefinitionId());
+		kaleoTaskAssignmentInstanceModel.setKaleoDefinitionVersionId(
+			kaleoTaskInstanceTokenModel.getKaleoDefinitionVersionId());
+		kaleoTaskAssignmentInstanceModel.setKaleoInstanceId(
+			kaleoTaskInstanceTokenModel.getKaleoInstanceId());
+		kaleoTaskAssignmentInstanceModel.setKaleoInstanceTokenId(
+			kaleoTaskInstanceTokenModel.getKaleoInstanceTokenId());
+		kaleoTaskAssignmentInstanceModel.setKaleoTaskInstanceTokenId(
+			kaleoTaskInstanceTokenModel.getKaleoTaskInstanceTokenId());
+		kaleoTaskAssignmentInstanceModel.setKaleoTaskId(
+			kaleoTaskInstanceTokenModel.getKaleoTaskId());
+		kaleoTaskAssignmentInstanceModel.setKaleoTaskName(
+			kaleoTaskInstanceTokenModel.getKaleoTaskName());
+		kaleoTaskAssignmentInstanceModel.setAssigneeClassName(
+			kaleoTaskAssignmentModel.getAssigneeClassName());
+		kaleoTaskAssignmentInstanceModel.setAssigneeClassPK(
+			kaleoTaskAssignmentModel.getAssigneeClassPK());
+		kaleoTaskAssignmentInstanceModel.setCompleted(false);
+
+		return kaleoTaskAssignmentInstanceModel;
+	}
+
+	
+	public KaleoTaskInstanceTokenModel newKaleoTaskInstanceTokenModel(
+		KaleoInstanceTokenModel kaleoInstanceTokenModel,
+		KaleoTaskModel kaleoTaskModel) {
+
+		KaleoTaskInstanceTokenModel kaleoTaskInstanceTokenModel =
+			new KaleoTaskInstanceTokenModelImpl();
+
+		kaleoTaskInstanceTokenModel.setKaleoTaskInstanceTokenId(_counter.get());
+		kaleoTaskInstanceTokenModel.setGroupId(kaleoInstanceTokenModel.getGroupId());
+		kaleoTaskInstanceTokenModel.setCompanyId(_companyId);
+		kaleoTaskInstanceTokenModel.setUserId(_sampleUserId);
+		kaleoTaskInstanceTokenModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoTaskInstanceTokenModel.setCreateDate(new Date());
+		kaleoTaskInstanceTokenModel.setModifiedDate(new Date());
+		kaleoTaskInstanceTokenModel.setKaleoDefinitionId(
+			kaleoInstanceTokenModel.getKaleoDefinitionId());
+		kaleoTaskInstanceTokenModel.setKaleoDefinitionVersionId(
+			kaleoInstanceTokenModel.getKaleoDefinitionVersionId());
+		kaleoTaskInstanceTokenModel.setKaleoInstanceId(
+			kaleoInstanceTokenModel.getKaleoInstanceId());
+		kaleoTaskInstanceTokenModel.setKaleoInstanceTokenId(
+			kaleoInstanceTokenModel.getKaleoInstanceTokenId());
+		kaleoTaskInstanceTokenModel.setKaleoTaskId(
+			kaleoTaskModel.getKaleoTaskId());
+		kaleoTaskInstanceTokenModel.setKaleoTaskName(
+			kaleoTaskModel.getName());
+		kaleoTaskInstanceTokenModel.setClassName(kaleoInstanceTokenModel.getClassName());
+		kaleoTaskInstanceTokenModel.setClassPK(kaleoInstanceTokenModel.getClassPK());
+		kaleoTaskInstanceTokenModel.setCompleted(false);
+
+		return kaleoTaskInstanceTokenModel;
+	}
+
+	public KaleoInstanceTokenModel newKaleoInstanceTokenModel(KaleoInstanceModel kaleoInstanceModel, KaleoNodeModel kaleoNodeModel) {
+		KaleoInstanceTokenModel kaleoInstanceTokenModel =
+			new KaleoInstanceTokenModelImpl();
+
+		kaleoInstanceTokenModel.setKaleoInstanceTokenId(kaleoInstanceModel.getRootKaleoInstanceTokenId());
+		kaleoInstanceTokenModel.setGroupId(kaleoInstanceModel.getGroupId());
+		kaleoInstanceTokenModel.setCompanyId(_companyId);
+		kaleoInstanceTokenModel.setUserId(_sampleUserId);
+		kaleoInstanceTokenModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoInstanceTokenModel.setCreateDate(new Date());
+		kaleoInstanceTokenModel.setModifiedDate(new Date());
+		kaleoInstanceTokenModel.setKaleoDefinitionId(kaleoInstanceModel.getKaleoDefinitionId());
+		kaleoInstanceTokenModel.setKaleoDefinitionVersionId(
+			kaleoInstanceModel.getKaleoDefinitionVersionId());
+		kaleoInstanceTokenModel.setKaleoInstanceId(kaleoInstanceModel.getKaleoInstanceId());
+		kaleoInstanceTokenModel.setParentKaleoInstanceTokenId(0);
+		kaleoInstanceTokenModel.setCurrentKaleoNodeId(kaleoNodeModel.getKaleoNodeId());
+		kaleoInstanceTokenModel.setCurrentKaleoNodeName(kaleoNodeModel.getName());
+		kaleoInstanceTokenModel.setClassName(kaleoInstanceModel.getClassName());
+		kaleoInstanceTokenModel.setClassPK(kaleoInstanceModel.getClassPK());
+		kaleoInstanceTokenModel.setCompleted(false);
+
+		return kaleoInstanceTokenModel;
+	}
+	
+	public KaleoTaskAssignmentModel newRoleKaleoTaskAssignmentModel(KaleoTaskModel kaleoTaskModel) throws Exception {
+		return newKaleoTaskAssignmentModel(kaleoTaskModel, Role.class.getName() ,_administratorRoleModel.getRoleId());
+	}
+	
+	public KaleoTaskAssignmentModel newUserKaleoTaskAssignmentModel(KaleoTaskModel kaleoTaskModel) throws Exception {
+		return newKaleoTaskAssignmentModel(kaleoTaskModel, User.class.getName() ,0);
+	}
+	
+	protected KaleoTaskAssignmentModel newKaleoTaskAssignmentModel(KaleoTaskModel kaleoTaskModel, String assigneeClassName, long assigneeClassPK) {
+
+		KaleoTaskAssignmentModel kaleoTaskAssignmentModel = new KaleoTaskAssignmentModelImpl();
+
+		kaleoTaskAssignmentModel.setKaleoTaskAssignmentId(_counter.get());
+		kaleoTaskAssignmentModel.setGroupId(kaleoTaskModel.getGroupId());
+		kaleoTaskAssignmentModel.setCompanyId(_companyId);
+		kaleoTaskAssignmentModel.setUserId(_sampleUserId);
+		kaleoTaskAssignmentModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoTaskAssignmentModel.setCreateDate(new Date());
+		kaleoTaskAssignmentModel.setModifiedDate(new Date());
+		kaleoTaskAssignmentModel.setKaleoClassName(KaleoTask.class.getName());
+		kaleoTaskAssignmentModel.setKaleoClassPK(kaleoTaskModel.getKaleoTaskId());
+		kaleoTaskAssignmentModel.setKaleoDefinitionId(kaleoTaskModel.getKaleoDefinitionId());
+		kaleoTaskAssignmentModel.setKaleoDefinitionVersionId(kaleoTaskModel.getKaleoDefinitionVersionId());
+		kaleoTaskAssignmentModel.setKaleoNodeId(kaleoTaskModel.getKaleoNodeId());		
+		kaleoTaskAssignmentModel.setAssigneeClassName(assigneeClassName);
+		kaleoTaskAssignmentModel.setAssigneeClassPK(assigneeClassPK);
+
+		return kaleoTaskAssignmentModel;
+	}
+	
+
+	public KaleoTaskModel newKaleoTaskModel(KaleoNodeModel kaleoNodeModel) {
+
+		KaleoTaskModel kaleoTaskModel = new KaleoTaskModelImpl();
+
+		kaleoTaskModel.setKaleoTaskId(_counter.get());
+		kaleoTaskModel.setGroupId(kaleoNodeModel.getGroupId());
+		kaleoTaskModel.setCompanyId(_companyId);
+		kaleoTaskModel.setUserId(_sampleUserId);
+		kaleoTaskModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoTaskModel.setCreateDate(new Date());
+		kaleoTaskModel.setModifiedDate(new Date());
+		kaleoTaskModel.setKaleoDefinitionId(kaleoNodeModel.getKaleoDefinitionId());
+		kaleoTaskModel.setKaleoDefinitionVersionId(kaleoNodeModel.getKaleoDefinitionVersionId());
+		kaleoTaskModel.setKaleoNodeId(kaleoNodeModel.getKaleoNodeId());
+		kaleoTaskModel.setName(kaleoNodeModel.getName());
+		kaleoTaskModel.setDescription(kaleoNodeModel.getDescription());
+
+		return kaleoTaskModel;
+	}
+
+	public KaleoTransitionModel newKaleoTransitionModel(
+		String name, KaleoNodeModel sourceKaleoNodeModel,
+		KaleoNodeModel targetKaleoNodeModel, boolean defaultValue) {
+
+		KaleoTransitionModel kaleoTransitionModel =
+			new KaleoTransitionModelImpl();
+
+		kaleoTransitionModel.setKaleoTransitionId(_counter.get());
+		kaleoTransitionModel.setGroupId(sourceKaleoNodeModel.getGroupId());
+		kaleoTransitionModel.setCompanyId(_companyId);
+		kaleoTransitionModel.setUserId(_sampleUserId);
+		kaleoTransitionModel.setUserName(_SAMPLE_USER_NAME);
+		kaleoTransitionModel.setCreateDate(new Date());
+		kaleoTransitionModel.setModifiedDate(new Date());
+		kaleoTransitionModel.setKaleoDefinitionId(sourceKaleoNodeModel.getKaleoDefinitionId());
+		kaleoTransitionModel.setKaleoDefinitionVersionId(
+			sourceKaleoNodeModel.getKaleoDefinitionVersionId());
+		kaleoTransitionModel.setKaleoNodeId(sourceKaleoNodeModel.getKaleoNodeId());
+		kaleoTransitionModel.setName(name);
+		kaleoTransitionModel.setSourceKaleoNodeId(
+			sourceKaleoNodeModel.getKaleoNodeId());
+		kaleoTransitionModel.setSourceKaleoNodeName(sourceKaleoNodeModel.getName());
+		kaleoTransitionModel.setTargetKaleoNodeId(
+			targetKaleoNodeModel.getKaleoNodeId());
+		kaleoTransitionModel.setTargetKaleoNodeName(targetKaleoNodeModel.getName());
+		kaleoTransitionModel.setDefaultTransition(defaultValue);
+
+		return kaleoTransitionModel;
+	}
 
 	protected LayoutSetModel newLayoutSetModel(
 		long groupId, boolean privateLayout) {
@@ -4475,11 +4892,11 @@ public class DataFactory {
 
 		return mbCategoryModel;
 	}
-
+	
 	protected MBMessageModel newMBMessageModel(
 		long groupId, long classNameId, long classPK, long categoryId,
 		long threadId, long messageId, long rootMessageId, long parentMessageId,
-		String subject, String urlSubject, String body) {
+		String subject, String urlSubject, String body, int status) {
 
 		MBMessageModel mBMessageModel = new MBMessageModelImpl();
 
@@ -4516,9 +4933,21 @@ public class DataFactory {
 		mBMessageModel.setBody(body);
 		mBMessageModel.setFormat(MBMessageConstants.DEFAULT_FORMAT);
 		mBMessageModel.setLastPublishDate(new Date());
+		mBMessageModel.setStatus(status);
 		mBMessageModel.setStatusDate(new Date());
 
 		return mBMessageModel;
+	}
+
+	protected MBMessageModel newMBMessageModel(
+		long groupId, long classNameId, long classPK, long categoryId,
+		long threadId, long messageId, long rootMessageId, long parentMessageId,
+		String subject, String urlSubject, String body) {
+
+		return newMBMessageModel(
+			groupId, classNameId, classPK, categoryId, threadId, messageId,
+			rootMessageId, parentMessageId, subject, urlSubject, body,
+			WorkflowConstants.STATUS_APPROVED);
 	}
 
 	protected MBThreadModel newMBThreadModel(
@@ -4872,6 +5301,50 @@ public class DataFactory {
 		return wikiPageModel;
 	}
 
+	public WorkflowDefinitionLinkModel newWorkflowDefinitionLinkModel(
+		KaleoDefinitionModel kaleoDefinitionModel) {
+
+		WorkflowDefinitionLinkModel workflowDefinitionLinkModel =
+			new WorkflowDefinitionLinkModelImpl();
+
+		workflowDefinitionLinkModel.setWorkflowDefinitionLinkId(_counter.get());
+		workflowDefinitionLinkModel.setGroupId(0);
+		workflowDefinitionLinkModel.setCompanyId(_companyId);
+		workflowDefinitionLinkModel.setUserId(_sampleUserId);
+		workflowDefinitionLinkModel.setUserName(_SAMPLE_USER_NAME);
+		workflowDefinitionLinkModel.setCreateDate(new Date());
+		workflowDefinitionLinkModel.setModifiedDate(new Date());
+		workflowDefinitionLinkModel.setClassNameId(getClassNameId(MBMessage.class));
+		workflowDefinitionLinkModel.setClassPK(0);
+		workflowDefinitionLinkModel.setTypePK(0);
+		workflowDefinitionLinkModel.setWorkflowDefinitionName(
+			kaleoDefinitionModel.getName());
+		workflowDefinitionLinkModel.setWorkflowDefinitionVersion(
+			kaleoDefinitionModel.getVersion());
+
+		return workflowDefinitionLinkModel;
+	}
+
+	public WorkflowInstanceLinkModel newWorkflowInstanceLinkModel(
+		KaleoInstanceModel kaleoInstanceModel) {
+
+		WorkflowInstanceLinkModel workflowInstanceLinkModel =
+			new WorkflowInstanceLinkModelImpl();
+
+		workflowInstanceLinkModel.setWorkflowInstanceLinkId(_counter.get());
+		workflowInstanceLinkModel.setGroupId(kaleoInstanceModel.getGroupId());
+		workflowInstanceLinkModel.setCompanyId(_companyId);
+		workflowInstanceLinkModel.setUserId(_sampleUserId);
+		workflowInstanceLinkModel.setUserName(_SAMPLE_USER_NAME);
+		workflowInstanceLinkModel.setCreateDate(new Date());
+		workflowInstanceLinkModel.setModifiedDate(new Date());
+		workflowInstanceLinkModel.setClassNameId(getClassNameId(MBMessage.class));
+		workflowInstanceLinkModel.setClassPK(kaleoInstanceModel.getClassPK());
+		workflowInstanceLinkModel.setWorkflowInstanceId(kaleoInstanceModel.getKaleoInstanceId());
+
+		return workflowInstanceLinkModel;
+	}
+	
 	protected String nextDDLCustomFieldName(
 		long groupId, int customFieldIndex) {
 

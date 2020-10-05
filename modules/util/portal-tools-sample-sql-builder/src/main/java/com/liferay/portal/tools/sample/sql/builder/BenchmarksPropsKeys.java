@@ -115,6 +115,12 @@ public interface BenchmarksPropsKeys {
 	public static final String MAX_WIKI_PAGE_COUNT =
 		"sample.sql.max.wiki.page.count";
 
+	public static final String MAX_WORKFLOW_COUNT =
+		"sample.sql.max.workflow.count";
+
+	public static final String MAX_WORKFLOW_INSTANCE_COUNT =
+		"sample.sql.max.workflow.instance.count";
+
 	public static final String OPTIMIZE_BUFFER_SIZE =
 		"sample.sql.optimize.buffer.size";
 

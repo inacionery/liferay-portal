@@ -155,6 +155,12 @@ public class BenchmarksPropsValues {
 	public static final int MAX_WIKI_PAGE_COUNT = GetterUtil.getInteger(
 		PropertiesHolder._get(BenchmarksPropsKeys.MAX_WIKI_PAGE_COUNT));
 
+	public static final int MAX_WORKFLOW_COUNT = GetterUtil.getInteger(
+		PropertiesHolder._get(BenchmarksPropsKeys.MAX_WORKFLOW_COUNT));
+
+	public static final int MAX_WORKFLOW_INSTANCE_COUNT = GetterUtil.getInteger(
+		PropertiesHolder._get(BenchmarksPropsKeys.MAX_WORKFLOW_INSTANCE_COUNT));
+
 	public static final int OPTIMIZE_BUFFER_SIZE = GetterUtil.getInteger(
 		PropertiesHolder._get(BenchmarksPropsKeys.OPTIMIZE_BUFFER_SIZE));
 
